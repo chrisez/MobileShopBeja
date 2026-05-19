@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v13</title>
+    <title>Mobile Shop Béja - Cloud System v14</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     
     <style>
         :root { 
@@ -35,10 +36,13 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         
-        /* منطقة الباركود السريع لـ Barcode to PC */
+        /* منطقة الـ Scanner المتقدمة للكاميرا والكمبيوتر */
         .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
-        .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; }
-
+        .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
+        
+        /* صندوق قارئ كاميرا الهاتف */
+        #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
+        
         /* الجداول والتصنيفات */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 550px; }
@@ -59,6 +63,7 @@
         .btn-primary { background-color: var(--primary); }
         .btn-success { background-color: var(--success); }
         .btn-danger { background-color: var(--danger); }
+        .btn-dark { background-color: var(--dark); }
         .btn-block { width: 100%; display: block; margin-top: 5px; }
         
         .admin-only { display: none; }
@@ -110,8 +115,17 @@
 
     <div class="barcode-listener-zone">
         <h4 style="margin: 0 0 10px 0; color: #d35400;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
-        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="امسح الـ QR بالهاتف الآن..." autocomplete="off">
-        <p style="font-size: 11px; color: #7f8c8d; margin: 5px 0 0 0;">(إذا كنت تستعمل الكمبيوتر، ابقِ مؤشر الكتابة وامضاً هنا)</p>
+        
+        <button id="toggleCameraBtn" class="btn btn-primary" style="margin-bottom: 12px; padding: 12px 20px; font-size: 15px; width: 90%; max-width: 300px;" onclick="toggleCameraScanner()">
+            📷 فتح كاميرا الهاتف للمسح المباشر
+        </button>
+        
+        <div id="camera-scanner-container">
+            <div id="interactive-reader" style="width: 100%;"></div>
+        </div>
+
+        <div style="color: #7f8c8d; font-size: 12px; margin: 5px 0;">أو الكتابة/المسح عبر جهاز خارجي هنا:</div>
+        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="انتظار مسح الـ QR للبيع..." autocomplete="off">
     </div>
 
     <div class="section-box cart-box" id="cartSection">
@@ -208,14 +222,13 @@
 </div>
 
 <script>
-    // تعديل الرابط إلى النطاق الأوروبي الصحيح الخاص بك
     const FIREBASE_URL = "https://mobileshopbeja-default-rtdb.europe-west1.firebasedatabase.app";
-
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
     let stock = [];
     let logs = [];
     let cart = []; 
     let currentRole = "";
+    let html5QrCodeScanner = null; // متغير لحفظ مساح الكاميرا
 
     async function cloudFetch() {
         try {
@@ -241,7 +254,6 @@
         renderJard();
     }
 
-    // مزامنة تلقائية حية كل 4 ثوانٍ لربط الأجهزة ببعضها
     setInterval(() => {
         if(currentRole !== "") { cloudFetch(); }
     }, 4000);
@@ -252,9 +264,7 @@
         if ((role === "admin" && pass === PASS_ADMIN) || (role === "worker" && pass === PASS_WORKER)) {
             currentRole = role;
             document.getElementById('loadingMsg').style.display = "block";
-            
             await cloudFetch();
-            
             document.getElementById('loginScreen').style.display = "none";
             document.getElementById('mainApp').style.display = "block";
             if(role === "admin") {
@@ -275,28 +285,83 @@
     
     document.addEventListener('click', function(e) {
         if(document.getElementById('mainApp').style.display === "block") {
-            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON') {
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target)) {
                 focusBarcodeField();
             }
         }
     });
 
+    // معالجة المدخلات القادمة من الحقل النصي الافتراضي
     document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            const scannedText = this.value.trim();
-            if(scannedText) {
-                const item = stock.find(i => scannedText.includes(i.id));
-                if(item) {
-                    addToCart(stock.indexOf(item));
-                } else {
-                    alert("⚠️ الكود الممسوح [" + scannedText + "] غير مدرج بالمخزن!");
-                }
-            }
+            processScannedCode(this.value.trim());
             this.value = "";
             focusBarcodeField();
         }
     });
+
+    // دالة موحدة لمعالجة الأكواد المقروءة (سواء من الكاميرا أو كتابة)
+    function processScannedCode(scannedText) {
+        if(!scannedText) return;
+        const item = stock.find(i => scannedText.includes(i.id));
+        if(item) {
+            addToCart(stock.indexOf(item));
+        } else {
+            alert("⚠️ الكود الممسوح [" + scannedText + "] غير مدرج بالمخزن!");
+        }
+    }
+
+    // تشغيل / إيقاف قارئ كاميرا الهاتف المباشر
+    function toggleCameraScanner() {
+        const container = document.getElementById('camera-scanner-container');
+        const btn = document.getElementById('toggleCameraBtn');
+        
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'block';
+            btn.innerText = "🛑 إيقاف تشغيل الكاميرا";
+            btn.className = "btn btn-danger";
+            
+            // تهيئة مصوّر الكاميرا الخلفية وتجهيز الإطار المربع المخصص للمسح
+            html5QrCodeScanner = new Html5Qrcode("interactive-reader");
+            html5QrCodeScanner.start(
+                { facingMode: "environment" }, // تشغيل الكاميرا الخلفية افتراضياً
+                {
+                    fps: 15,    // سرعة تتبع الإطارات
+                    qrbox: { width: 230, height: 230 } // المربع المحدد للمسح وسط الكاميرا
+                },
+                (decodedText) => {
+                    // عند نجاح المسح: نقوم بالمعالجة وإصدار صوت تنبيه خفيف إن أمكن
+                    processScannedCode(decodedText);
+                    // نقوم بإيقاف مؤقت لمنع التكرار اللحظي المزعج
+                    stopCamera();
+                },
+                (errorMessage) => {
+                    // تجاهل الأخطاء المستمرة الناتجة عن محاولات التركيز وعدم وجود كود
+                }
+            ).catch(err => {
+                alert("❌ فشل فتح الكاميرا، يرجى إعطاء صلاحية الكاميرا للمتصفح.");
+                stopCamera();
+            });
+        } else {
+            stopCamera();
+        }
+    }
+
+    function stopCamera() {
+        const container = document.getElementById('camera-scanner-container');
+        const btn = document.getElementById('toggleCameraBtn');
+        container.style.display = 'none';
+        btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر";
+        btn.className = "btn btn-primary";
+        
+        if (html5QrCodeScanner) {
+            html5QrCodeScanner.stop().then(() => {
+                html5QrCodeScanner = null;
+                focusBarcodeField();
+            }).catch(err => console.log(err));
+        }
+    }
 
     function addService() {
         const name = document.getElementById('svcName').value, 
