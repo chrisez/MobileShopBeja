@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile Shop Béja - Cloud System v13</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #e67e22; --dark: #2c3e50; --success: #2ecc71; --danger: #e74c3c; --bg: #f4f7f6;
+            --cat-green: #d4edda; --cat-blue: #cce5ff; --cat-yellow: #fff3cd;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; font-size: 14px; }
+        
+        /* شاشة الدخول */
+        .login-screen { max-width: 400px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; border-top: 6px solid var(--primary); }
+        .logo-container { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 15px; display: inline-block; }
+        .logo-img { width: 140px; height: auto; border-radius: 8px; }
+
+        .login-group { display: flex; flex-direction: column; text-align: right; margin-bottom: 15px; }
+        .login-group label { font-weight: bold; margin-bottom: 5px; color: var(--dark); }
+        .login-group input, .login-group select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+
+        /* الواجهة الرئيسية */
+        .main-app { display: none; max-width: 900px; margin: 0 auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .user-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .nav-logo { width: 45px; border-radius: 5px; background: white; padding: 2px; vertical-align: middle; }
+        
+        .section-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eee; }
+        h3 { margin-top: 0; color: var(--dark); border-right: 4px solid var(--primary); padding-right: 8px; display: flex; align-items: center; gap: 8px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        
+        /* منطقة الباركود السريع لـ Barcode to PC */
+        .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
+        .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; }
+
+        /* الجداول والتصنيفات */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 550px; }
+        th, td { padding: 10px 8px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f8f9fa; color: var(--dark); }
+        
+        .row-سماعات { background-color: var(--cat-green) !important; }
+        .row-حماية { background-color: var(--cat-blue) !important; }
+        .row-كفرات { background-color: var(--cat-yellow) !important; }
+
+        .low-stock { background: #ff7675 !important; color: white; font-weight: bold; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        .blur-sensitive { filter: blur(5px); transition: 0.3s; cursor: pointer; background: #eee; padding: 2px 4px; border-radius: 4px; display: inline-block; }
+        .blur-sensitive:hover { filter: blur(0); }
+        
+        .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; font-size: 14px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-primary { background-color: var(--primary); }
+        .btn-success { background-color: var(--success); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-block { width: 100%; display: block; margin-top: 5px; }
+        
+        .admin-only { display: none; }
+        .loading-text { color: var(--primary); font-weight: bold; display: none; margin-bottom: 10px; }
+        
+        #qrModal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background:white; width:90%; max-width:320px; margin:100px auto; padding:20px; border-radius:15px; text-align:center; }
+        #qrcode { margin: 15px auto; display: flex; justify-content: center; }
+
+        .jard-container { background: var(--dark); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; }
+        .cart-box { background: #fffdf0; border: 2px solid #f1c40f; display: none; }
+
+        @media (max-width: 480px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .user-bar { flex-direction: column; gap: 10px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+    <div class="logo-container">
+        <img src="logo.png" alt="MSB Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/140x140?text=MSB+LOGO'">
+    </div>
+    <h2 style="color: var(--primary); margin: 0 0 20px 0;">نظام Mobile Shop Béja سحابي</h2>
+    <div class="login-group">
+        <label>نوع الحساب</label>
+        <select id="loginRole">
+            <option value="admin">الأدمين (المالك)</option>
+            <option value="worker">الموظف</option>
+        </select>
+    </div>
+    <div class="login-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPass" placeholder="أدخل كلمة السر">
+    </div>
+    <div id="loadingMsg" class="loading-text">جاري الاتصال بالسحابة وتحميل البيانات...</div>
+    <button class="btn btn-primary btn-block" style="padding: 15px;" onclick="checkLogin()">دخول النظام</button>
+</div>
+
+<div class="main-app" id="mainApp">
+    <div class="user-bar">
+        <div>
+            <img src="logo.png" class="nav-logo" onerror="this.src='https://via.placeholder.com/45?text=MSB'">
+            <span id="welcomeMsg" style="margin-right: 8px; font-weight: bold;">مرحباً بك</span>
+        </div>
+        <button class="btn btn-danger" style="padding: 5px 12px;" onclick="location.reload()">🔒 خروج</button>
+    </div>
+
+    <div class="barcode-listener-zone">
+        <h4 style="margin: 0 0 10px 0; color: #d35400;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
+        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="امسح الـ QR بالهاتف الآن..." autocomplete="off">
+        <p style="font-size: 11px; color: #7f8c8d; margin: 5px 0 0 0;">(إذا كنت تستعمل الكمبيوتر، ابقِ مؤشر الكتابة وامضاً هنا)</p>
+    </div>
+
+    <div class="section-box cart-box" id="cartSection">
+        <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية (الزبون الحالي)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>السلعة</th><th>الكمية المطلوبة</th><th>سعر الحبة</th><th>المجموع</th><th>حذف</th></tr>
+                </thead>
+                <tbody id="cartBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div>الإجمالي المستحق: <span id="cartTotalText" style="font-size:18px; font-weight:bold; color:var(--danger);">0.00</span> د.ت</div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="checkoutCart()" class="btn btn-success">🖨️ تأكيد البيع وطباعة الفاتورة</button>
+                <button onclick="clearCart()" class="btn btn-danger">إلغاء السلة</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h3 style="color: var(--success); border-right-color: var(--success);">🛠️ خدمات الصيانة</h3>
+        <div class="form-grid">
+            <input type="text" id="svcName" placeholder="وصف العطل">
+            <input type="number" id="svcTotal" placeholder="المبلغ المطلوب">
+            <input type="number" id="svcCost" placeholder="تكلفة القطع (أدمين)" class="admin-only">
+        </div>
+        <button onclick="addService()" class="btn btn-success btn-block">طباعة فاتورة صيانة</button>
+    </div>
+
+    <div class="section-box admin-only">
+        <h3>📦 إضافة منتج جديد للمخزن</h3>
+        <div class="form-grid">
+            <input type="text" id="pName" placeholder="اسم السلعة">
+            <select id="pCat">
+                <option value="سماعات">سماعات</option>
+                <option value="حماية">حماية شاشة</option>
+                <option value="كفرات">كفرات</option>
+                <option value="أخرى">أخرى</option>
+            </select>
+            <input type="text" id="pModel" placeholder="الموديل">
+            <input type="number" id="pQty" placeholder="الكمية">
+            <input type="number" id="pCost" placeholder="التكلفة">
+            <input type="number" id="pPrice" placeholder="سعر البيع">
+        </div>
+        <button onclick="addProduct()" class="btn btn-primary btn-block">حفظ وتوليد الـ QR</button>
+    </div>
+
+    <div class="section-box">
+        <h3>🔍 البحث والمخزن</h3>
+        <input type="text" id="searchBox" onkeyup="search()" placeholder="ابحث عن أي شيء..." style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+        <div class="table-container">
+            <table id="stockTable">
+                <thead>
+                    <tr><th>القسم</th><th>السلعة</th><th>الموديل</th><th>الكمية</th><th>السعر</th><th>إجراء</th></tr>
+                </thead>
+                <tbody id="stockBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="jard-container admin-only" id="jardBox">
+        <h2>📊 الجرد اليومي والأرباح</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 11px; opacity: 0.8;">المداخيل الإجمالية</div>
+                <div id="sumSales" style="font-size: 18px; font-weight: bold;">0.00</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 11px; opacity: 0.8;">الربح الصافي (مخفى)</div>
+                <div id="sumProfit" class="blur-sensitive" style="font-size: 18px; font-weight: bold;">0.00</div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table style="color: white; border-color: rgba(255,255,255,0.1);">
+                <thead><tr><th>الوقت</th><th>البيان</th><th>المبلغ</th><th>الربح</th><th>حذف</th></tr></thead>
+                <tbody id="logBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="qrModal">
+    <div class="modal-content">
+        <h3 id="qrTitle" style="border:none; color: var(--primary); justify-content:center;"></h3>
+        <div id="qrcode"></div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button class="btn btn-success" onclick="printQR()">🖨️ طباعة الملصق</button>
+            <button class="btn btn-danger" onclick="closeQR()">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // تم ربط قاعدة بيانات Firebase الخاصة بمحلك بنجاح هنا
+    const FIREBASE_URL = "https://mobile-shop-beja-default-rtdb.firebaseio.com/";
+
+    const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
+    let stock = [];
+    let logs = [];
+    let cart = []; 
+    let currentRole = "";
+
+    async function cloudFetch() {
+        try {
+            let resStock = await fetch(FIREBASE_URL + "/stock.json");
+            let dataStock = await resStock.json();
+            stock = dataStock ? Object.values(dataStock) : [];
+            
+            let resLogs = await fetch(FIREBASE_URL + "/logs.json");
+            let dataLogs = await resLogs.json();
+            logs = dataLogs ? Object.values(dataLogs) : [];
+            
+            renderStock(); renderJard();
+        } catch(e) { console.error("خطأ في جلب البيانات من السحاب: ", e); }
+    }
+
+    async function cloudSaveStock() {
+        await fetch(FIREBASE_URL + "/stock.json", { method: 'PUT', body: JSON.stringify(stock) });
+        renderStock();
+    }
+
+    async function cloudSaveLogs() {
+        await fetch(FIREBASE_URL + "/logs.json", { method: 'PUT', body: JSON.stringify(logs) });
+        renderJard();
+    }
+
+    // مزامنة حية وتلقائية كل 4 ثوانٍ لربط جهاز الموظف والمدير معاً
+    setInterval(() => {
+        if(currentRole !== "") { cloudFetch(); }
+    }, 4000);
+
+    async function checkLogin() {
+        const role = document.getElementById('loginRole').value;
+        const pass = document.getElementById('loginPass').value;
+        if ((role === "admin" && pass === PASS_ADMIN) || (role === "worker" && pass === PASS_WORKER)) {
+            currentRole = role;
+            document.getElementById('loadingMsg').style.display = "block";
+            
+            await cloudFetch();
+            
+            document.getElementById('loginScreen').style.display = "none";
+            document.getElementById('mainApp').style.display = "block";
+            if(role === "admin") {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block");
+            }
+            document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير" : "🧑‍💼 الموظف";
+            renderStock(); renderJard();
+            focusBarcodeField();
+        } else {
+            alert("❌ كلمة السر خاطئة");
+        }
+    }
+
+    function focusBarcodeField() {
+        const bInput = document.getElementById('barcodeScannerInput');
+        if(bInput) bInput.focus();
+    }
+    
+    document.addEventListener('click', function(e) {
+        if(document.getElementById('mainApp').style.display === "block") {
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON') {
+                focusBarcodeField();
+            }
+        }
+    });
+
+    document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const scannedText = this.value.trim();
+            if(scannedText) {
+                const item = stock.find(i => scannedText.includes(i.id));
+                if(item) {
+                    addToCart(stock.indexOf(item));
+                } else {
+                    alert("⚠️ الكود الممسوح [" + scannedText + "] غير مدرج بالمخزن!");
+                }
+            }
+            this.value = "";
+            focusBarcodeField();
+        }
+    });
+
+    function addService() {
+        const name = document.getElementById('svcName').value, 
+              cost = parseFloat(document.getElementById('svcCost').value) || 0, 
+              total = parseFloat(document.getElementById('svcTotal').value) || 0;
+        if(name && total > 0) {
+            logs.push({ time: new Date().toLocaleTimeString('ar-TN'), txt: "🛠️ صيانة: " + name, val: total, prf: total - cost });
+            cloudSaveLogs();
+            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }]);
+            document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = "";
+            focusBarcodeField();
+        } else alert("الرجاء إدخال البيانات المطلوبة للصيانة.");
+    }
+
+    function addProduct() {
+        const n = document.getElementById('pName').value, 
+              cat = document.getElementById('pCat').value,
+              m = document.getElementById('pModel').value, 
+              q = parseInt(document.getElementById('pQty').value) || 0, 
+              c = parseFloat(document.getElementById('pCost').value) || 0, 
+              p = parseFloat(document.getElementById('pPrice').value) || 0;
+        if(n && m && q >= 0) {
+            const id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+            stock.push({ id, n, cat, m, q, c, p });
+            cloudSaveStock();
+            alert("✅ تم رفع المنتج للسحاب وتوليد رمز QR.");
+            document.getElementById('pName').value = ""; document.getElementById('pModel').value = "";
+            focusBarcodeField();
+        } else alert("يرجى ملء الحقول الأساسية وتحديد كمية صحيحة.");
+    }
+
+    function addToCart(index) {
+        let item = stock[index];
+        if(item.q <= 0) { alert("❌ عذراً، لقد نفدت الكمية بالكامل من هذا المنتج!"); focusBarcodeField(); return; }
+        
+        let qty = parseInt(prompt("أدخل الكمية التي يريدها الزبون من [ " + item.n + " ] (المتوفر " + item.q + " حبة):", 1));
+        if(isNaN(qty) || qty <= 0) { focusBarcodeField(); return; }
+        if(qty > item.q) { alert("⚠️ الكمية المطلوبة أكبر من المتوفرة في المخزن حالياً!"); focusBarcodeField(); return; }
+
+        let price = parseFloat(prompt("تأكيد سعر البيع للحبة الواحدة (د.ت):", item.p));
+        if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
+
+        let existing = cart.find(c => c.stockIndex === index);
+        if(existing) {
+            if((existing.qty + qty) > item.q) { alert("⚠️ المجموع الكلي المطلوب بالسلة يتجاوز الكمية المتاحة بالمخزن!"); focusBarcodeField(); return; }
+            existing.qty += qty;
+            existing.finalPrice = price;
+        } else {
+            cart.push({ stockIndex: index, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c });
+        }
+        renderCart();
+        focusBarcodeField();
+    }
+
+    function renderCart() {
+        const cBox = document.getElementById('cartSection');
+        const cBody = document.getElementById('cartBody');
+        if(cart.length === 0) { cBox.style.display = 'none'; return; }
+        
+        cBox.style.display = 'block';
+        cBody.innerHTML = '';
+        let total = 0;
+        
+        cart.forEach((cItem, idx) => {
+            let subtotal = cItem.qty * cItem.finalPrice;
+            total += subtotal;
+            cBody.innerHTML += '<tr>' +
+                '<td><b>' + cItem.n + ' (' + cItem.m + ')</b></td>' +
+                '<td>' + cItem.qty + '</td>' +
+                '<td>' + cItem.finalPrice.toFixed(2) + '</td>' +
+                '<td><b>' + subtotal.toFixed(2) + ' د.ت</b></td>' +
+                '<td><button onclick="removeFromCart(' + idx + ')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px;">❌</button></td>' +
+            '</tr>';
+        });
+        document.getElementById('cartTotalText').innerText = total.toFixed(2);
+    }
+
+    function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); focusBarcodeField(); }
+    function clearCart() { cart = []; renderCart(); focusBarcodeField(); }
+
+    async function checkoutCart() {
+        if(cart.length === 0) return;
+        
+        cart.forEach(cItem => {
+            stock[cItem.stockIndex].q -= cItem.qty; 
+            let itemTotalSale = cItem.qty * cItem.finalPrice;
+            let itemTotalCost = cItem.qty * cItem.cost;
+            let itemProfit = itemTotalSale - itemTotalCost;
+            
+            logs.push({ 
+                time: new Date().toLocaleTimeString('ar-TN'), 
+                txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', 
+                val: itemTotalSale, 
+                prf: itemProfit 
+            });
+        });
+        
+        printMultipleInvoice("فاتورة بيع منتجات", cart);
+        cart = [];
+        renderCart();
+        
+        await cloudSaveStock();
+        await cloudSaveLogs();
+        focusBarcodeField();
+    }
+
+    function printMultipleInvoice(type, itemsList) {
+        const win = window.open('', '_blank');
+        const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
+        let rowsHtml = "";
+        let totalAmount = 0;
+        
+        itemsList.forEach((item, index) => {
+            let subtotal = item.qty * item.finalPrice;
+            totalAmount += subtotal;
+            let modelText = item.m ? '(' + item.m + ')' : '';
+            rowsHtml += '<tr>' +
+                '<td style="text-align: center;">' + (index + 1) + '</td>' +
+                '<td><strong>' + item.n + ' ' + modelText + '</strong></td>' +
+                '<td style="text-align: center;">' + item.cat + '</td>' +
+                '<td style="text-align: center;">' + item.qty + '</td>' +
+                '<td style="text-align: left;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
+                '<td style="font-weight: 600; text-align: left;">' + subtotal.toFixed(2) + ' د.ت</td>' +
+            '</tr>';
+        });
+        
+        win.document.write('\
+            <!DOCTYPE html>\
+            <html lang="ar" dir="rtl">\
+            <head>\
+                <meta charset="UTF-8">\
+                <title>فاتورة ' + invoiceNum + '</title>\
+                <style>\
+                    @page { size: A4; margin: 20mm; }\
+                    body { font-family: "Segoe UI", Tahoma, Arial, sans-serif; color: #2c3e50; margin: 0; padding: 0; font-size: 14px; background: #fff; line-height: 1.6; }\
+                    .invoice-container { max-width: 100%; margin: 0 auto; background: #fff; }\
+                    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }\
+                    .header-table td { vertical-align: middle; border: none; padding: 0; }\
+                    .brand-title { color: #e67e22; font-size: 28px; font-weight: bold; margin: 0 0 5px 0; letter-spacing: 0.5px; }\
+                    .brand-subtitle { font-size: 13px; color: #7f8c8d; margin: 0; }\
+                    .logo-wrapper { text-align: left; }\
+                    .invoice-logo { width: 110px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }\
+                    .meta-box { background: #f8f9fa; border-right: 4px solid #e67e22; padding: 15px 20px; border-radius: 0 6px 6px 0; margin-bottom: 35px; }\
+                    .meta-grid { display: table; width: 100%; }\
+                    .meta-col { display: table-cell; width: 33.33%; }\
+                    .meta-label { font-size: 12px; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }\
+                    .meta-value { font-size: 14px; font-weight: 600; color: #2c3e50; }\
+                    .doc-title-container { margin-bottom: 25px; border-bottom: 2px solid #eaeded; padding-bottom: 10px; }\
+                    .doc-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 0; display: inline-block; position: relative; }\
+                    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; text-align: right; }\
+                    .items-table th { background: #2c3e50; color: #ffffff; padding: 12px 15px; font-weight: 600; font-size: 13px; border: 1px solid #2c3e50; }\
+                    .items-table td { padding: 14px 15px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 13.5px; }\
+                    .summary-wrapper { width: 100%; margin-top: 20px; }\
+                    .summary-table { width: 300px; float: left; border-collapse: collapse; }\
+                    .summary-table td { padding: 10px 12px; font-size: 14px; }\
+                    .total-row { background: #e67e22; color: #fff; font-weight: bold; border-radius: 6px; }\
+                    .total-row td { padding: 12px; font-size: 16px; border: 1px solid #e67e22; }\
+                    .terms-box { width: 50%; float: right; font-size: 12px; color: #7f8c8d; line-height: 1.8; padding-left: 20px; }\
+                    .terms-title { font-weight: bold; color: #2c3e50; margin-bottom: 5px; font-size: 12.5px; }\
+                    .footer-banner { clear: both; padding-top: 60px; text-align: center; border-top: 1px dashed #cbd5e1; margin-top: 50px; }\
+                    .footer-text { font-size: 11px; color: #94a3b8; margin: 0; }\
+                </style>\
+            </head>\
+            <body>\
+                <div class="invoice-container">\
+                    <table class="header-table">\
+                        <tr>\
+                            <td>\
+                                <h1 class="brand-title">Mobile Shop Béja</h1>\
+                                <p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p>\
+                                <p class="brand-subtitle">بيع وصيانة الأجهزة الذكية والملحقات</p>\
+                            </td>\
+                            <td class="logo-wrapper">\
+                                <img src="logo.png" class="invoice-logo" alt="Logo" onerror="this.src=\'https://via.placeholder.com/110?text=MSB+LOGO\'">\
+                            </td>\
+                        </tr>\
+                    </table>\
+                    <div class="doc-title-container">\
+                        <h2 class="doc-title">' + type + '</h2>\
+                    </div>\
+                    <div class="meta-box">\
+                        <div class="meta-grid">\
+                            <div class="meta-col">\
+                                <div class="meta-label">رقم الوثيقة</div>\
+                                <div class="meta-value">' + invoiceNum + '</div>\
+                            </div>\
+                            <div class="meta-col">\
+                                <div class="meta-label">تاريخ الإصدار</div>\
+                                <div class="meta-value">' + new Date().toLocaleDateString('ar-TN') + ' - ' + new Date().toLocaleTimeString('ar-TN', {hour: '2-digit', minute:'2-digit'}) + '</div>\
+                            </div>\
+                            <div class="meta-col">\
+                                <div class="meta-label">الحالة</div>\
+                                <div class="meta-value" style="color: #2ecc71;">مدفوعة بالكامل</div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <table class="items-table">\
+                        <thead>\
+                            <tr>\
+                                <th style="width: 7%; text-align: center;">الرقم</th>\
+                                <th style="width: 43%;">الوصف والبيان</th>\
+                                <th style="width: 15%; text-align: center;">الصنف</th>\
+                                <th style="width: 10%; text-align: center;">الكمية</th>\
+                                <th style="width: 12%; text-align: left;">سعر الحبة</th>\
+                                <th style="width: 13%; text-align: left;">الإجمالي</th>\
+                            </tr>\
+                        </thead>\
+                        <tbody>\
+                            ' + rowsHtml + '\
+                        </tbody>\
+                    </table>\
+                    <div class="summary-wrapper">\
+                        <div class="terms-box">\
+                            <div class="terms-title">شروط وإرشادات التعامل:</div>\
+                            <div>• يرجى الاحتفاظ بنسخة مطبوعة من هذا الوصل أو الفاتورة عند المراجعة أو الفحص الفني.</div>\
+                            <div>• بالنسبة للملحقات والقطع المباعة، لا يتم قبول الاستبدال أو الإرجاع إلا بحالتها الأصلية المقفلة.</div>\
+                            <div>• خدمات الصيانة الفنية تخضع لفترة الفحص والضمان المتفق عليها عند الاستلام.</div>\
+                        </div>\
+                        <table class="summary-table">\
+                            <tr>\
+                                <td style="color: #7f8c8d; font-weight: bold;">المجموع الصافي:</td>\
+                                <td style="text-align: left; font-weight: 600;">' + totalAmount.toFixed(2) + ' د.ت</td>\
+                            </tr>\
+                            <tr>\
+                                <td style="color: #7f8c8d; font-weight: bold;">الضرائب والرسوم:</td>\
+                                <td style="text-align: left; font-weight: 600;">0.00 د.ت</td>\
+                            </tr>\
+                            <tr class="total-row">\
+                                <td>المبلغ الإجمالي:</td>\
+                                <td style="text-align: left;">' + totalAmount.toFixed(2) + ' د.ت</td>\
+                            </tr>\
+                        </table>\
+                    </div>\
+                    <div class="footer-banner">\
+                        <p class="footer-text">نظام Mobile Shop Béja الذكي لإدارة ومراقبة المبيعات والمخازن</p>\
+                    </div>\
+                </div>\
+            </body>\
+            </html>\
+        ');
+        win.document.close();
+    }
+
+    function renderStock(data = stock) {
+        const tbody = document.getElementById('stockBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        data.forEach((item) => {
+            const actualIdx = stock.indexOf(item);
+            const isLow = item.q <= 1;
+            let btns = '<button onclick="addToCart(' + actualIdx + ')" class="btn btn-success" style="padding:4px 8px;">بيع</button> ' +
+                        '<button onclick="showQR(' + actualIdx + ')" class="btn" style="background:#9b59b6; padding:4px 8px;">QR</button>';
+            if(currentRole === 'admin') btns += ' <button onclick="deleteProduct(' + actualIdx + ')" class="btn btn-danger" style="padding:4px 8px; margin-right:3px;">🗑️</button>';
+            
+            tbody.innerHTML += '<tr class="row-' + item.cat + '">' +
+                '<td><b>' + item.cat + '</b></td><td>' + item.n + '</td><td>' + item.m + '</td>' +
+                '<td class="' + (isLow ? 'low-stock' : '') + '">' + item.q + '</td>' +
+                '<td>' + item.p.toFixed(2) + '</td><td>' + btns + '</td>' +
+            '</tr>';
+        });
+    }
+
+    function renderJard() {
+        if(currentRole !== 'admin') return;
+        const lb = document.getElementById('logBody'); if(!lb) return;
+        lb.innerHTML = '';
+        let sV = 0, sP = 0;
+        logs.forEach((l, index) => {
+            sV += l.val; sP += l.prf;
+            lb.innerHTML += '<tr><td>' + l.time + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
+        });
+        document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
+        document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
+    }
+
+    function showQR(index) {
+        const item = stock[index];
+        const qrBox = document.getElementById("qrcode");
+        qrBox.innerHTML = "";
+        new QRCode(qrBox, { text: "MSB_ID:" + item.id, width: 140, height: 140 });
+        document.getElementById("qrTitle").innerText = item.n;
+        document.getElementById("qrModal").style.display = "block";
+    }
+
+    function printQR() {
+        const img = document.querySelector("#qrcode img").src;
+        const title = document.getElementById("qrTitle").innerText;
+        const win = window.open('', '_blank', 'width=300,height=300');
+        win.document.write('\
+            <div style="text-align:center; font-family:sans-serif; padding:10px;">\
+                <h3 style="margin:0 0 5px 0; color:#e67e22;">Mobile Shop Béja</h3>\
+                <img src="' + img + '" style="width:130px; border:1px solid #eee; padding:5px; border-radius:6px;">\
+                <p style="margin:5px 0 0 0; font-weight:bold; font-size:14px;">' + title + '</p>\
+            </div>\
+            <script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 500);}<\/script>\
+        ');
+        win.document.close();
+        focusBarcodeField();
+    }
+
+    function closeQR() { document.getElementById("qrModal").style.display = "none"; focusBarcodeField(); }
+    function search() { const t = document.getElementById('searchBox').value.toLowerCase(); renderStock(stock.filter(i => i.n.toLowerCase().includes(t) || i.m.toLowerCase().includes(t))); }
+    
+    function deleteProduct(i) { 
+        if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً من المخزن السحابي؟")) { 
+            stock.splice(i,1); 
+            cloudSaveStock(); 
+        } 
+        focusBarcodeField(); 
+    }
+    
+    function deleteLog(i) { 
+        if(confirm("هل تريد إزالة هذه العملية من سجلات الأرباح السحابية؟")) { 
+            logs.splice(i,1); 
+            cloudSaveLogs(); 
+        } 
+        focusBarcodeField(); 
+    }
+</script>
+</body>
+</html>
