@@ -208,8 +208,8 @@
 </div>
 
 <script>
-    // تم ربط قاعدة بيانات Firebase الخاصة بمحلك بنجاح هنا
-    const FIREBASE_URL = "https://mobile-shop-beja-default-rtdb.firebaseio.com/";
+    // تعديل الرابط إلى النطاق الأوروبي الصحيح الخاص بك
+    const FIREBASE_URL = "https://mobileshopbeja-default-rtdb.europe-west1.firebasedatabase.app";
 
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
     let stock = [];
@@ -241,7 +241,7 @@
         renderJard();
     }
 
-    // مزامنة حية وتلقائية كل 4 ثوانٍ لربط جهاز الموظف والمدير معاً
+    // مزامنة تلقائية حية كل 4 ثوانٍ لربط الأجهزة ببعضها
     setInterval(() => {
         if(currentRole !== "") { cloudFetch(); }
     }, 4000);
