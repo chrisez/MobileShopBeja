@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v15 Pro</title>
+    <title>Mobile Shop Béja - Cloud System v18 Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -12,7 +12,7 @@
         :root { 
             --primary: #e67e22; --dark: #2c3e50; --success: #2ecc71; --danger: #e74c3c; --bg: #f4f7f6;
             --cat-green: #d4edda; --cat-blue: #cce5ff; --cat-yellow: #fff3cd;
-            --accent-blue: #3498db; --accent-purple: #9b59b6;
+            --accent-blue: #3498db; --accent-purple: #9b59b6; --accent-gold: #f1c40f;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; font-size: 14px; }
@@ -27,7 +27,7 @@
         .login-group input, .login-group select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
 
         /* الواجهة الرئيسية */
-        .main-app { display: none; max-width: 900px; margin: 0 auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .main-app { display: none; max-width: 950px; margin: 0 auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .user-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .nav-logo { width: 45px; border-radius: 5px; background: white; padding: 2px; vertical-align: middle; }
         
@@ -37,30 +37,31 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         
-        /* منطقة الـ Scanner المتقدمة للكاميرا والكمبيوتر */
+        /* الباركود والكاميرا */
         .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
         #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
         
-        /* لوحة تقسيم الأرباح الفاخرة للأدمين */
-        .profit-dashboard { background: #ffffff; border: 1px solid #e0e6ed; border-radius: 14px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent-blue); }
-        .profit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .profit-card { background: #f8fafc; border: 1px solid #edf2f7; padding: 15px; border-radius: 10px; text-align: center; position: relative; transition: 0.3s; }
+        /* لوحة تقسيم الأرباح */
+        .profit-dashboard { background: #ffffff; border: 1px solid #e0e6ed; border-radius: 14px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); }
+        .profit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .profit-card { background: #f8fafc; border: 1px solid #edf2f7; padding: 12px; border-radius: 10px; text-align: center; position: relative; transition: 0.3s; }
         .profit-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card-title { font-size: 13px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
-        .card-value { font-size: 18px; font-weight: bold; color: var(--dark); margin-bottom: 10px; }
+        .card-title { font-size: 12.5px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
+        .card-value { font-size: 16px; font-weight: bold; color: var(--dark); margin-bottom: 10px; }
         
-        /* أشرطة التقدم الملونة لتقسيم المال */
+        /* أشرطة التقدم الملونة */
         .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; width: 85%; margin: 0 auto; }
         .progress-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1s ease-in-out; }
         .fill-liabilities { background: var(--danger); }
         .fill-investment { background: var(--accent-blue); }
+        .fill-savings { background: var(--accent-gold); }
         .fill-personal { background: var(--success); }
         .percentage-tag { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-top: 4px; }
 
-        /* الجداول والتصنيفات */
+        /* الجداول */
         .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 550px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 650px; }
         th, td { padding: 10px 8px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
         th { background: #f8f9fa; color: var(--dark); }
         
@@ -70,7 +71,6 @@
 
         .low-stock { background: #ff7675 !important; color: white; font-weight: bold; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-
         .blur-sensitive { filter: blur(5px); transition: 0.3s; cursor: pointer; background: #eee; padding: 2px 4px; border-radius: 4px; display: inline-block; }
         .blur-sensitive:hover { filter: blur(0); }
         
@@ -78,7 +78,6 @@
         .btn-primary { background-color: var(--primary); }
         .btn-success { background-color: var(--success); }
         .btn-danger { background-color: var(--danger); }
-        .btn-dark { background-color: var(--dark); }
         .btn-block { width: 100%; display: block; margin-top: 5px; }
         
         .admin-only { display: none; }
@@ -91,10 +90,11 @@
         .jard-container { background: var(--dark); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; }
         .cart-box { background: #fffdf0; border: 2px solid #f1c40f; display: none; }
 
-        @media (max-width: 768px) {
-            .profit-grid { grid-template-columns: 1fr; gap: 10px; }
+        @media (max-width: 900px) {
+            .profit-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
+            .profit-grid { grid-template-columns: 1fr; gap: 10px; }
             .form-grid { grid-template-columns: 1fr; }
             .user-bar { flex-direction: column; gap: 10px; text-align: center; }
         }
@@ -106,7 +106,7 @@
     <div class="logo-container">
         <img src="logo.png" alt="MSB Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/140x140?text=MSB+LOGO'">
     </div>
-    <h2 style="color: var(--primary); margin: 0 0 20px 0;">نظام Mobile Shop Béja سحابي</h2>
+    <h2 style="color: var(--primary); margin: 0 0 20px 0;">نظام Mobile Shop Béجا سحابي</h2>
     <div class="login-group">
         <label>نوع الحساب</label>
         <select id="loginRole">
@@ -116,7 +116,7 @@
     </div>
     <div class="login-group">
         <label>كلمة المرور</label>
-        <input type="password" id="loginPass" placeholder="أدخل كلمة السر">
+        <input type="password" id="loginPass" placeholder="أدخل كلمة السر واضغط Enter">
     </div>
     <div id="loadingMsg" class="loading-text">جاري الاتصال بالسحابة وتحميل البيانات...</div>
     <button class="btn btn-primary btn-block" style="padding: 15px;" onclick="checkLogin()">دخول النظام</button>
@@ -144,7 +144,7 @@
     </div>
 
     <div class="section-box cart-box" id="cartSection">
-        <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية (الزبون الحالي)</h3>
+        <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية</h3>
         <div class="table-container">
             <table>
                 <thead>
@@ -204,58 +204,71 @@
     </div>
 
     <div class="jard-container admin-only" id="jardBox">
-        <h2>📊 الجرد اليومي والأرباح</h2>
+        <h2>📊 الجرد اليومي والأرباح المتقدمة</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
                 <div style="font-size: 11px; opacity: 0.8;">المداخيل الإجمالية</div>
                 <div id="sumSales" style="font-size: 18px; font-weight: bold;">0.00</div>
             </div>
             <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 11px; opacity: 0.8;">الربح الصافي (مخفى)</div>
+                <div style="font-size: 11px; opacity: 0.8;">الربح الصافي الإجمالي</div>
                 <div id="sumProfit" class="blur-sensitive" style="font-size: 18px; font-weight: bold;">0.00</div>
             </div>
         </div>
         <div class="table-container">
             <table style="color: white; border-color: rgba(255,255,255,0.1);">
-                <thead><tr><th>الوقت</th><th>البيان</th><th>المبلغ</th><th>الربح</th><th>حذف</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>رقم الفاتورة</th>
+                        <th>التاريخ</th>
+                        <th>الوقت</th>
+                        <th>البيان</th>
+                        <th>المبلغ</th>
+                        <th>الربح</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
                 <tbody id="logBody"></tbody>
             </table>
         </div>
+        <button onclick="clearMonthlyLogs()" class="btn btn-danger btn-block" style="margin-top:15px; background-color:#c0392b; padding:12px;">🧹 تصفير السجلات وبدء شهر جديد</button>
     </div>
 
     <div class="profit-dashboard admin-only" id="financeDashboard">
-        <h3 style="color: var(--accent-blue); border-right-color: var(--accent-blue); margin-bottom: 5px;">💼 لوحة التخطيط المالي وتوزيع الدخل للمالك</h3>
-        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">توزيع ذكي وتلقائي مبني على صافي أرباح المحل الفعليه لتأمين المصاريف والتطوير</p>
+        <h3 style="color: var(--primary); border-right-color: var(--primary); margin-bottom: 5px;">💼 لوحة التخطيط المالي الاستراتيجي الفاخرة</h3>
+        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">خصم آلي للالتزامات الثابتة (335 د.ت)، مع تقسيم باقي الأرباح الصافية (30% استثمار | 40% ادخار | 30% شخصي)</p>
         
         <div class="profit-grid">
             <div class="profit-card" style="border-top: 4px solid var(--danger);">
-                <div class="card-title">🏢 1. الالتزامات والتشغيل</div>
-                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(كراء، كهرباء، إنترنت)</div>
+                <div class="card-title">🏢 1. الالتزامات الثابتة</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(كراء 250 + ضوء 30 + نت 55)</div>
                 <div id="valLiabilities" class="card-value" style="color: var(--danger);">0.00 د.ت</div>
-                <div class="progress-bar-bg">
-                    <div id="barLiabilities" class="progress-fill fill-liabilities"></div>
-                </div>
-                <span class="percentage-tag">المخصص الموصى به: 40%</span>
+                <div class="progress-bar-bg"><div id="barLiabilities" class="progress-fill fill-liabilities"></div></div>
+                <span class="percentage-tag" id="liabilitiesStatus">ثابتة: 335 د.ت</span>
             </div>
             
             <div class="profit-card" style="border-top: 4px solid var(--accent-blue);">
-                <div class="card-title">🚀 2. صندوق الاستثمار</div>
-                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(شراء سلع جديدة وتوسيع)</div>
+                <div class="card-title">🚀 2. ميزانية الاستثمار</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(تجديد المخزن والسلع)</div>
                 <div id="valInvestment" class="card-value" style="color: var(--accent-blue);">0.00 د.ت</div>
-                <div class="progress-bar-bg">
-                    <div id="barInvestment" class="progress-fill fill-investment"></div>
-                </div>
-                <span class="percentage-tag">المخصص الموصى به: 40%</span>
+                <div class="progress-bar-bg"><div id="barInvestment" class="progress-fill fill-investment"></div></div>
+                <span class="percentage-tag">مخصص: 30% بعد الخصم</span>
+            </div>
+
+            <div class="profit-card" style="border-top: 4px solid var(--accent-gold);">
+                <div class="card-title">💰 3. صندوق الادخار</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(احتياطي وأمان للمحل)</div>
+                <div id="valSavings" class="card-value" style="color: #d4ac0d;">0.00 د.ت</div>
+                <div class="progress-bar-bg"><div id="barSavings" class="progress-fill fill-savings"></div></div>
+                <span class="percentage-tag">مخصص: 40% بعد الخصم</span>
             </div>
             
             <div class="profit-card" style="border-top: 4px solid var(--success);">
-                <div class="card-title">🛒 3. المصاريف الشخصية</div>
-                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الصافي للمالك)</div>
+                <div class="card-title">🛒 4. المصاريف الشخصية</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الحر الصافي للمالك)</div>
                 <div id="valPersonal" class="card-value" style="color: var(--success);">0.00 د.ت</div>
-                <div class="progress-bar-bg">
-                    <div id="barPersonal" class="progress-fill fill-personal"></div>
-                </div>
-                <span class="percentage-tag">المخصص الموصى به: 20%</span>
+                <div class="progress-bar-bg"><div id="barPersonal" class="progress-fill fill-personal"></div></div>
+                <span class="percentage-tag">مخصص: 30% بعد الخصم</span>
             </div>
         </div>
     </div>
@@ -276,181 +289,108 @@
 <script>
     const FIREBASE_URL = "https://mobileshopbeja-default-rtdb.europe-west1.firebasedatabase.app";
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
-    let stock = [];
-    let logs = [];
-    let cart = []; 
-    let currentRole = "";
-    let html5QrCodeScanner = null;
+    let stock = []; let logs = []; let cart = []; let currentRole = ""; let html5QrCodeScanner = null;
+
+    document.getElementById('loginPass').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); checkLogin(); } });
 
     async function cloudFetch() {
         try {
             let resStock = await fetch(FIREBASE_URL + "/stock.json");
-            let dataStock = await resStock.json();
-            stock = dataStock ? Object.values(dataStock) : [];
-            
+            let dataStock = await resStock.json(); stock = dataStock ? Object.values(dataStock) : [];
             let resLogs = await fetch(FIREBASE_URL + "/logs.json");
-            let dataLogs = await resLogs.json();
-            logs = dataLogs ? Object.values(dataLogs) : [];
-            
+            let dataLogs = await resLogs.json(); logs = dataLogs ? Object.values(dataLogs) : [];
             renderStock(); renderJard();
         } catch(e) { console.error("خطأ في جلب البيانات: ", e); }
     }
 
-    async function cloudSaveStock() {
-        await fetch(FIREBASE_URL + "/stock.json", { method: 'PUT', body: JSON.stringify(stock) });
-        renderStock();
-    }
+    async function cloudSaveStock() { await fetch(FIREBASE_URL + "/stock.json", { method: 'PUT', body: JSON.stringify(stock) }); renderStock(); }
+    async function cloudSaveLogs() { await fetch(FIREBASE_URL + "/logs.json", { method: 'PUT', body: JSON.stringify(logs) }); renderJard(); }
 
-    async function cloudSaveLogs() {
-        await fetch(FIREBASE_URL + "/logs.json", { method: 'PUT', body: JSON.stringify(logs) });
-        renderJard();
-    }
-
-    setInterval(() => {
-        if(currentRole !== "") { cloudFetch(); }
-    }, 4000);
+    setInterval(() => { if(currentRole !== "") { cloudFetch(); } }, 4000);
 
     async function checkLogin() {
-        const role = document.getElementById('loginRole').value;
-        const pass = document.getElementById('loginPass').value;
+        const role = document.getElementById('loginRole').value; const pass = document.getElementById('loginPass').value;
         if ((role === "admin" && pass === PASS_ADMIN) || (role === "worker" && pass === PASS_WORKER)) {
-            currentRole = role;
-            document.getElementById('loadingMsg').style.display = "block";
-            await cloudFetch();
-            document.getElementById('loginScreen').style.display = "none";
-            document.getElementById('mainApp').style.display = "block";
-            if(role === "admin") {
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block");
-            }
+            currentRole = role; document.getElementById('loadingMsg').style.display = "block"; await cloudFetch();
+            document.getElementById('loginScreen').style.display = "none"; document.getElementById('mainApp').style.display = "block";
+            if(role === "admin") { document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block"); }
             document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير (المالك)" : "🧑‍💼 الموظف";
-            renderStock(); renderJard();
-            focusBarcodeField();
-        } else {
-            alert("❌ كلمة السر خاطئة");
-        }
+            renderStock(); renderJard(); focusBarcodeField();
+        } else { alert("❌ كلمة السر خاطئة"); }
     }
 
-    function focusBarcodeField() {
-        const bInput = document.getElementById('barcodeScannerInput');
-        if(bInput) bInput.focus();
-    }
-    
-    document.addEventListener('click', function(e) {
-        if(document.getElementById('mainApp').style.display === "block") {
-            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target)) {
-                focusBarcodeField();
-            }
-        }
-    });
-
-    document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            processScannedCode(this.value.trim());
-            this.value = "";
-            focusBarcodeField();
-        }
-    });
+    function focusBarcodeField() { const bInput = document.getElementById('barcodeScannerInput'); if(bInput) bInput.focus(); }
+    document.addEventListener('click', function(e) { if(document.getElementById('mainApp').style.display === "block") { if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target)) { focusBarcodeField(); } } });
+    document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); processScannedCode(this.value.trim()); this.value = ""; focusBarcodeField(); } });
 
     function processScannedCode(scannedText) {
-        if(!scannedText) return;
-        const item = stock.find(i => scannedText.includes(i.id));
-        if(item) {
-            addToCart(stock.indexOf(item));
-        } else {
-            alert("⚠️ الكود الممسوح [" + scannedText + "] غير مدرج بالمخزن!");
-        }
+        if(!scannedText) return; const item = stock.find(i => scannedText.includes(i.id));
+        if(item) { addToCart(stock.indexOf(item)); } else { alert("⚠️ الكود الممسوح غير مدرج!"); }
     }
 
     function toggleCameraScanner() {
-        const container = document.getElementById('camera-scanner-container');
-        const btn = document.getElementById('toggleCameraBtn');
-        
+        const container = document.getElementById('camera-scanner-container'); const btn = document.getElementById('toggleCameraBtn');
         if (container.style.display === 'none' || container.style.display === '') {
-            container.style.display = 'block';
-            btn.innerText = "🛑 إيقاف تشغيل الكاميرا";
-            btn.className = "btn btn-danger";
-            
+            container.style.display = 'block'; btn.innerText = "🛑 إيقاف تشغيل الكاميرا"; btn.className = "btn btn-danger";
             html5QrCodeScanner = new Html5Qrcode("interactive-reader");
-            html5QrCodeScanner.start(
-                { facingMode: "environment" },
-                { fps: 15, qrbox: { width: 230, height: 230 } },
-                (decodedText) => {
-                    processScannedCode(decodedText);
-                    stopCamera();
-                },
-                (err) => {}
-            ).catch(err => {
-                alert("❌ فشل فتح الكاميرا، يرجى إعطاء الصلاحية.");
-                stopCamera();
-            });
-        } else {
-            stopCamera();
-        }
+            html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 230 } }, (decodedText) => { processScannedCode(decodedText); stopCamera(); }, (err) => {}).catch(err => { alert("❌ فشل تشغيل الكاميرا."); stopCamera(); });
+        } else { stopCamera(); }
     }
 
     function stopCamera() {
-        const container = document.getElementById('camera-scanner-container');
-        const btn = document.getElementById('toggleCameraBtn');
-        container.style.display = 'none';
-        btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر";
-        btn.className = "btn btn-primary";
-        if (html5QrCodeScanner) {
-            html5QrCodeScanner.stop().then(() => {
-                html5QrCodeScanner = null;
-                focusBarcodeField();
-            }).catch(err => console.log(err));
+        const container = document.getElementById('camera-scanner-container'); const btn = document.getElementById('toggleCameraBtn');
+        container.style.display = 'none'; btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر"; btn.className = "btn btn-primary";
+        if (html5QrCodeScanner) { html5QrCodeScanner.stop().then(() => { html5QrCodeScanner = null; focusBarcodeField(); }).catch(err => console.log(err)); }
+    }
+
+    async function clearMonthlyLogs() {
+        if (confirm("⚠️ تنبيه هام جداً:\nهل أنت متأكد تماماً من رغبتك في تفريغ وتصفير جرد الأرباح والسجلات لبدء الشهر المقبل؟")) {
+            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع؟")) {
+                logs = []; await cloudSaveLogs(); alert("🧹 تم تصفير سجلات الأرباح السحابية بنجاح!"); focusBarcodeField();
+            }
         }
     }
 
     function addService() {
-        const name = document.getElementById('svcName').value, 
-              cost = parseFloat(document.getElementById('svcCost').value) || 0, 
-              total = parseFloat(document.getElementById('svcTotal').value) || 0;
+        const name = document.getElementById('svcName').value, cost = parseFloat(document.getElementById('svcCost').value) || 0, total = parseFloat(document.getElementById('svcTotal').value) || 0;
         if(name && total > 0) {
-            logs.push({ time: new Date().toLocaleTimeString('ar-TN'), txt: "🛠️ صيانة: " + name, val: total, prf: total - cost });
+            const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
+            const currentDate = new Date().toLocaleDateString('ar-TN');
+            const currentTime = new Date().toLocaleTimeString('ar-TN');
+
+            logs.push({ 
+                invoice: invoiceNum, 
+                date: currentDate, 
+                time: currentTime, 
+                txt: "🛠️ صيانة: " + name, 
+                val: total, 
+                prf: total - cost 
+            }); 
             cloudSaveLogs();
-            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }]);
-            document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = "";
-            focusBarcodeField();
+            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate);
+            document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
         } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
 
     function addProduct() {
-        const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value,
-              m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, 
-              c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
+        const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value, m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
         if(n && m && q >= 0) {
-            const id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase();
-            stock.push({ id, n, cat, m, q, c, p });
-            cloudSaveStock();
-            alert("✅ تم رفع المنتج للسحاب وتوليد رمز QR.");
-            document.getElementById('pName').value = ""; document.getElementById('pModel').value = "";
-            focusBarcodeField();
+            const id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); stock.push({ id, n, cat, m, q, c, p }); cloudSaveStock();
+            alert("✅ تم الحفظ وتوليد الـ QR."); document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; focusBarcodeField();
         } else alert("يرجى ملء الحقول الأساسية.");
     }
 
     function addToCart(index) {
-        let item = stock[index];
-        if(item.q <= 0) { alert("❌ الكمية نفدت!"); focusBarcodeField(); return; }
-        let qty = parseInt(prompt("أدخل الكمية المطلوبة من [ " + item.n + " ]:", 1));
-        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة أو تتجاوز المخزن!"); focusBarcodeField(); return; }
-        let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p));
-        if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
-
+        let item = stock[index]; if(item.q <= 0) { alert("❌ الكمية نفدت!"); focusBarcodeField(); return; }
+        let qty = parseInt(prompt("أدخل الكمية المطلوبة من [ " + item.n + " ]:", 1)); if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة!"); focusBarcodeField(); return; }
+        let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p)); if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
         let existing = cart.find(c => c.stockIndex === index);
-        if(existing) {
-            existing.qty += qty;
-            existing.finalPrice = price;
-        } else {
-            cart.push({ stockIndex: index, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c });
-        }
+        if(existing) { existing.qty += qty; existing.finalPrice = price; } else { cart.push({ stockIndex: index, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c }); }
         renderCart(); focusBarcodeField();
     }
 
     function renderCart() {
-        const cBox = document.getElementById('cartSection'); const cBody = document.getElementById('cartBody');
-        if(cart.length === 0) { cBox.style.display = 'none'; return; }
+        const cBox = document.getElementById('cartSection'); const cBody = document.getElementById('cartBody'); if(cart.length === 0) { cBox.style.display = 'none'; return; }
         cBox.style.display = 'block'; cBody.innerHTML = ''; let total = 0;
         cart.forEach((cItem, idx) => {
             let subtotal = cItem.qty * cItem.finalPrice; total += subtotal;
@@ -464,100 +404,98 @@
 
     async function checkoutCart() {
         if(cart.length === 0) return;
+        const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
+        const currentDate = new Date().toLocaleDateString('ar-TN');
+        const currentTime = new Date().toLocaleTimeString('ar-TN');
+
         cart.forEach(cItem => {
-            stock[cItem.stockIndex].q -= cItem.qty; 
-            let itemTotalSale = cItem.qty * cItem.finalPrice;
-            let itemTotalCost = cItem.qty * cItem.cost;
-            logs.push({ time: new Date().toLocaleTimeString('ar-TN'), txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', val: itemTotalSale, prf: itemTotalSale - itemTotalCost });
+            stock[cItem.stockIndex].q -= cItem.qty; let itemTotalSale = cItem.qty * cItem.finalPrice; let itemTotalCost = cItem.qty * cItem.cost;
+            logs.push({ 
+                invoice: invoiceNum, 
+                date: currentDate, 
+                time: currentTime, 
+                txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', 
+                val: itemTotalSale, 
+                prf: itemTotalSale - itemTotalCost 
+            });
         });
-        printMultipleInvoice("فاتورة بيع منتجات", cart);
-        cart = []; renderCart();
-        await cloudSaveStock(); await cloudSaveLogs();
-        focusBarcodeField();
+        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate); cart = []; renderCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
     }
 
-    function printMultipleInvoice(type, itemsList) {
-        const win = window.open('', '_blank');
-        const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
-        let rowsHtml = ""; let totalAmount = 0;
+    function printMultipleInvoice(type, itemsList, invoiceNum, currentDate) {
+        const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
         itemsList.forEach((item, index) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
             rowsHtml += '<tr><td style="text-align: center;">' + (index + 1) + '</td><td><strong>' + item.n + ' ' + (item.m ? '('+item.m+')' : '') + '</strong></td><td style="text-align: center;">' + item.cat + '</td><td style="text-align: center;">' + item.qty + '</td><td style="text-align: left;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="font-weight: 600; text-align: left;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>فاتورة ' + invoiceNum + '</title><style>@page { size: A4; margin: 20mm; } body { font-family: "Segoe UI", sans-serif; color: #2c3e50; margin: 0; font-size: 14px; line-height: 1.6; } .invoice-container { max-width: 100%; } .header-table { width: 100%; margin-bottom: 30px; } .brand-title { color: #e67e22; font-size: 28px; font-weight: bold; margin: 0; } .brand-subtitle { font-size: 13px; color: #7f8c8d; margin: 3px 0; } .meta-box { background: #f8f9fa; border-right: 4px solid #e67e22; padding: 15px; border-radius: 4px; margin-bottom: 30px; } .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; } .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; } .items-table th { background: #2c3e50; color: #fff; padding: 10px; text-align: right; } .items-table td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; } .summary-table { width: 280px; float: left; margin-top: 15px; } .summary-table td { padding: 8px; } .total-row { background: #e67e22; color: #fff; font-weight: bold; } .footer { clear: both; text-align: center; padding-top: 40px; font-size: 11px; color: #94a3b8; }</style></head><body><div class="invoice-container"><table class="header-table"><tr><td><h1 class="brand-title">Mobile Shop Béja</h1><p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p></td><td style="text-align: left;"><img src="logo.png" style="width:100px;" onerror="this.src=\'https://via.placeholder.com/100\'"></td></tr></table><h2>' + type + '</h2><div class="meta-box"><div class="meta-grid"><div><b>رقم الفاتورة:</b> ' + invoiceNum + '</div><div><b>التاريخ:</b> ' + new Date().toLocaleDateString('ar-TN') + '</div><div style="color:#2ecc71;"><b>الحالة:</b> مدفوعة بالكامل</div></div></div><table class="items-table"><thead><tr><th>الرقم</th><th>البيان والسلعة</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div style="width:50%; float:right; font-size:12px; color:#7f8c8d;">• يرجى الاستظهار بهذا الوصل عند المراجعة أو الفحص الفني بمحلاتنا.</div><table class="summary-table"><tr><td>المجموع:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr><tr class="total-row"><td>الإجمالي المستحق:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr></table><div class="footer"><p>نظام Mobile Shop Béja لإدارة ومراقبة المبيعات والمخازن</p></div></div></body></html>');
-        win.document.close();
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:"Segoe UI",sans-serif;color:#2c3e50;margin:0;font-size:14px;line-height:1.6;}.invoice-container{max-width:100%;}.header-table{width:100%;margin-bottom:30px;}.brand-title{color:#e67e22;font-size:28px;font-weight:bold;margin:0;}.brand-subtitle{font-size:13px;color:#7f8c8d;margin:3px 0;}.meta-box{background:#f8f9fa;border-right:4px solid #e67e22;padding:15px;border-radius:4px;margin-bottom:30px;}.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;}.items-table{width:100%;border-collapse:collapse;margin-bottom:30px;}.items-table th{background:#2c3e50;color:#fff;padding:10px;text-align:right;}.items-table td{padding:12px 10px;border-bottom:1px solid #e2e8f0;}.summary-table{width:280px;float:left;margin-top:15px;}.summary-table td{padding:8px;}.total-row{background:#e67e22;color:#fff;font-weight:bold;}</style></head><body><div class="invoice-container"><table class="header-table"><tr><td><h1 class="brand-title">Mobile Shop Béja</h1><p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p></td><td style="text-align: left;"><img src="logo.png" style="width:100px;" onerror="this.src=\'https://via.placeholder.com/100\'"></td></tr></table><h2>' + type + '</h2><div class="meta-box"><div class="meta-grid"><div><b>رقم الفاتورة:</b> ' + invoiceNum + '</div><div><b>التاريخ:</b> ' + currentDate + '</div><div style="color:#2ecc71;"><b>الحالة:</b> مدفوعة بالكامل</div></div></div><table class="items-table"><thead><tr><th>الرقم</th><th>البيان والسلعة</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><table class="summary-table"><tr><td>المجموع:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr><tr class="total-row"><td>الإجمالي المستحق:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr></table></div></body></html>'); win.document.close();
     }
 
     function renderStock(data = stock) {
         const tbody = document.getElementById('stockBody'); if(!tbody) return; tbody.innerHTML = '';
         data.forEach((item) => {
             const actualIdx = stock.indexOf(item); const isLow = item.q <= 1;
-            let btns = '<button onclick="addToCart(' + actualIdx + ')" class="btn btn-success" style="padding:4px 8px;">بيع</button> ' +
-                        '<button onclick="showQR(' + actualIdx + ')" class="btn" style="background:#9b59b6; padding:4px 8px;">QR</button>';
+            let btns = '<button onclick="addToCart(' + actualIdx + ')" class="btn btn-success" style="padding:4px 8px;">بيع</button> <button onclick="showQR(' + actualIdx + ')" class="btn" style="background:#9b59b6; padding:4px 8px;">QR</button>';
             if(currentRole === 'admin') btns += ' <button onclick="deleteProduct(' + actualIdx + ')" class="btn btn-danger" style="padding:4px 8px; margin-right:3px;">🗑️</button>';
             tbody.innerHTML += '<tr class="row-' + item.cat + '"><td><b>' + item.cat + '</b></td><td>' + item.n + '</td><td>' + item.m + '</td><td class="' + (isLow ? 'low-stock' : '') + '">' + item.q + '</td><td>' + item.p.toFixed(2) + '</td><td>' + btns + '</td></tr>';
         });
     }
 
     function renderJard() {
-        if(currentRole !== 'admin') return;
-        const lb = document.getElementById('logBody'); if(!lb) return; lb.innerHTML = '';
+        if(currentRole !== 'admin') return; const lb = document.getElementById('logBody'); if(!lb) return; lb.innerHTML = '';
         let sV = 0, sP = 0;
         logs.forEach((l, index) => {
             sV += l.val; sP += l.prf;
-            lb.innerHTML += '<tr><td>' + l.time + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
+            // إظهار القيم السابقة بشكل مرن وتجنيب ظهور undefined في حالة السجلات القديمة
+            let inv = l.invoice ? l.invoice : "---";
+            let dt = l.date ? l.date : "اليوم";
+            
+            lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + l.time + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
-        
-        // حساب وتحديث لوحة تحكم تقسيم الأرباح الاستراتيجية (الجديدة)
         calculateFinancialDivision(sP);
     }
 
-    // دالة تقسيم الدخل الاحترافية الجديدة للمالك
     function calculateFinancialDivision(totalProfit) {
-        if (totalProfit < 0) totalProfit = 0;
+        const FIXED_LIABILITIES = 335.00;
+        let liabilitiesDisplay = 0; let remainingProfit = 0; let investment = 0; let savings = 0; let personal = 0;
+
+        if (totalProfit >= FIXED_LIABILITIES) {
+            liabilitiesDisplay = FIXED_LIABILITIES; remainingProfit = totalProfit - FIXED_LIABILITIES;
+            investment = remainingProfit * 0.30; savings = remainingProfit * 0.40; personal = remainingProfit * 0.30;
+            document.getElementById('liabilitiesStatus').innerText = "✅ مغطاة بالكامل (335 د.ت)";
+            document.getElementById('liabilitiesStatus').style.color = "var(--success)";
+        } else {
+            liabilitiesDisplay = totalProfit; remainingProfit = 0;
+            document.getElementById('liabilitiesStatus').innerText = "⚠️ لم تُغطَّ بعد (نقص " + (FIXED_LIABILITIES - totalProfit).toFixed(2) + " د.ت)";
+            document.getElementById('liabilitiesStatus').style.color = "var(--danger)";
+        }
         
-        // تقسيم النسب الاستراتيجية: 40% التزامات، 40% استثمار، 20% شخصي
-        const liabilities = totalProfit * 0.40;
-        const investment = totalProfit * 0.40;
-        const personal = totalProfit * 0.20;
-        
-        // عرض القيم الرقمية بدقة في البطاقات
-        document.getElementById('valLiabilities').innerText = liabilities.toFixed(2) + " د.ت";
+        document.getElementById('valLiabilities').innerText = liabilitiesDisplay.toFixed(2) + " / " + FIXED_LIABILITIES + " د.ت";
         document.getElementById('valInvestment').innerText = investment.toFixed(2) + " د.ت";
+        document.getElementById('valSavings').innerText = savings.toFixed(2) + " د.ت";
         document.getElementById('valPersonal').innerText = personal.toFixed(2) + " د.ت";
         
-        // تحريك أشرطة التقدم الملونة لتعطي شكلاً بيانياً تفاعلياً
-        if(totalProfit > 0) {
-            document.getElementById('barLiabilities').style.width = "40%";
-            document.getElementById('barInvestment').style.width = "40%";
-            document.getElementById('barPersonal').style.width = "20%";
+        if (totalProfit > 0) {
+            let liabilityPercent = Math.min((totalProfit / FIXED_LIABILITIES) * 100, 100);
+            document.getElementById('barLiabilities').style.width = liabilityPercent + "%";
+            if (remainingProfit > 0) {
+                document.getElementById('barInvestment').style.width = "30%"; document.getElementById('barSavings').style.width = "40%"; document.getElementById('barPersonal').style.width = "30%";
+            } else {
+                document.getElementById('barInvestment').style.width = "0%"; document.getElementById('barSavings').style.width = "0%"; document.getElementById('barPersonal').style.width = "0%";
+            }
         } else {
-            document.getElementById('barLiabilities').style.width = "0%";
-            document.getElementById('barInvestment').style.width = "0%";
-            document.getElementById('barPersonal').style.width = "0%";
+            document.getElementById('barLiabilities').style.width = "0%"; document.getElementById('barInvestment').style.width = "0%"; document.getElementById('barSavings').style.width = "0%"; document.getElementById('barPersonal').style.width = "0%";
         }
     }
 
-    function showQR(index) {
-        const item = stock[index]; const qrBox = document.getElementById("qrcode"); qrBox.innerHTML = "";
-        new QRCode(qrBox, { text: "MSB_ID:" + item.id, width: 140, height: 140 });
-        document.getElementById("qrTitle").innerText = item.n;
-        document.getElementById("qrModal").style.display = "block";
-    }
-
-    function printQR() {
-        const img = document.querySelector("#qrcode img").src; const title = document.getElementById("qrTitle").innerText;
-        const win = window.open('', '_blank', 'width=300,height=300');
-        win.document.write('<div style="text-align:center; font-family:sans-serif; padding:10px;"><h3 style="margin:0 0 5px 0; color:#e67e22;">Mobile Shop Béja</h3><img src="' + img + '" style="width:130px;"><p style="margin:5px 0 0 0; font-weight:bold;">' + title + '</p></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 500);}<\/script>');
-        win.document.close(); closeQR();
-    }
-
+    function showQR(index) { const item = stock[index]; const qrBox = document.getElementById("qrcode"); qrBox.innerHTML = ""; new QRCode(qrBox, { text: "MSB_ID:" + item.id, width: 140, height: 140 }); document.getElementById("qrTitle").innerText = item.n; document.getElementById("qrModal").style.display = "block"; }
+    function printQR() { const img = document.querySelector("#qrcode img").src; const title = document.getElementById("qrTitle").innerText; const win = window.open('', '_blank', 'width=300,height=300'); win.document.write('<div style="text-align:center; font-family:sans-serif; padding:10px;"><h3 style="margin:0 0 5px 0; color:#e67e22;">Mobile Shop Béja</h3><img src="' + img + '" style="width:130px;"><p style="margin:5px 0 0 0; font-weight:bold;">' + title + '</p></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 500);}<\/script>'); win.document.close(); closeQR(); }
     function closeQR() { document.getElementById("qrModal").style.display = "none"; focusBarcodeField(); }
     function search() { const t = document.getElementById('searchBox').value.toLowerCase(); renderStock(stock.filter(i => i.n.toLowerCase().includes(t) || i.m.toLowerCase().includes(t))); }
     function deleteProduct(i) { if(confirm("حذف المنتج نهائياً؟")) { stock.splice(i,1); cloudSaveStock(); } focusBarcodeField(); }
-    function deleteLog(i) { if(confirm("إزالة العملية من السجلات السحابية؟")) { logs.splice(i,1); cloudSaveLogs(); } focusBarcodeField(); }
+    function deleteLog(i) { if(confirm("إزالة العملية؟")) { logs.splice(i,1); cloudSaveLogs(); } focusBarcodeField(); }
 </script>
 </body>
 </html>
