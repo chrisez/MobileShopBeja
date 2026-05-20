@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v23 Sound Pro</title>
+    <title>Mobile Shop Béja - Cloud System v24 Smart Stock</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -106,12 +106,12 @@
     <div class="logo-container">
         <img src="logo.png" alt="MSB Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/140x140?text=MSB+LOGO'">
     </div>
-    <h2 style="color: var(--primary); margin: 0 0 20px 0;"> Mobile Shop Béja</h2>
+    <h2 style="color: var(--primary); margin: 0 0 20px 0;">نظام Mobile Shop Béجا سحابي</h2>
     <div class="login-group">
         <label>نوع الحساب</label>
         <select id="loginRole">
             <option value="admin">الأدمين (المالك)</option>
-            <option value="worker">(المحل)موظف</option>
+            <option value="worker">الموظف</option>
         </select>
     </div>
     <div class="login-group">
@@ -172,9 +172,10 @@
         <button onclick="addService()" class="btn btn-success btn-block">طباعة فاتورة صيانة</button>
     </div>
 
-    <div class="section-box admin-only">
-        <h3>📦 إضافة منتج جديد للمخزن</h3>
+    <div class="section-box admin-only" id="addProductSection">
+        <h3 style="color: var(--accent-blue); border-right-color: var(--accent-blue);">📦 إضافة منتج جديد للمخزن</h3>
         <div class="form-grid">
+            <input type="text" id="pId" placeholder="كود المنتج (اتركه فارغاً للتوليد التلقائي)">
             <input type="text" id="pName" placeholder="اسم السلعة">
             <select id="pCat">
                 <option value="سماعات">سماعات</option>
@@ -183,7 +184,7 @@
                 <option value="أخرى">أخرى</option>
             </select>
             <input type="text" id="pModel" placeholder="الموديل">
-            <input type="number" id="pQty" placeholder="الكمية">
+            <input type="number" id="pQty" placeholder="الكمية" value="1">
             <input type="number" id="pCost" placeholder="التكلفة">
             <input type="number" id="pPrice" placeholder="سعر البيع">
         </div>
@@ -291,25 +292,19 @@
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
     let stock = []; let logs = []; let cart = []; let currentRole = ""; let html5QrCodeScanner = null;
 
-    // دالة توليد صوت الباركود برمجياً (Beep) بدون الحاجة لملفات خارجية
     function playBarcodeBeep() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(1400, audioCtx.currentTime); // تردد حاد نقي يشبه القارئ الحقيقي
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // مستوى الصوت
-
+            oscillator.frequency.setValueAtTime(1400, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-
             oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.08); // نبضة صوتية سريعة جداً (80 ميلي ثانية)
-        } catch (e) {
-            console.log("فشل تشغيل الصوت بسبب قيود المتصفح البدئية:", e);
-        }
+            oscillator.stop(audioCtx.currentTime + 0.08);
+        } catch (e) { console.log(e); }
     }
 
     document.getElementById('loginPass').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); checkLogin(); } });
@@ -318,15 +313,12 @@
         try {
             let resStock = await fetch(FIREBASE_URL + "/stock.json");
             let dataStock = await resStock.json(); stock = dataStock ? Object.values(dataStock) : [];
-            
             let resLogs = await fetch(FIREBASE_URL + "/logs.json");
             let dataLogs = await resLogs.json(); logs = dataLogs ? Object.values(dataLogs) : [];
-            
             let resCart = await fetch(FIREBASE_URL + "/cart.json");
             let dataCart = await resCart.json(); cart = dataCart ? Object.values(dataCart) : [];
-
             renderStock(); renderJard(); renderCart();
-        } catch(e) { console.error("خطأ في جلب البيانات: ", e); }
+        } catch(e) { console.error(e); }
     }
 
     async function cloudSaveStock() { await fetch(FIREBASE_URL + "/stock.json", { method: 'PUT', body: JSON.stringify(stock) }); renderStock(); }
@@ -350,13 +342,30 @@
     document.addEventListener('click', function(e) { if(document.getElementById('mainApp').style.display === "block") { if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target)) { focusBarcodeField(); } } });
     document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); processScannedCode(this.value.trim()); this.value = ""; focusBarcodeField(); } });
 
+    // تعديل ذكي لمعالجة الأكواد الجديدة والقديمة
     function processScannedCode(scannedText) {
-        if(!scannedText) return; const item = stock.find(i => scannedText.includes(i.id));
+        if(!scannedText) return; 
+        
+        // تنظيف الكود المستخرج من السيرفر السحابي أو الكود الخارجي لضمان المطابقة
+        let cleanCode = scannedText.replace("MSB_ID:", "").trim();
+        const item = stock.find(i => i.id === cleanCode || i.id === scannedText);
+        
         if(item) { 
-            playBarcodeBeep(); // 🔊 إطلاق الصوت فوراً عند التعرف الناجح
+            playBarcodeBeep();
             addToCart(stock.indexOf(item)); 
         } else { 
-            alert("⚠️ الكود الممسوح غير مدرج!"); 
+            // إذا كان المستخدم أدمين، نعرض خيار إضافة المنتج مباشرة بالباركود الممسوح
+            if(currentRole === 'admin') {
+                playBarcodeBeep();
+                let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
+                if(confirmAdd) {
+                    document.getElementById('pId').value = cleanCode;
+                    document.getElementById('pName').focus();
+                    document.getElementById('addProductSection').scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                alert("⚠️ الكود الممسوح غير مدرج! يرجى إعلام المدير لإضافته للمخزن.");
+            }
         }
     }
 
@@ -389,27 +398,33 @@
             const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
             const currentDate = new Date().toLocaleDateString('ar-TN');
             const currentTime = new Date().toLocaleTimeString('ar-TN');
-
-            logs.push({ 
-                invoice: invoiceNum, 
-                date: currentDate, 
-                time: currentTime, 
-                txt: "🛠️ صيانة: " + name, 
-                val: total, 
-                prf: total - cost 
-            }); 
+            logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: "🛠️ صيانة: " + name, val: total, prf: total - cost }); 
             cloudSaveLogs();
             printMultipleInvoice("إيصال دفع / فاتورة صيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
         } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
 
+    // تعديل دالة الإضافة لاستيعاب الكود اليدوي أو الممسوح
     function addProduct() {
+        let id = document.getElementById('pId').value.trim();
         const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value, m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
+        
         if(n && m && q >= 0) {
-            const id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); stock.push({ id, n, cat, m, q, c, p }); cloudSaveStock();
-            alert("✅ تم الحفظ وتوليد الـ QR."); document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; focusBarcodeField();
-        } else alert("يرجى ملء الحقول الأساسية.");
+            // إذا لم يكن هناك كود ممسوح مسبقاً، نولد كود للمحل تلقائياً
+            if(!id) { id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); }
+            
+            stock.push({ id, n, cat, m, q, c, p }); 
+            cloudSaveStock();
+            alert("✅ تم حفظ المنتج الجديد بنجاح بالكود: " + id);
+            
+            document.getElementById('pId').value = "";
+            document.getElementById('pName').value = ""; 
+            document.getElementById('pModel').value = "";
+            document.getElementById('pCost').value = "";
+            document.getElementById('pPrice').value = "";
+            focusBarcodeField();
+        } else alert("يرجى ملء الحقول الأساسية (الاسم والموديل).");
     }
 
     function addToCart(index) {
@@ -440,136 +455,22 @@
         const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
         const currentDate = new Date().toLocaleDateString('ar-TN');
         const currentTime = new Date().toLocaleTimeString('ar-TN');
-
         cart.forEach(cItem => {
             stock[cItem.stockIndex].q -= cItem.qty; let itemTotalSale = cItem.qty * cItem.finalPrice; let itemTotalCost = cItem.qty * cItem.cost;
-            logs.push({ 
-                invoice: invoiceNum, 
-                date: currentDate, 
-                time: currentTime, 
-                txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', 
-                val: itemTotalSale, 
-                prf: itemTotalSale - itemTotalCost 
-            });
+            logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', val: itemTotalSale, prf: itemTotalSale - itemTotalCost });
         });
         printMultipleInvoice("إيصال دفع / فاتورة", cart, invoiceNum, currentDate, currentTime); 
         cart = []; 
         await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
     }
 
-    // دالة الطباعة الاحترافية المطابقة للصورة 100% مع شعار شفاف مائي وخلفية بيضاء ورق
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
         const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
-        
         itemsList.forEach((item, index) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
-            rowsHtml += '<tr>' +
-                '<td>' + (item.m ? item.n + ' - ' + item.m : item.n) + '</td>' +
-                '<td style="text-align: center; font-weight: bold;">' + item.qty + '</td>' +
-                '<td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
-                '<td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td>' +
-            '</tr>';
+            rowsHtml += '<tr><td>' + (item.m ? item.n + ' - ' + item.m : item.n) + '</td><td style="text-align: center; font-weight: bold;">' + item.qty + '</td><td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
-
-        win.document.write('<!DOCTYPE html>' +
-        '<html lang="ar" dir="rtl">' +
-        '<head>' +
-            '<meta charset="UTF-8">' +
-            '<style>' +
-                'body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }' +
-                '.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }' +
-                '.invoice-wrapper { max-width: 850px; margin: 0 auto; }' +
-                '.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }' +
-                '.brand-side { display: flex; align-items: center; gap: 15px; }' +
-                '.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }' +
-                '.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }' +
-                '.brand-title-text span { color: #e67e22; }' +
-                '.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }' +
-                '.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }' +
-                '.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }' +
-                '.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }' +
-                '.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }' +
-                '.meta-label { font-weight: bold; color: #64748b; }' +
-                '.meta-val { color: #1e293b; font-weight: 600; }' +
-                '.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }' +
-                '.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }' +
-                '.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }' +
-                '.items-luxury-table tr:last-child td { border-bottom: none; }' +
-                '.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }' +
-                '.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }' +
-                '.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }' +
-                '.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }' +
-                '.sig-box { text-align: center; width: 150px; }' +
-                '.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }' +
-                '.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }' +
-                '@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }' +
-            '</style>' +
-        '</head>' +
-        '<body>' +
-            '<img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'">' +
-            '<div class="invoice-wrapper">' +
-                '<div class="header-grid">' +
-                    '<div class="brand-side">' +
-                        '<img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'">' +
-                        '<div>' +
-                            '<h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1>' +
-                            '<p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div style="text-align: left; font-size: 12px; color: #64748b;">' +
-                        '<b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026' +
-                    '</div>' +
-                '</div>' +
-                
-                '<div class="invoice-main-title">' + type + '</div>' +
-                
-                '<div class="meta-container-box">' +
-                    '<div class="meta-inner-grid">' +
-                        '<div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div>' +
-                        '<div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">✓ مدفوع بالكامل</span></div>' +
-                        '<div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div>' +
-                        '<div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div>' +
-                    '</div>' +
-                '</div>' +
-                
-                '<table class="items-luxury-table">' +
-                    '<thead>' +
-                        '<tr>' +
-                            '<th style="width: 50%; text-align: right;">المنتج / الخدمة</th>' +
-                            '<th style="width: 12%; text-align: center;">الكمية</th>' +
-                            '<th style="width: 18%; text-align: center;">السعر</th>' +
-                            '<th style="width: 20%; text-align: center;">المجموع</th>' +
-                        '</tr>' +
-                    '</thead>' +
-                    '<tbody>' + rowsHtml + '</tbody>' +
-                '</table>' +
-                
-                '<div class="bottom-pricing-section">' +
-                    '<div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div>' +
-                    '<div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div>' +
-                '</div>' +
-                
-                '<div class="auth-signatures-space">' +
-                    '<div class="sig-box">' +
-                        '<div class="sig-title">توقيع المسؤول</div>' +
-                        '<div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div>' +
-                    '</div>' +
-                    '<div class="sig-box">' +
-                        '<div class="sig-title">ختم المتجر الرسمي</div>' +
-                        '<div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">' +
-                            'MSB BEJA' +
-                        '</div>' +
-                    '</div>' +
-                '</div>' +
-                
-                '<div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;">' +
-                    '<p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p>' +
-                    '<p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p>' +
-                '</div>' +
-            '</div>' +
-            '<script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script>' +
-        '</body>' +
-        '</html>');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }.invoice-wrapper { max-width: 850px; margin: 0 auto; }.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }.brand-side { display: flex; align-items: center; gap: 15px; }.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }.brand-title-text span { color: #e67e22; }.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }.meta-label { font-weight: bold; color: #64748b; }.meta-val { color: #1e293b; font-weight: 600; }.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }.items-luxury-table tr:last-child td { border-bottom: none; }.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }.sig-box { text-align: center; width: 150px; }.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }</style></head><body><img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'"><div class="invoice-wrapper"><div class="header-grid"><div class="brand-side"><img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'"><div><h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1><p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p></div></div><div style="text-align: left; font-size: 12px; color: #64748b;"><b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026</div></div><div class="invoice-main-title">' + type + '</div><div class="meta-container-box"><div class="meta-inner-grid"><div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div><div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">✓ مدفوع بالكامل</span></div><div class="meta-item-row"><span class="meta-label">تاريخ تحروج الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div><div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div></div></div><table class="items-luxury-table"><thead><tr><th style="width: 50%; text-align: right;">المنتج / الخدمة</th><th style="width: 12%; text-align: center;">الكمية</th><th style="width: 18%; text-align: center;">السعر</th><th style="width: 20%; text-align: center;">المجموع</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div class="bottom-pricing-section"><div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div><div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div></div><div class="auth-signatures-space"><div class="sig-box"><div class="sig-title">توقيع المسؤول</div><div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div></div><div class="sig-box"><div class="sig-title">ختم المتجر الرسمي</div><div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">MSB BEJA</div></div></div><div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;"><p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p><p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p></div></div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script></body></html>');
         win.document.close();
     }
 
@@ -588,10 +489,7 @@
         let sV = 0, sP = 0;
         logs.forEach((l, index) => {
             sV += l.val; sP += l.prf;
-            let inv = l.invoice ? l.invoice : "---";
-            let dt = l.date ? l.date : "اليوم";
-            let tm = l.time ? l.time : "--:--";
-            
+            let inv = l.invoice ? l.invoice : "---"; let dt = l.date ? l.date : "اليوم"; let tm = l.time ? l.time : "--:--";
             lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
@@ -602,12 +500,9 @@
     function calculateFinancialDivision(totalSales) {
         const FIXED_LIABILITIES = 335.00;
         let liabilitiesDisplay = 0; let remainingSales = 0; let investment = 0; let savings = 0; let personal = 0;
-
         if (totalSales >= FIXED_LIABILITIES) {
             liabilitiesDisplay = FIXED_LIABILITIES; remainingSales = totalSales - FIXED_LIABILITIES;
-            investment = remainingSales * 0.30; 
-            savings = remainingSales * 0.40; 
-            personal = remainingSales * 0.30;
+            investment = remainingSales * 0.30; savings = remainingSales * 0.40; personal = remainingSales * 0.30;
             document.getElementById('liabilitiesStatus').innerText = "✅ مغطاة بالكامل (335 د.ت)";
             document.getElementById('liabilitiesStatus').style.color = "var(--success)";
         } else {
@@ -615,19 +510,15 @@
             document.getElementById('liabilitiesStatus').innerText = "⚠️ لم تُغطَّ بعد (نقص " + (FIXED_LIABILITIES - totalSales).toFixed(2) + " د.ت)";
             document.getElementById('liabilitiesStatus').style.color = "var(--danger)";
         }
-        
         document.getElementById('valLiabilities').innerText = liabilitiesDisplay.toFixed(2) + " / " + FIXED_LIABILITIES + " د.ت";
         document.getElementById('valInvestment').innerText = investment.toFixed(2) + " د.ت";
         document.getElementById('valSavings').innerText = savings.toFixed(2) + " د.ت";
         document.getElementById('valPersonal').innerText = personal.toFixed(2) + " د.ت";
-        
         if (totalSales > 0) {
             let liabilityPercent = Math.min((totalSales / FIXED_LIABILITIES) * 100, 100);
             document.getElementById('barLiabilities').style.width = liabilityPercent + "%";
             if (remainingSales > 0) {
-                document.getElementById('barInvestment').style.width = "30%"; 
-                document.getElementById('barSavings').style.width = "40%"; 
-                document.getElementById('barPersonal').style.width = "30%";
+                document.getElementById('barInvestment').style.width = "30%"; document.getElementById('barSavings').style.width = "40%"; document.getElementById('barPersonal').style.width = "30%";
             } else {
                 document.getElementById('barInvestment').style.width = "0%"; document.getElementById('barSavings').style.width = "0%"; document.getElementById('barPersonal').style.width = "0%";
             }
