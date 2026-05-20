@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v19 Pro</title>
+    <title>Mobile Shop Béja - Cloud System v20 Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -144,7 +144,7 @@
     </div>
 
     <div class="section-box cart-box" id="cartSection">
-        <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية</h3>
+        <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية (متزامنة سحابياً 🔄)</h3>
         <div class="table-container">
             <table>
                 <thead>
@@ -297,15 +297,23 @@
         try {
             let resStock = await fetch(FIREBASE_URL + "/stock.json");
             let dataStock = await resStock.json(); stock = dataStock ? Object.values(dataStock) : [];
+            
             let resLogs = await fetch(FIREBASE_URL + "/logs.json");
             let dataLogs = await resLogs.json(); logs = dataLogs ? Object.values(dataLogs) : [];
-            renderStock(); renderJard();
+            
+            // جلب السلة المشتركة من السيرفر السحابي
+            let resCart = await fetch(FIREBASE_URL + "/cart.json");
+            let dataCart = await resCart.json(); cart = dataCart ? Object.values(dataCart) : [];
+
+            renderStock(); renderJard(); renderCart();
         } catch(e) { console.error("خطأ في جلب البيانات: ", e); }
     }
 
     async function cloudSaveStock() { await fetch(FIREBASE_URL + "/stock.json", { method: 'PUT', body: JSON.stringify(stock) }); renderStock(); }
     async function cloudSaveLogs() { await fetch(FIREBASE_URL + "/logs.json", { method: 'PUT', body: JSON.stringify(logs) }); renderJard(); }
+    async function cloudSaveCart() { await fetch(FIREBASE_URL + "/cart.json", { method: 'PUT', body: JSON.stringify(cart) }); renderCart(); }
 
+    // المزامنة الحية كل 4 ثوانٍ لتمكين العمل المشترك بين الهاتف والحاسوب
     setInterval(() => { if(currentRole !== "") { cloudFetch(); } }, 4000);
 
     async function checkLogin() {
@@ -315,7 +323,7 @@
             document.getElementById('loginScreen').style.display = "none"; document.getElementById('mainApp').style.display = "block";
             if(role === "admin") { document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block"); }
             document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير (المالك)" : "🧑‍💼 الموظف";
-            renderStock(); renderJard(); focusBarcodeField();
+            renderStock(); renderJard(); renderCart(); focusBarcodeField();
         } else { alert("❌ كلمة السر خاطئة"); }
     }
 
@@ -345,7 +353,7 @@
 
     async function clearMonthlyLogs() {
         if (confirm("⚠️ تنبيه هام جداً:\nهل أنت متأكد تماماً من رغبتك في تفريغ وتصفير جرد الأرباح والسجلات لبدء الشهر المقبل؟")) {
-            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع؟")) {
+            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع Feather؟")) {
                 logs = []; await cloudSaveLogs(); alert("🧹 تم تصفير سجلات الأرباح السحابية بنجاح!"); focusBarcodeField();
             }
         }
@@ -369,7 +377,7 @@
             cloudSaveLogs();
             printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
-        } else alert("الرجاء إدخل البيانات المطلوبة.");
+        } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
 
     function addProduct() {
@@ -386,11 +394,12 @@
         let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p)); if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
         let existing = cart.find(c => c.stockIndex === index);
         if(existing) { existing.qty += qty; existing.finalPrice = price; } else { cart.push({ stockIndex: index, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c }); }
-        renderCart(); focusBarcodeField();
+        cloudSaveCart(); focusBarcodeField();
     }
 
     function renderCart() {
-        const cBox = document.getElementById('cartSection'); const cBody = document.getElementById('cartBody'); if(cart.length === 0) { cBox.style.display = 'none'; return; }
+        const cBox = document.getElementById('cartSection'); const cBody = document.getElementById('cartBody'); if(!cBox || !cBody) return;
+        if(cart.length === 0) { cBox.style.display = 'none'; return; }
         cBox.style.display = 'block'; cBody.innerHTML = ''; let total = 0;
         cart.forEach((cItem, idx) => {
             let subtotal = cItem.qty * cItem.finalPrice; total += subtotal;
@@ -399,8 +408,8 @@
         document.getElementById('cartTotalText').innerText = total.toFixed(2);
     }
 
-    function removeFromCart(idx) { cart.splice(idx, 1); renderCart(); focusBarcodeField(); }
-    function clearCart() { cart = []; renderCart(); focusBarcodeField(); }
+    function removeFromCart(idx) { cart.splice(idx, 1); cloudSaveCart(); focusBarcodeField(); }
+    function clearCart() { cart = []; cloudSaveCart(); focusBarcodeField(); }
 
     async function checkoutCart() {
         if(cart.length === 0) return;
@@ -419,7 +428,9 @@
                 prf: itemTotalSale - itemTotalCost 
             });
         });
-        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate); cart = []; renderCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
+        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate); 
+        cart = []; 
+        await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
     }
 
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate) {
@@ -453,19 +464,15 @@
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
-        
-        // تمرير المداخيل الإجمالية للتقسيم بدلاً من الأرباح الصافية
         calculateFinancialDivision(sV);
     }
 
-    // الدالة المحدثة لحساب التقسيم المالي بناءً على إجمالي المدخول
     function calculateFinancialDivision(totalSales) {
         const FIXED_LIABILITIES = 335.00;
         let liabilitiesDisplay = 0; let remainingSales = 0; let investment = 0; let savings = 0; let personal = 0;
 
         if (totalSales >= FIXED_LIABILITIES) {
             liabilitiesDisplay = FIXED_LIABILITIES; remainingSales = totalSales - FIXED_LIABILITIES;
-            // تقسيم باقي المدخول بالكامل: 30% استثمار ، 40% ادخار ، 30% شخصي
             investment = remainingSales * 0.30; 
             savings = remainingSales * 0.40; 
             personal = remainingSales * 0.30;
