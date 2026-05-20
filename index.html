@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v14</title>
+    <title>Mobile Shop Béja - Cloud System v15 Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -12,6 +12,7 @@
         :root { 
             --primary: #e67e22; --dark: #2c3e50; --success: #2ecc71; --danger: #e74c3c; --bg: #f4f7f6;
             --cat-green: #d4edda; --cat-blue: #cce5ff; --cat-yellow: #fff3cd;
+            --accent-blue: #3498db; --accent-purple: #9b59b6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; font-size: 14px; }
@@ -30,7 +31,7 @@
         .user-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .nav-logo { width: 45px; border-radius: 5px; background: white; padding: 2px; vertical-align: middle; }
         
-        .section-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eee; }
+        .section-box { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         h3 { margin-top: 0; color: var(--dark); border-right: 4px solid var(--primary); padding-right: 8px; display: flex; align-items: center; gap: 8px; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
@@ -39,10 +40,24 @@
         /* منطقة الـ Scanner المتقدمة للكاميرا والكمبيوتر */
         .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
-        
-        /* صندوق قارئ كاميرا الهاتف */
         #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
         
+        /* لوحة تقسيم الأرباح الفاخرة للأدمين */
+        .profit-dashboard { background: #ffffff; border: 1px solid #e0e6ed; border-radius: 14px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--accent-blue); }
+        .profit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .profit-card { background: #f8fafc; border: 1px solid #edf2f7; padding: 15px; border-radius: 10px; text-align: center; position: relative; transition: 0.3s; }
+        .profit-card:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-title { font-size: 13px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
+        .card-value { font-size: 18px; font-weight: bold; color: var(--dark); margin-bottom: 10px; }
+        
+        /* أشرطة التقدم الملونة لتقسيم المال */
+        .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; width: 85%; margin: 0 auto; }
+        .progress-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1s ease-in-out; }
+        .fill-liabilities { background: var(--danger); }
+        .fill-investment { background: var(--accent-blue); }
+        .fill-personal { background: var(--success); }
+        .percentage-tag { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-top: 4px; }
+
         /* الجداول والتصنيفات */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 550px; }
@@ -76,6 +91,9 @@
         .jard-container { background: var(--dark); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; }
         .cart-box { background: #fffdf0; border: 2px solid #f1c40f; display: none; }
 
+        @media (max-width: 768px) {
+            .profit-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
         @media (max-width: 480px) {
             .form-grid { grid-template-columns: 1fr; }
             .user-bar { flex-direction: column; gap: 10px; text-align: center; }
@@ -115,15 +133,12 @@
 
     <div class="barcode-listener-zone">
         <h4 style="margin: 0 0 10px 0; color: #d35400;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
-        
         <button id="toggleCameraBtn" class="btn btn-primary" style="margin-bottom: 12px; padding: 12px 20px; font-size: 15px; width: 90%; max-width: 300px;" onclick="toggleCameraScanner()">
             📷 فتح كاميرا الهاتف للمسح المباشر
         </button>
-        
         <div id="camera-scanner-container">
             <div id="interactive-reader" style="width: 100%;"></div>
         </div>
-
         <div style="color: #7f8c8d; font-size: 12px; margin: 5px 0;">أو الكتابة/المسح عبر جهاز خارجي هنا:</div>
         <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="انتظار مسح الـ QR للبيع..." autocomplete="off">
     </div>
@@ -207,6 +222,43 @@
             </table>
         </div>
     </div>
+
+    <div class="profit-dashboard admin-only" id="financeDashboard">
+        <h3 style="color: var(--accent-blue); border-right-color: var(--accent-blue); margin-bottom: 5px;">💼 لوحة التخطيط المالي وتوزيع الدخل للمالك</h3>
+        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">توزيع ذكي وتلقائي مبني على صافي أرباح المحل الفعليه لتأمين المصاريف والتطوير</p>
+        
+        <div class="profit-grid">
+            <div class="profit-card" style="border-top: 4px solid var(--danger);">
+                <div class="card-title">🏢 1. الالتزامات والتشغيل</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(كراء، كهرباء، إنترنت)</div>
+                <div id="valLiabilities" class="card-value" style="color: var(--danger);">0.00 د.ت</div>
+                <div class="progress-bar-bg">
+                    <div id="barLiabilities" class="progress-fill fill-liabilities"></div>
+                </div>
+                <span class="percentage-tag">المخصص الموصى به: 40%</span>
+            </div>
+            
+            <div class="profit-card" style="border-top: 4px solid var(--accent-blue);">
+                <div class="card-title">🚀 2. صندوق الاستثمار</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(شراء سلع جديدة وتوسيع)</div>
+                <div id="valInvestment" class="card-value" style="color: var(--accent-blue);">0.00 د.ت</div>
+                <div class="progress-bar-bg">
+                    <div id="barInvestment" class="progress-fill fill-investment"></div>
+                </div>
+                <span class="percentage-tag">المخصص الموصى به: 40%</span>
+            </div>
+            
+            <div class="profit-card" style="border-top: 4px solid var(--success);">
+                <div class="card-title">🛒 3. المصاريف الشخصية</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الصافي للمالك)</div>
+                <div id="valPersonal" class="card-value" style="color: var(--success);">0.00 د.ت</div>
+                <div class="progress-bar-bg">
+                    <div id="barPersonal" class="progress-fill fill-personal"></div>
+                </div>
+                <span class="percentage-tag">المخصص الموصى به: 20%</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="qrModal">
@@ -228,7 +280,7 @@
     let logs = [];
     let cart = []; 
     let currentRole = "";
-    let html5QrCodeScanner = null; // متغير لحفظ مساح الكاميرا
+    let html5QrCodeScanner = null;
 
     async function cloudFetch() {
         try {
@@ -241,7 +293,7 @@
             logs = dataLogs ? Object.values(dataLogs) : [];
             
             renderStock(); renderJard();
-        } catch(e) { console.error("خطأ في جلب البيانات من السحاب: ", e); }
+        } catch(e) { console.error("خطأ في جلب البيانات: ", e); }
     }
 
     async function cloudSaveStock() {
@@ -270,7 +322,7 @@
             if(role === "admin") {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block");
             }
-            document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير" : "🧑‍💼 الموظف";
+            document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير (المالك)" : "🧑‍💼 الموظف";
             renderStock(); renderJard();
             focusBarcodeField();
         } else {
@@ -291,7 +343,6 @@
         }
     });
 
-    // معالجة المدخلات القادمة من الحقل النصي الافتراضي
     document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -301,7 +352,6 @@
         }
     });
 
-    // دالة موحدة لمعالجة الأكواد المقروءة (سواء من الكاميرا أو كتابة)
     function processScannedCode(scannedText) {
         if(!scannedText) return;
         const item = stock.find(i => scannedText.includes(i.id));
@@ -312,7 +362,6 @@
         }
     }
 
-    // تشغيل / إيقاف قارئ كاميرا الهاتف المباشر
     function toggleCameraScanner() {
         const container = document.getElementById('camera-scanner-container');
         const btn = document.getElementById('toggleCameraBtn');
@@ -322,25 +371,17 @@
             btn.innerText = "🛑 إيقاف تشغيل الكاميرا";
             btn.className = "btn btn-danger";
             
-            // تهيئة مصوّر الكاميرا الخلفية وتجهيز الإطار المربع المخصص للمسح
             html5QrCodeScanner = new Html5Qrcode("interactive-reader");
             html5QrCodeScanner.start(
-                { facingMode: "environment" }, // تشغيل الكاميرا الخلفية افتراضياً
-                {
-                    fps: 15,    // سرعة تتبع الإطارات
-                    qrbox: { width: 230, height: 230 } // المربع المحدد للمسح وسط الكاميرا
-                },
+                { facingMode: "environment" },
+                { fps: 15, qrbox: { width: 230, height: 230 } },
                 (decodedText) => {
-                    // عند نجاح المسح: نقوم بالمعالجة وإصدار صوت تنبيه خفيف إن أمكن
                     processScannedCode(decodedText);
-                    // نقوم بإيقاف مؤقت لمنع التكرار اللحظي المزعج
                     stopCamera();
                 },
-                (errorMessage) => {
-                    // تجاهل الأخطاء المستمرة الناتجة عن محاولات التركيز وعدم وجود كود
-                }
+                (err) => {}
             ).catch(err => {
-                alert("❌ فشل فتح الكاميرا، يرجى إعطاء صلاحية الكاميرا للمتصفح.");
+                alert("❌ فشل فتح الكاميرا، يرجى إعطاء الصلاحية.");
                 stopCamera();
             });
         } else {
@@ -354,7 +395,6 @@
         container.style.display = 'none';
         btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر";
         btn.className = "btn btn-primary";
-        
         if (html5QrCodeScanner) {
             html5QrCodeScanner.stop().then(() => {
                 html5QrCodeScanner = null;
@@ -373,16 +413,13 @@
             printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }]);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = "";
             focusBarcodeField();
-        } else alert("الرجاء إدخال البيانات المطلوبة للصيانة.");
+        } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
 
     function addProduct() {
-        const n = document.getElementById('pName').value, 
-              cat = document.getElementById('pCat').value,
-              m = document.getElementById('pModel').value, 
-              q = parseInt(document.getElementById('pQty').value) || 0, 
-              c = parseFloat(document.getElementById('pCost').value) || 0, 
-              p = parseFloat(document.getElementById('pPrice').value) || 0;
+        const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value,
+              m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, 
+              c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
         if(n && m && q >= 0) {
             const id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase();
             stock.push({ id, n, cat, m, q, c, p });
@@ -390,51 +427,34 @@
             alert("✅ تم رفع المنتج للسحاب وتوليد رمز QR.");
             document.getElementById('pName').value = ""; document.getElementById('pModel').value = "";
             focusBarcodeField();
-        } else alert("يرجى ملء الحقول الأساسية وتحديد كمية صحيحة.");
+        } else alert("يرجى ملء الحقول الأساسية.");
     }
 
     function addToCart(index) {
         let item = stock[index];
-        if(item.q <= 0) { alert("❌ عذراً، لقد نفدت الكمية بالكامل من هذا المنتج!"); focusBarcodeField(); return; }
-        
-        let qty = parseInt(prompt("أدخل الكمية التي يريدها الزبون من [ " + item.n + " ] (المتوفر " + item.q + " حبة):", 1));
-        if(isNaN(qty) || qty <= 0) { focusBarcodeField(); return; }
-        if(qty > item.q) { alert("⚠️ الكمية المطلوبة أكبر من المتوفرة في المخزن حالياً!"); focusBarcodeField(); return; }
-
-        let price = parseFloat(prompt("تأكيد سعر البيع للحبة الواحدة (د.ت):", item.p));
+        if(item.q <= 0) { alert("❌ الكمية نفدت!"); focusBarcodeField(); return; }
+        let qty = parseInt(prompt("أدخل الكمية المطلوبة من [ " + item.n + " ]:", 1));
+        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة أو تتجاوز المخزن!"); focusBarcodeField(); return; }
+        let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p));
         if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
 
         let existing = cart.find(c => c.stockIndex === index);
         if(existing) {
-            if((existing.qty + qty) > item.q) { alert("⚠️ المجموع الكلي المطلوب بالسلة يتجاوز الكمية المتاحة بالمخزن!"); focusBarcodeField(); return; }
             existing.qty += qty;
             existing.finalPrice = price;
         } else {
             cart.push({ stockIndex: index, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c });
         }
-        renderCart();
-        focusBarcodeField();
+        renderCart(); focusBarcodeField();
     }
 
     function renderCart() {
-        const cBox = document.getElementById('cartSection');
-        const cBody = document.getElementById('cartBody');
+        const cBox = document.getElementById('cartSection'); const cBody = document.getElementById('cartBody');
         if(cart.length === 0) { cBox.style.display = 'none'; return; }
-        
-        cBox.style.display = 'block';
-        cBody.innerHTML = '';
-        let total = 0;
-        
+        cBox.style.display = 'block'; cBody.innerHTML = ''; let total = 0;
         cart.forEach((cItem, idx) => {
-            let subtotal = cItem.qty * cItem.finalPrice;
-            total += subtotal;
-            cBody.innerHTML += '<tr>' +
-                '<td><b>' + cItem.n + ' (' + cItem.m + ')</b></td>' +
-                '<td>' + cItem.qty + '</td>' +
-                '<td>' + cItem.finalPrice.toFixed(2) + '</td>' +
-                '<td><b>' + subtotal.toFixed(2) + ' د.ت</b></td>' +
-                '<td><button onclick="removeFromCart(' + idx + ')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px;">❌</button></td>' +
-            '</tr>';
+            let subtotal = cItem.qty * cItem.finalPrice; total += subtotal;
+            cBody.innerHTML += '<tr><td><b>' + cItem.n + ' (' + cItem.m + ')</b></td><td>' + cItem.qty + '</td><td>' + cItem.finalPrice.toFixed(2) + '</td><td><b>' + subtotal.toFixed(2) + ' د.ت</b></td><td><button onclick="removeFromCart(' + idx + ')" style="background:none; border:none; color:var(--danger); cursor:pointer;">❌</button></td></tr>';
         });
         document.getElementById('cartTotalText').innerText = total.toFixed(2);
     }
@@ -444,190 +464,44 @@
 
     async function checkoutCart() {
         if(cart.length === 0) return;
-        
         cart.forEach(cItem => {
             stock[cItem.stockIndex].q -= cItem.qty; 
             let itemTotalSale = cItem.qty * cItem.finalPrice;
             let itemTotalCost = cItem.qty * cItem.cost;
-            let itemProfit = itemTotalSale - itemTotalCost;
-            
-            logs.push({ 
-                time: new Date().toLocaleTimeString('ar-TN'), 
-                txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', 
-                val: itemTotalSale, 
-                prf: itemProfit 
-            });
+            logs.push({ time: new Date().toLocaleTimeString('ar-TN'), txt: cItem.n + ' (' + cItem.m + ') [x' + cItem.qty + ']', val: itemTotalSale, prf: itemTotalSale - itemTotalCost });
         });
-        
         printMultipleInvoice("فاتورة بيع منتجات", cart);
-        cart = [];
-        renderCart();
-        
-        await cloudSaveStock();
-        await cloudSaveLogs();
+        cart = []; renderCart();
+        await cloudSaveStock(); await cloudSaveLogs();
         focusBarcodeField();
     }
 
     function printMultipleInvoice(type, itemsList) {
         const win = window.open('', '_blank');
         const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
-        let rowsHtml = "";
-        let totalAmount = 0;
-        
+        let rowsHtml = ""; let totalAmount = 0;
         itemsList.forEach((item, index) => {
-            let subtotal = item.qty * item.finalPrice;
-            totalAmount += subtotal;
-            let modelText = item.m ? '(' + item.m + ')' : '';
-            rowsHtml += '<tr>' +
-                '<td style="text-align: center;">' + (index + 1) + '</td>' +
-                '<td><strong>' + item.n + ' ' + modelText + '</strong></td>' +
-                '<td style="text-align: center;">' + item.cat + '</td>' +
-                '<td style="text-align: center;">' + item.qty + '</td>' +
-                '<td style="text-align: left;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
-                '<td style="font-weight: 600; text-align: left;">' + subtotal.toFixed(2) + ' د.ت</td>' +
-            '</tr>';
+            let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
+            rowsHtml += '<tr><td style="text-align: center;">' + (index + 1) + '</td><td><strong>' + item.n + ' ' + (item.m ? '('+item.m+')' : '') + '</strong></td><td style="text-align: center;">' + item.cat + '</td><td style="text-align: center;">' + item.qty + '</td><td style="text-align: left;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="font-weight: 600; text-align: left;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
-        
-        win.document.write('\
-            <!DOCTYPE html>\
-            <html lang="ar" dir="rtl">\
-            <head>\
-                <meta charset="UTF-8">\
-                <title>فاتورة ' + invoiceNum + '</title>\
-                <style>\
-                    @page { size: A4; margin: 20mm; }\
-                    body { font-family: "Segoe UI", Tahoma, Arial, sans-serif; color: #2c3e50; margin: 0; padding: 0; font-size: 14px; background: #fff; line-height: 1.6; }\
-                    .invoice-container { max-width: 100%; margin: 0 auto; background: #fff; }\
-                    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }\
-                    .header-table td { vertical-align: middle; border: none; padding: 0; }\
-                    .brand-title { color: #e67e22; font-size: 28px; font-weight: bold; margin: 0 0 5px 0; letter-spacing: 0.5px; }\
-                    .brand-subtitle { font-size: 13px; color: #7f8c8d; margin: 0; }\
-                    .logo-wrapper { text-align: left; }\
-                    .invoice-logo { width: 110px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }\
-                    .meta-box { background: #f8f9fa; border-right: 4px solid #e67e22; padding: 15px 20px; border-radius: 0 6px 6px 0; margin-bottom: 35px; }\
-                    .meta-grid { display: table; width: 100%; }\
-                    .meta-col { display: table-cell; width: 33.33%; }\
-                    .meta-label { font-size: 12px; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }\
-                    .meta-value { font-size: 14px; font-weight: 600; color: #2c3e50; }\
-                    .doc-title-container { margin-bottom: 25px; border-bottom: 2px solid #eaeded; padding-bottom: 10px; }\
-                    .doc-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 0; display: inline-block; position: relative; }\
-                    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; text-align: right; }\
-                    .items-table th { background: #2c3e50; color: #ffffff; padding: 12px 15px; font-weight: 600; font-size: 13px; border: 1px solid #2c3e50; }\
-                    .items-table td { padding: 14px 15px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 13.5px; }\
-                    .summary-wrapper { width: 100%; margin-top: 20px; }\
-                    .summary-table { width: 300px; float: left; border-collapse: collapse; }\
-                    .summary-table td { padding: 10px 12px; font-size: 14px; }\
-                    .total-row { background: #e67e22; color: #fff; font-weight: bold; border-radius: 6px; }\
-                    .total-row td { padding: 12px; font-size: 16px; border: 1px solid #e67e22; }\
-                    .terms-box { width: 50%; float: right; font-size: 12px; color: #7f8c8d; line-height: 1.8; padding-left: 20px; }\
-                    .terms-title { font-weight: bold; color: #2c3e50; margin-bottom: 5px; font-size: 12.5px; }\
-                    .footer-banner { clear: both; padding-top: 60px; text-align: center; border-top: 1px dashed #cbd5e1; margin-top: 50px; }\
-                    .footer-text { font-size: 11px; color: #94a3b8; margin: 0; }\
-                </style>\
-            </head>\
-            <body>\
-                <div class="invoice-container">\
-                    <table class="header-table">\
-                        <tr>\
-                            <td>\
-                                <h1 class="brand-title">Mobile Shop Béja</h1>\
-                                <p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p>\
-                                <p class="brand-subtitle">بيع وصيانة الأجهزة الذكية والملحقات</p>\
-                            </td>\
-                            <td class="logo-wrapper">\
-                                <img src="logo.png" class="invoice-logo" alt="Logo" onerror="this.src=\'https://via.placeholder.com/110?text=MSB+LOGO\'">\
-                            </td>\
-                        </tr>\
-                    </table>\
-                    <div class="doc-title-container">\
-                        <h2 class="doc-title">' + type + '</h2>\
-                    </div>\
-                    <div class="meta-box">\
-                        <div class="meta-grid">\
-                            <div class="meta-col">\
-                                <div class="meta-label">رقم الوثيقة</div>\
-                                <div class="meta-value">' + invoiceNum + '</div>\
-                            </div>\
-                            <div class="meta-col">\
-                                <div class="meta-label">تاريخ الإصدار</div>\
-                                <div class="meta-value">' + new Date().toLocaleDateString('ar-TN') + ' - ' + new Date().toLocaleTimeString('ar-TN', {hour: '2-digit', minute:'2-digit'}) + '</div>\
-                            </div>\
-                            <div class="meta-col">\
-                                <div class="meta-label">الحالة</div>\
-                                <div class="meta-value" style="color: #2ecc71;">مدفوعة بالكامل</div>\
-                            </div>\
-                        </div>\
-                    </div>\
-                    <table class="items-table">\
-                        <thead>\
-                            <tr>\
-                                <th style="width: 7%; text-align: center;">الرقم</th>\
-                                <th style="width: 43%;">الوصف والبيان</th>\
-                                <th style="width: 15%; text-align: center;">الصنف</th>\
-                                <th style="width: 10%; text-align: center;">الكمية</th>\
-                                <th style="width: 12%; text-align: left;">سعر الحبة</th>\
-                                <th style="width: 13%; text-align: left;">الإجمالي</th>\
-                            </tr>\
-                        </thead>\
-                        <tbody>\
-                            ' + rowsHtml + '\
-                        </tbody>\
-                    </table>\
-                    <div class="summary-wrapper">\
-                        <div class="terms-box">\
-                            <div class="terms-title">شروط وإرشادات التعامل:</div>\
-                            <div>• يرجى الاحتفاظ بنسخة مطبوعة من هذا الوصل أو الفاتورة عند المراجعة أو الفحص الفني.</div>\
-                            <div>• بالنسبة للملحقات والقطع المباعة، لا يتم قبول الاستبدال أو الإرجاع إلا بحالتها الأصلية المقفلة.</div>\
-                            <div>• خدمات الصيانة الفنية تخضع لفترة الفحص والضمان المتفق عليها عند الاستلام.</div>\
-                        </div>\
-                        <table class="summary-table">\
-                            <tr>\
-                                <td style="color: #7f8c8d; font-weight: bold;">المجموع الصافي:</td>\
-                                <td style="text-align: left; font-weight: 600;">' + totalAmount.toFixed(2) + ' د.ت</td>\
-                            </tr>\
-                            <tr>\
-                                <td style="color: #7f8c8d; font-weight: bold;">الضرائب والرسوم:</td>\
-                                <td style="text-align: left; font-weight: 600;">0.00 د.ت</td>\
-                            </tr>\
-                            <tr class="total-row">\
-                                <td>المبلغ الإجمالي:</td>\
-                                <td style="text-align: left;">' + totalAmount.toFixed(2) + ' د.ت</td>\
-                            </tr>\
-                        </table>\
-                    </div>\
-                    <div class="footer-banner">\
-                        <p class="footer-text">نظام Mobile Shop Béja الذكي لإدارة ومراقبة المبيعات والمخازن</p>\
-                    </div>\
-                </div>\
-            </body>\
-            </html>\
-        ');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>فاتورة ' + invoiceNum + '</title><style>@page { size: A4; margin: 20mm; } body { font-family: "Segoe UI", sans-serif; color: #2c3e50; margin: 0; font-size: 14px; line-height: 1.6; } .invoice-container { max-width: 100%; } .header-table { width: 100%; margin-bottom: 30px; } .brand-title { color: #e67e22; font-size: 28px; font-weight: bold; margin: 0; } .brand-subtitle { font-size: 13px; color: #7f8c8d; margin: 3px 0; } .meta-box { background: #f8f9fa; border-right: 4px solid #e67e22; padding: 15px; border-radius: 4px; margin-bottom: 30px; } .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; } .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; } .items-table th { background: #2c3e50; color: #fff; padding: 10px; text-align: right; } .items-table td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; } .summary-table { width: 280px; float: left; margin-top: 15px; } .summary-table td { padding: 8px; } .total-row { background: #e67e22; color: #fff; font-weight: bold; } .footer { clear: both; text-align: center; padding-top: 40px; font-size: 11px; color: #94a3b8; }</style></head><body><div class="invoice-container"><table class="header-table"><tr><td><h1 class="brand-title">Mobile Shop Béja</h1><p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p></td><td style="text-align: left;"><img src="logo.png" style="width:100px;" onerror="this.src=\'https://via.placeholder.com/100\'"></td></tr></table><h2>' + type + '</h2><div class="meta-box"><div class="meta-grid"><div><b>رقم الفاتورة:</b> ' + invoiceNum + '</div><div><b>التاريخ:</b> ' + new Date().toLocaleDateString('ar-TN') + '</div><div style="color:#2ecc71;"><b>الحالة:</b> مدفوعة بالكامل</div></div></div><table class="items-table"><thead><tr><th>الرقم</th><th>البيان والسلعة</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div style="width:50%; float:right; font-size:12px; color:#7f8c8d;">• يرجى الاستظهار بهذا الوصل عند المراجعة أو الفحص الفني بمحلاتنا.</div><table class="summary-table"><tr><td>المجموع:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr><tr class="total-row"><td>الإجمالي المستحق:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr></table><div class="footer"><p>نظام Mobile Shop Béja لإدارة ومراقبة المبيعات والمخازن</p></div></div></body></html>');
         win.document.close();
     }
 
     function renderStock(data = stock) {
-        const tbody = document.getElementById('stockBody');
-        if(!tbody) return;
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('stockBody'); if(!tbody) return; tbody.innerHTML = '';
         data.forEach((item) => {
-            const actualIdx = stock.indexOf(item);
-            const isLow = item.q <= 1;
+            const actualIdx = stock.indexOf(item); const isLow = item.q <= 1;
             let btns = '<button onclick="addToCart(' + actualIdx + ')" class="btn btn-success" style="padding:4px 8px;">بيع</button> ' +
                         '<button onclick="showQR(' + actualIdx + ')" class="btn" style="background:#9b59b6; padding:4px 8px;">QR</button>';
             if(currentRole === 'admin') btns += ' <button onclick="deleteProduct(' + actualIdx + ')" class="btn btn-danger" style="padding:4px 8px; margin-right:3px;">🗑️</button>';
-            
-            tbody.innerHTML += '<tr class="row-' + item.cat + '">' +
-                '<td><b>' + item.cat + '</b></td><td>' + item.n + '</td><td>' + item.m + '</td>' +
-                '<td class="' + (isLow ? 'low-stock' : '') + '">' + item.q + '</td>' +
-                '<td>' + item.p.toFixed(2) + '</td><td>' + btns + '</td>' +
-            '</tr>';
+            tbody.innerHTML += '<tr class="row-' + item.cat + '"><td><b>' + item.cat + '</b></td><td>' + item.n + '</td><td>' + item.m + '</td><td class="' + (isLow ? 'low-stock' : '') + '">' + item.q + '</td><td>' + item.p.toFixed(2) + '</td><td>' + btns + '</td></tr>';
         });
     }
 
     function renderJard() {
         if(currentRole !== 'admin') return;
-        const lb = document.getElementById('logBody'); if(!lb) return;
-        lb.innerHTML = '';
+        const lb = document.getElementById('logBody'); if(!lb) return; lb.innerHTML = '';
         let sV = 0, sP = 0;
         logs.forEach((l, index) => {
             sV += l.val; sP += l.prf;
@@ -635,51 +509,55 @@
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
+        
+        // حساب وتحديث لوحة تحكم تقسيم الأرباح الاستراتيجية (الجديدة)
+        calculateFinancialDivision(sP);
+    }
+
+    // دالة تقسيم الدخل الاحترافية الجديدة للمالك
+    function calculateFinancialDivision(totalProfit) {
+        if (totalProfit < 0) totalProfit = 0;
+        
+        // تقسيم النسب الاستراتيجية: 40% التزامات، 40% استثمار، 20% شخصي
+        const liabilities = totalProfit * 0.40;
+        const investment = totalProfit * 0.40;
+        const personal = totalProfit * 0.20;
+        
+        // عرض القيم الرقمية بدقة في البطاقات
+        document.getElementById('valLiabilities').innerText = liabilities.toFixed(2) + " د.ت";
+        document.getElementById('valInvestment').innerText = investment.toFixed(2) + " د.ت";
+        document.getElementById('valPersonal').innerText = personal.toFixed(2) + " د.ت";
+        
+        // تحريك أشرطة التقدم الملونة لتعطي شكلاً بيانياً تفاعلياً
+        if(totalProfit > 0) {
+            document.getElementById('barLiabilities').style.width = "40%";
+            document.getElementById('barInvestment').style.width = "40%";
+            document.getElementById('barPersonal').style.width = "20%";
+        } else {
+            document.getElementById('barLiabilities').style.width = "0%";
+            document.getElementById('barInvestment').style.width = "0%";
+            document.getElementById('barPersonal').style.width = "0%";
+        }
     }
 
     function showQR(index) {
-        const item = stock[index];
-        const qrBox = document.getElementById("qrcode");
-        qrBox.innerHTML = "";
+        const item = stock[index]; const qrBox = document.getElementById("qrcode"); qrBox.innerHTML = "";
         new QRCode(qrBox, { text: "MSB_ID:" + item.id, width: 140, height: 140 });
         document.getElementById("qrTitle").innerText = item.n;
         document.getElementById("qrModal").style.display = "block";
     }
 
     function printQR() {
-        const img = document.querySelector("#qrcode img").src;
-        const title = document.getElementById("qrTitle").innerText;
+        const img = document.querySelector("#qrcode img").src; const title = document.getElementById("qrTitle").innerText;
         const win = window.open('', '_blank', 'width=300,height=300');
-        win.document.write('\
-            <div style="text-align:center; font-family:sans-serif; padding:10px;">\
-                <h3 style="margin:0 0 5px 0; color:#e67e22;">Mobile Shop Béja</h3>\
-                <img src="' + img + '" style="width:130px; border:1px solid #eee; padding:5px; border-radius:6px;">\
-                <p style="margin:5px 0 0 0; font-weight:bold; font-size:14px;">' + title + '</p>\
-            </div>\
-            <script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 500);}<\/script>\
-        ');
-        win.document.close();
-        focusBarcodeField();
+        win.document.write('<div style="text-align:center; font-family:sans-serif; padding:10px;"><h3 style="margin:0 0 5px 0; color:#e67e22;">Mobile Shop Béja</h3><img src="' + img + '" style="width:130px;"><p style="margin:5px 0 0 0; font-weight:bold;">' + title + '</p></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 500);}<\/script>');
+        win.document.close(); closeQR();
     }
 
     function closeQR() { document.getElementById("qrModal").style.display = "none"; focusBarcodeField(); }
     function search() { const t = document.getElementById('searchBox').value.toLowerCase(); renderStock(stock.filter(i => i.n.toLowerCase().includes(t) || i.m.toLowerCase().includes(t))); }
-    
-    function deleteProduct(i) { 
-        if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً من المخزن السحابي؟")) { 
-            stock.splice(i,1); 
-            cloudSaveStock(); 
-        } 
-        focusBarcodeField(); 
-    }
-    
-    function deleteLog(i) { 
-        if(confirm("هل تريد إزالة هذه العملية من سجلات الأرباح السحابية؟")) { 
-            logs.splice(i,1); 
-            cloudSaveLogs(); 
-        } 
-        focusBarcodeField(); 
-    }
+    function deleteProduct(i) { if(confirm("حذف المنتج نهائياً؟")) { stock.splice(i,1); cloudSaveStock(); } focusBarcodeField(); }
+    function deleteLog(i) { if(confirm("إزالة العملية من السجلات السحابية؟")) { logs.splice(i,1); cloudSaveLogs(); } focusBarcodeField(); }
 </script>
 </body>
 </html>
