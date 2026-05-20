@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v18 Pro</title>
+    <title>Mobile Shop Béja - Cloud System v19 Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -42,7 +42,7 @@
         .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
         #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
         
-        /* لوحة تقسيم الأرباح */
+        /* لوحة تقسيم الأرباح والمداخيل */
         .profit-dashboard { background: #ffffff; border: 1px solid #e0e6ed; border-radius: 14px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); }
         .profit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
         .profit-card { background: #f8fafc; border: 1px solid #edf2f7; padding: 12px; border-radius: 10px; text-align: center; position: relative; transition: 0.3s; }
@@ -236,7 +236,7 @@
 
     <div class="profit-dashboard admin-only" id="financeDashboard">
         <h3 style="color: var(--primary); border-right-color: var(--primary); margin-bottom: 5px;">💼 لوحة التخطيط المالي الاستراتيجي الفاخرة</h3>
-        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">خصم آلي للالتزامات الثابتة (335 د.ت)، مع تقسيم باقي الأرباح الصافية (30% استثمار | 40% ادخار | 30% شخصي)</p>
+        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">خصم آلي للالتزامات الثابتة (335 د.ت)، مع تقسيم **باقي المدخول الإجمالي** (30% إعادة استثمار | 40% ادخار | 30% شخصي)</p>
         
         <div class="profit-grid">
             <div class="profit-card" style="border-top: 4px solid var(--danger);">
@@ -248,11 +248,11 @@
             </div>
             
             <div class="profit-card" style="border-top: 4px solid var(--accent-blue);">
-                <div class="card-title">🚀 2. ميزانية الاستثمار</div>
-                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(تجديد المخزن والسلع)</div>
+                <div class="card-title">🚀 2. ميزانية إعادة الاستثمار</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(شراء سلعة وتكبير المحل)</div>
                 <div id="valInvestment" class="card-value" style="color: var(--accent-blue);">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barInvestment" class="progress-fill fill-investment"></div></div>
-                <span class="percentage-tag">مخصص: 30% بعد الخصم</span>
+                <span class="percentage-tag">مخصص: 30% من المدخول الباقي</span>
             </div>
 
             <div class="profit-card" style="border-top: 4px solid var(--accent-gold);">
@@ -260,15 +260,15 @@
                 <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(احتياطي وأمان للمحل)</div>
                 <div id="valSavings" class="card-value" style="color: #d4ac0d;">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barSavings" class="progress-fill fill-savings"></div></div>
-                <span class="percentage-tag">مخصص: 40% بعد الخصم</span>
+                <span class="percentage-tag">مخصص: 40% من المدخول الباقي</span>
             </div>
             
             <div class="profit-card" style="border-top: 4px solid var(--success);">
                 <div class="card-title">🛒 4. المصاريف الشخصية</div>
-                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الحر الصافي للمالك)</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الصافي المتاح للملك)</div>
                 <div id="valPersonal" class="card-value" style="color: var(--success);">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barPersonal" class="progress-fill fill-personal"></div></div>
-                <span class="percentage-tag">مخصص: 30% بعد الخصم</span>
+                <span class="percentage-tag">مخصص: 30% من المدخول الباقي</span>
             </div>
         </div>
     </div>
@@ -369,7 +369,7 @@
             cloudSaveLogs();
             printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
-        } else alert("الرجاء إدخال البيانات المطلوبة.");
+        } else alert("الرجاء إدخل البيانات المطلوبة.");
     }
 
     function addProduct() {
@@ -446,7 +446,6 @@
         let sV = 0, sP = 0;
         logs.forEach((l, index) => {
             sV += l.val; sP += l.prf;
-            // إظهار القيم السابقة بشكل مرن وتجنيب ظهور undefined في حالة السجلات القديمة
             let inv = l.invoice ? l.invoice : "---";
             let dt = l.date ? l.date : "اليوم";
             
@@ -454,21 +453,27 @@
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
-        calculateFinancialDivision(sP);
+        
+        // تمرير المداخيل الإجمالية للتقسيم بدلاً من الأرباح الصافية
+        calculateFinancialDivision(sV);
     }
 
-    function calculateFinancialDivision(totalProfit) {
+    // الدالة المحدثة لحساب التقسيم المالي بناءً على إجمالي المدخول
+    function calculateFinancialDivision(totalSales) {
         const FIXED_LIABILITIES = 335.00;
-        let liabilitiesDisplay = 0; let remainingProfit = 0; let investment = 0; let savings = 0; let personal = 0;
+        let liabilitiesDisplay = 0; let remainingSales = 0; let investment = 0; let savings = 0; let personal = 0;
 
-        if (totalProfit >= FIXED_LIABILITIES) {
-            liabilitiesDisplay = FIXED_LIABILITIES; remainingProfit = totalProfit - FIXED_LIABILITIES;
-            investment = remainingProfit * 0.30; savings = remainingProfit * 0.40; personal = remainingProfit * 0.30;
+        if (totalSales >= FIXED_LIABILITIES) {
+            liabilitiesDisplay = FIXED_LIABILITIES; remainingSales = totalSales - FIXED_LIABILITIES;
+            // تقسيم باقي المدخول بالكامل: 30% استثمار ، 40% ادخار ، 30% شخصي
+            investment = remainingSales * 0.30; 
+            savings = remainingSales * 0.40; 
+            personal = remainingSales * 0.30;
             document.getElementById('liabilitiesStatus').innerText = "✅ مغطاة بالكامل (335 د.ت)";
             document.getElementById('liabilitiesStatus').style.color = "var(--success)";
         } else {
-            liabilitiesDisplay = totalProfit; remainingProfit = 0;
-            document.getElementById('liabilitiesStatus').innerText = "⚠️ لم تُغطَّ بعد (نقص " + (FIXED_LIABILITIES - totalProfit).toFixed(2) + " د.ت)";
+            liabilitiesDisplay = totalSales; remainingSales = 0;
+            document.getElementById('liabilitiesStatus').innerText = "⚠️ لم تُغطَّ بعد (نقص " + (FIXED_LIABILITIES - totalSales).toFixed(2) + " د.ت)";
             document.getElementById('liabilitiesStatus').style.color = "var(--danger)";
         }
         
@@ -477,11 +482,13 @@
         document.getElementById('valSavings').innerText = savings.toFixed(2) + " د.ت";
         document.getElementById('valPersonal').innerText = personal.toFixed(2) + " د.ت";
         
-        if (totalProfit > 0) {
-            let liabilityPercent = Math.min((totalProfit / FIXED_LIABILITIES) * 100, 100);
+        if (totalSales > 0) {
+            let liabilityPercent = Math.min((totalSales / FIXED_LIABILITIES) * 100, 100);
             document.getElementById('barLiabilities').style.width = liabilityPercent + "%";
-            if (remainingProfit > 0) {
-                document.getElementById('barInvestment').style.width = "30%"; document.getElementById('barSavings').style.width = "40%"; document.getElementById('barPersonal').style.width = "30%";
+            if (remainingSales > 0) {
+                document.getElementById('barInvestment').style.width = "30%"; 
+                document.getElementById('barSavings').style.width = "40%"; 
+                document.getElementById('barPersonal').style.width = "30%";
             } else {
                 document.getElementById('barInvestment').style.width = "0%"; document.getElementById('barSavings').style.width = "0%"; document.getElementById('barPersonal').style.width = "0%";
             }
