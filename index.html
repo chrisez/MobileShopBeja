@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v21 Pro</title>
+    <title>Mobile Shop Béja - Cloud System v22 Ultra</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -373,7 +373,7 @@
                 prf: total - cost 
             }); 
             cloudSaveLogs();
-            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
+            printMultipleInvoice("إيصال دفع / فاتورة صيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
         } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
@@ -426,23 +426,22 @@
                 prf: itemTotalSale - itemTotalCost 
             });
         });
-        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate, currentTime); 
+        printMultipleInvoice("إيصال دفع / فاتورة", cart, invoiceNum, currentDate, currentTime); 
         cart = []; 
         await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
     }
 
-    // دالة الطباعة الاحترافية والفاخرة الجديدة بالكامل
+    // دالة الطباعة الاحترافية المطابقة للصورة 100% مع شعار شفاف مائي وخلفية بيضاء ورق
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
         const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
+        
         itemsList.forEach((item, index) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
             rowsHtml += '<tr>' +
-                '<td style="text-align: center; color: #7f8c8d;">' + (index + 1) + '</td>' +
-                '<td><span style="font-weight: bold; color: #2c3e50;">' + item.n + '</span> ' + (item.m ? '<span style="color: #7f8c8d; font-size: 12px;">(' + item.m + ')</span>' : '') + '</td>' +
-                '<td style="text-align: center; color: #34495e;">' + item.cat + '</td>' +
-                '<td style="text-align: center; font-weight: bold; color: #e67e22;">' + item.qty + '</td>' +
-                '<td style="text-align: left; font-family: monospace;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
-                '<td style="font-weight: bold; text-align: left; font-family: monospace; color: #2c3e50;">' + subtotal.toFixed(2) + ' د.ت</td>' +
+                '<td>' + (item.m ? item.n + ' - ' + item.m : item.n) + '</td>' +
+                '<td style="text-align: center; font-weight: bold;">' + item.qty + '</td>' +
+                '<td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
+                '<td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td>' +
             '</tr>';
         });
 
@@ -451,77 +450,114 @@
         '<head>' +
             '<meta charset="UTF-8">' +
             '<style>' +
-                'body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; margin: 0; padding: 20px; font-size: 14px; line-height: 1.6; background-color: #fff; }' +
-                '.invoice-container { max-width: 800px; margin: 0 auto; padding: 10px; }' +
-                '.header-block { background: #2c3e50; color: white; padding: 25px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 5px solid #e67e22; }' +
-                '.brand-title { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: #fff; }' +
-                '.brand-subtitle { font-size: 13px; color: #ced6e0; margin: 5px 0 0 0; font-weight: 300; }' +
-                '.invoice-type-title { font-size: 22px; font-weight: bold; color: #e67e22; margin: 0 0 15px 0; border-right: 5px solid #e67e22; padding-right: 10px; }' +
-                '.meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }' +
-                '.meta-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; text-align: center; }' +
-                '.meta-card-label { font-size: 11px; color: #64748b; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }' +
-                '.meta-card-value { font-size: 13px; color: #1e293b; font-weight: 600; }' +
-                '.items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border-radius: 6px; overflow: hidden; }' +
-                '.items-table th { background: #34495e; color: #fff; padding: 12px 10px; text-align: right; font-size: 13px; font-weight: 600; }' +
-                '.items-table td { padding: 12px 10px; border-bottom: 1px solid #edf2f7; font-size: 13.5px; }' +
-                '.items-table tr:nth-child(even) { background-color: #f8fafc; }' +
-                '.summary-wrapper { display: flex; justify-content: flex-end; margin-top: 20px; }' +
-                '.summary-box { width: 300px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }' +
-                '.summary-row { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #edf2f7; font-size: 14px; }' +
-                '.total-row { background: #e67e22; color: white; font-weight: bold; font-size: 16px; border-bottom: none; }' +
-                '.invoice-footer { text-align: center; margin-top: 50px; padding-top: 15px; border-top: 1px dashed #cbd5e1; color: #64748b; font-size: 12px; }' +
-                '@media print { body { padding: 0; } .header-block { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .total-row { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }' +
+                'body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; } track { background: white; }' +
+                /* العلامة المائية الشفافة في الخلفية */
+                '.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }' +
+                '.invoice-wrapper { max-width: 850px; margin: 0 auto; }' +
+                /* الترويسة العلوية الفاخرة */
+                '.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }' +
+                '.brand-side { display: flex; align-items: center; gap: 15px; }' +
+                '.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }' +
+                '.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }' +
+                '.brand-title-text span { color: #e67e22; }' +
+                '.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }' +
+                '.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }' +
+                /* بطاقة البيانات الفوقية */
+                '.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }' +
+                '.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }' +
+                '.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }' +
+                '.meta-label { font-weight: bold; color: #64748b; }' +
+                '.meta-val { color: #1e293b; font-weight: 600; }' +
+                /* جدول المنتجات المطابق للصورة */
+                '.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }' +
+                '.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }' +
+                '.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }' +
+                '.items-luxury-table tr:last-child td { border-bottom: none; }' +
+                '.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }' +
+                /* قسم الحسابات والإجمالي */
+                '.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }' +
+                '.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }' +
+                /* الختم والتوقيع */
+                '.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }' +
+                '.sig-box { text-align: center; width: 150px; }' +
+                '.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }' +
+                '.stamp-circle-img { width: 85px; height: auto; opacity: 0.85; }' +
+                '.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }' +
+                '@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }' +
             '</style>' +
         '</head>' +
         '<body>' +
-            '<div class="invoice-container">' +
-                '<div class="header-block">' +
-                    '<div>' +
-                        '<h1 class="brand-title">Mobile Shop Béja</h1>' +
-                        '<p class="brand-subtitle">باجة - نهج الاستقلال (بجانب الفتح) | الهاتف: 29.150.225</p>' +
+            /* وضع الشعار كعلامة مائية شفافة في الخلفية خلف النصوص */
+            '<img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'">' +
+            
+            '<div class="invoice-wrapper">' +
+                '' +
+                '<div class="header-grid">' +
+                    '<div class="brand-side">' +
+                        '<img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'">' +
+                        '<div>' +
+                            '<h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1>' +
+                            '<p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p>' +
+                        '</div>' +
                     '</div>' +
-                    '<div style="text-align: left;">' +
-                        '<div style="font-size: 20px; font-weight: bold; color: #e67e22;">MSB SOUK</div>' +
+                    '<div style="text-align: left; font-size: 12px; color: #64748b;">' +
+                        '<b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026' +
                     '</div>' +
                 '</div>' +
                 
-                '<h2 class="invoice-type-title">' + type + '</h2>' +
+                '<div class="invoice-main-title">' + type + '</div>' +
                 
-                '<div class="meta-grid">' +
-                    '<div class="meta-card"><div class="meta-card-label">رقم الإيصال</div><div class="meta-card-value" style="color:#e67e22; font-family:monospace;">' + invoiceNum + '</div></div>' +
-                    '<div class="meta-card"><div class="meta-card-label">التاريخ</div><div class="meta-card-value">' + currentDate + '</div></div>' +
-                    '<div class="meta-card"><div class="meta-card-label">التوقيت</div><div class="meta-card-value" style="font-family:monospace;">' + (currentTime ? currentTime : '--:--') + '</div></div>' +
-                    '<div class="meta-card"><div class="meta-card-label">حالة الفاتورة</div><div class="meta-card-value" style="color:#2ecc71;">✓ مدفوعة بالكامل</div></div>' +
+                '' +
+                '<div class="meta-container-box">' +
+                    '<div class="meta-inner-grid">' +
+                        '<div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div>' +
+                        '<div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">✓ مدفوع بالكامل</span></div>' +
+                        '<div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div>' +
+                        '<div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div>' +
+                    '</div>' +
                 '</div>' +
                 
-                '<table class="items-table">' +
+                '' +
+                '<table class="items-luxury-table">' +
                     '<thead>' +
                         '<tr>' +
-                            '<th style="width: 5%; text-align: center;">#</th>' +
-                            '<th style="width: 45%;">البيان والسلعة</th>' +
-                            '<th style="width: 15%; text-align: center;">الصنف</th>' +
-                            '<th style="width: 10%; text-align: center;">الكمية</th>' +
-                            '<th style="width: 10%; text-align: left;">السعر الفردي</th>' +
-                            '<th style="width: 15%; text-align: left;">الإجمالي</th>' +
+                            '<th style="width: 50%; text-align: right;">المنتج / الخدمة</th>' +
+                            '<th style="width: 12%; text-align: center;">الكمية</th>' +
+                            '<th style="width: 18%; text-align: center;">السعر</th>' +
+                            '<th style="width: 20%; text-align: center;">المجموع</th>' +
                         '</tr>' +
                     '</thead>' +
                     '<tbody>' + rowsHtml + '</tbody>' +
                 '</table>' +
                 
-                '<div class="summary-wrapper">' +
-                    '<div class="summary-box">' +
-                        '<div class="summary-row"><span>المجموع الفرعي:</span><span style="font-family: monospace;">' + totalAmount.toFixed(2) + ' د.ت</span></div>' +
-                        '<div class="summary-row"><span>الأداءات والرسوم:</span><span style="font-family: monospace;">0.00 د.ت</span></div>' +
-                        '<div class="summary-row total-row"><span>الإجمالي المستحق:</span><span style="font-family: monospace;">' + totalAmount.toFixed(2) + ' د.ت</span></div>' +
+                '' +
+                '<div class="bottom-pricing-section">' +
+                    '<div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div>' +
+                    '<div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div>' +
+                '</div>' +
+                
+                '' +
+                '<div class="auth-signatures-space">' +
+                    '<div class="sig-box">' +
+                        '<div class="sig-title">توقيع المسؤول</div>' +
+                        '<div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div>' +
+                    '</div>' +
+                    '<div class="sig-box">' +
+                        '<div class="sig-title">ختم المتجر الرسمي</div>' +
+                        '' +
+                        '<div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">' +
+                            'MSB BEJA' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
                 
-                '<div class="invoice-footer">' +
-                    '<p>شكراً لتعاملكم معنا واختياركم <b>Mobile Shop Béja</b></p>' +
-                    '<p style="font-size: 11px; color:#94a3b8;">يرجى التثبت من السلع الإلكترونية والقطع وتجربتها داخل المحل.</p>' +
+                '' +
+                '<div class="footer-notes-text">' +
+                    '<p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p>' +
+                    '<p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p>' +
                 '</div>' +
             '</div>' +
-            '<script>window.onload = function() { window.print(); setTimeout(() => window.close(), 800); };<\/script>' +
+            '<script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script>' +
         '</body>' +
         '</html>');
         win.document.close();
