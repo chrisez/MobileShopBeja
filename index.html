@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v22 Ultra</title>
+    <title>Mobile Shop Béja - Cloud System v23 Sound Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -291,6 +291,27 @@
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
     let stock = []; let logs = []; let cart = []; let currentRole = ""; let html5QrCodeScanner = null;
 
+    // دالة توليد صوت الباركود برمجياً (Beep) بدون الحاجة لملفات خارجية
+    function playBarcodeBeep() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(1400, audioCtx.currentTime); // تردد حاد نقي يشبه القارئ الحقيقي
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); // مستوى الصوت
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.08); // نبضة صوتية سريعة جداً (80 ميلي ثانية)
+        } catch (e) {
+            console.log("فشل تشغيل الصوت بسبب قيود المتصفح البدئية:", e);
+        }
+    }
+
     document.getElementById('loginPass').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); checkLogin(); } });
 
     async function cloudFetch() {
@@ -331,7 +352,12 @@
 
     function processScannedCode(scannedText) {
         if(!scannedText) return; const item = stock.find(i => scannedText.includes(i.id));
-        if(item) { addToCart(stock.indexOf(item)); } else { alert("⚠️ الكود الممسوح غير مدرج!"); }
+        if(item) { 
+            playBarcodeBeep(); // 🔊 إطلاق الصوت فوراً عند التعرف الناجح
+            addToCart(stock.indexOf(item)); 
+        } else { 
+            alert("⚠️ الكود الممسوح غير مدرج!"); 
+        }
     }
 
     function toggleCameraScanner() {
@@ -450,11 +476,9 @@
         '<head>' +
             '<meta charset="UTF-8">' +
             '<style>' +
-                'body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; } track { background: white; }' +
-                /* العلامة المائية الشفافة في الخلفية */
+                'body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }' +
                 '.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }' +
                 '.invoice-wrapper { max-width: 850px; margin: 0 auto; }' +
-                /* الترويسة العلوية الفاخرة */
                 '.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }' +
                 '.brand-side { display: flex; align-items: center; gap: 15px; }' +
                 '.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }' +
@@ -462,36 +486,28 @@
                 '.brand-title-text span { color: #e67e22; }' +
                 '.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }' +
                 '.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }' +
-                /* بطاقة البيانات الفوقية */
                 '.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }' +
                 '.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }' +
                 '.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }' +
                 '.meta-label { font-weight: bold; color: #64748b; }' +
                 '.meta-val { color: #1e293b; font-weight: 600; }' +
-                /* جدول المنتجات المطابق للصورة */
                 '.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }' +
                 '.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }' +
                 '.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }' +
                 '.items-luxury-table tr:last-child td { border-bottom: none; }' +
                 '.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }' +
-                /* قسم الحسابات والإجمالي */
                 '.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }' +
                 '.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }' +
-                /* الختم والتوقيع */
                 '.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }' +
                 '.sig-box { text-align: center; width: 150px; }' +
                 '.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }' +
-                '.stamp-circle-img { width: 85px; height: auto; opacity: 0.85; }' +
                 '.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }' +
                 '@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }' +
             '</style>' +
         '</head>' +
         '<body>' +
-            /* وضع الشعار كعلامة مائية شفافة في الخلفية خلف النصوص */
             '<img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'">' +
-            
             '<div class="invoice-wrapper">' +
-                '' +
                 '<div class="header-grid">' +
                     '<div class="brand-side">' +
                         '<img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'">' +
@@ -507,7 +523,6 @@
                 
                 '<div class="invoice-main-title">' + type + '</div>' +
                 
-                '' +
                 '<div class="meta-container-box">' +
                     '<div class="meta-inner-grid">' +
                         '<div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div>' +
@@ -517,7 +532,6 @@
                     '</div>' +
                 '</div>' +
                 
-                '' +
                 '<table class="items-luxury-table">' +
                     '<thead>' +
                         '<tr>' +
@@ -530,13 +544,11 @@
                     '<tbody>' + rowsHtml + '</tbody>' +
                 '</table>' +
                 
-                '' +
                 '<div class="bottom-pricing-section">' +
                     '<div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div>' +
                     '<div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div>' +
                 '</div>' +
                 
-                '' +
                 '<div class="auth-signatures-space">' +
                     '<div class="sig-box">' +
                         '<div class="sig-title">توقيع المسؤول</div>' +
@@ -544,15 +556,13 @@
                     '</div>' +
                     '<div class="sig-box">' +
                         '<div class="sig-title">ختم المتجر الرسمي</div>' +
-                        '' +
                         '<div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">' +
                             'MSB BEJA' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
                 
-                '' +
-                '<div class="footer-notes-text">' +
+                '<div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;">' +
                     '<p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p>' +
                     '<p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p>' +
                 '</div>' +
