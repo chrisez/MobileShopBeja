@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v20 Pro</title>
+    <title>Mobile Shop Béja - Cloud System v21 Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -301,7 +301,6 @@
             let resLogs = await fetch(FIREBASE_URL + "/logs.json");
             let dataLogs = await resLogs.json(); logs = dataLogs ? Object.values(dataLogs) : [];
             
-            // جلب السلة المشتركة من السيرفر السحابي
             let resCart = await fetch(FIREBASE_URL + "/cart.json");
             let dataCart = await resCart.json(); cart = dataCart ? Object.values(dataCart) : [];
 
@@ -313,7 +312,6 @@
     async function cloudSaveLogs() { await fetch(FIREBASE_URL + "/logs.json", { method: 'PUT', body: JSON.stringify(logs) }); renderJard(); }
     async function cloudSaveCart() { await fetch(FIREBASE_URL + "/cart.json", { method: 'PUT', body: JSON.stringify(cart) }); renderCart(); }
 
-    // المزامنة الحية كل 4 ثوانٍ لتمكين العمل المشترك بين الهاتف والحاسوب
     setInterval(() => { if(currentRole !== "") { cloudFetch(); } }, 4000);
 
     async function checkLogin() {
@@ -353,7 +351,7 @@
 
     async function clearMonthlyLogs() {
         if (confirm("⚠️ تنبيه هام جداً:\nهل أنت متأكد تماماً من رغبتك في تفريغ وتصفير جرد الأرباح والسجلات لبدء الشهر المقبل؟")) {
-            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع Feather؟")) {
+            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع؟")) {
                 logs = []; await cloudSaveLogs(); alert("🧹 تم تصفير سجلات الأرباح السحابية بنجاح!"); focusBarcodeField();
             }
         }
@@ -375,7 +373,7 @@
                 prf: total - cost 
             }); 
             cloudSaveLogs();
-            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate);
+            printMultipleInvoice("وصل إصلاح وصيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
         } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
@@ -428,18 +426,105 @@
                 prf: itemTotalSale - itemTotalCost 
             });
         });
-        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate); 
+        printMultipleInvoice("فاتورة بيع منتجات", cart, invoiceNum, currentDate, currentTime); 
         cart = []; 
         await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
     }
 
-    function printMultipleInvoice(type, itemsList, invoiceNum, currentDate) {
+    // دالة الطباعة الاحترافية والفاخرة الجديدة بالكامل
+    function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
         const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
         itemsList.forEach((item, index) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
-            rowsHtml += '<tr><td style="text-align: center;">' + (index + 1) + '</td><td><strong>' + item.n + ' ' + (item.m ? '('+item.m+')' : '') + '</strong></td><td style="text-align: center;">' + item.cat + '</td><td style="text-align: center;">' + item.qty + '</td><td style="text-align: left;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="font-weight: 600; text-align: left;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
+            rowsHtml += '<tr>' +
+                '<td style="text-align: center; color: #7f8c8d;">' + (index + 1) + '</td>' +
+                '<td><span style="font-weight: bold; color: #2c3e50;">' + item.n + '</span> ' + (item.m ? '<span style="color: #7f8c8d; font-size: 12px;">(' + item.m + ')</span>' : '') + '</td>' +
+                '<td style="text-align: center; color: #34495e;">' + item.cat + '</td>' +
+                '<td style="text-align: center; font-weight: bold; color: #e67e22;">' + item.qty + '</td>' +
+                '<td style="text-align: left; font-family: monospace;">' + item.finalPrice.toFixed(2) + ' د.ت</td>' +
+                '<td style="font-weight: bold; text-align: left; font-family: monospace; color: #2c3e50;">' + subtotal.toFixed(2) + ' د.ت</td>' +
+            '</tr>';
         });
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:"Segoe UI",sans-serif;color:#2c3e50;margin:0;font-size:14px;line-height:1.6;}.invoice-container{max-width:100%;}.header-table{width:100%;margin-bottom:30px;}.brand-title{color:#e67e22;font-size:28px;font-weight:bold;margin:0;}.brand-subtitle{font-size:13px;color:#7f8c8d;margin:3px 0;}.meta-box{background:#f8f9fa;border-right:4px solid #e67e22;padding:15px;border-radius:4px;margin-bottom:30px;}.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;}.items-table{width:100%;border-collapse:collapse;margin-bottom:30px;}.items-table th{background:#2c3e50;color:#fff;padding:10px;text-align:right;}.items-table td{padding:12px 10px;border-bottom:1px solid #e2e8f0;}.summary-table{width:280px;float:left;margin-top:15px;}.summary-table td{padding:8px;}.total-row{background:#e67e22;color:#fff;font-weight:bold;}</style></head><body><div class="invoice-container"><table class="header-table"><tr><td><h1 class="brand-title">Mobile Shop Béja</h1><p class="brand-subtitle">باجة - نهج الاستقلال | الهاتف: 29.150.225</p></td><td style="text-align: left;"><img src="logo.png" style="width:100px;" onerror="this.src=\'https://via.placeholder.com/100\'"></td></tr></table><h2>' + type + '</h2><div class="meta-box"><div class="meta-grid"><div><b>رقم الفاتورة:</b> ' + invoiceNum + '</div><div><b>التاريخ:</b> ' + currentDate + '</div><div style="color:#2ecc71;"><b>الحالة:</b> مدفوعة بالكامل</div></div></div><table class="items-table"><thead><tr><th>الرقم</th><th>البيان والسلعة</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><table class="summary-table"><tr><td>المجموع:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr><tr class="total-row"><td>الإجمالي المستحق:</td><td style="text-align:left;">' + totalAmount.toFixed(2) + ' د.ت</td></tr></table></div></body></html>'); win.document.close();
+
+        win.document.write('<!DOCTYPE html>' +
+        '<html lang="ar" dir="rtl">' +
+        '<head>' +
+            '<meta charset="UTF-8">' +
+            '<style>' +
+                'body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; color: #2c3e50; margin: 0; padding: 20px; font-size: 14px; line-height: 1.6; background-color: #fff; }' +
+                '.invoice-container { max-width: 800px; margin: 0 auto; padding: 10px; }' +
+                '.header-block { background: #2c3e50; color: white; padding: 25px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 5px solid #e67e22; }' +
+                '.brand-title { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: 0.5px; color: #fff; }' +
+                '.brand-subtitle { font-size: 13px; color: #ced6e0; margin: 5px 0 0 0; font-weight: 300; }' +
+                '.invoice-type-title { font-size: 22px; font-weight: bold; color: #e67e22; margin: 0 0 15px 0; border-right: 5px solid #e67e22; padding-right: 10px; }' +
+                '.meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 25px; }' +
+                '.meta-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; text-align: center; }' +
+                '.meta-card-label { font-size: 11px; color: #64748b; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }' +
+                '.meta-card-value { font-size: 13px; color: #1e293b; font-weight: 600; }' +
+                '.items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border-radius: 6px; overflow: hidden; }' +
+                '.items-table th { background: #34495e; color: #fff; padding: 12px 10px; text-align: right; font-size: 13px; font-weight: 600; }' +
+                '.items-table td { padding: 12px 10px; border-bottom: 1px solid #edf2f7; font-size: 13.5px; }' +
+                '.items-table tr:nth-child(even) { background-color: #f8fafc; }' +
+                '.summary-wrapper { display: flex; justify-content: flex-end; margin-top: 20px; }' +
+                '.summary-box { width: 300px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }' +
+                '.summary-row { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #edf2f7; font-size: 14px; }' +
+                '.total-row { background: #e67e22; color: white; font-weight: bold; font-size: 16px; border-bottom: none; }' +
+                '.invoice-footer { text-align: center; margin-top: 50px; padding-top: 15px; border-top: 1px dashed #cbd5e1; color: #64748b; font-size: 12px; }' +
+                '@media print { body { padding: 0; } .header-block { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .total-row { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }' +
+            '</style>' +
+        '</head>' +
+        '<body>' +
+            '<div class="invoice-container">' +
+                '<div class="header-block">' +
+                    '<div>' +
+                        '<h1 class="brand-title">Mobile Shop Béja</h1>' +
+                        '<p class="brand-subtitle">باجة - نهج الاستقلال (بجانب الفتح) | الهاتف: 29.150.225</p>' +
+                    '</div>' +
+                    '<div style="text-align: left;">' +
+                        '<div style="font-size: 20px; font-weight: bold; color: #e67e22;">MSB SOUK</div>' +
+                    '</div>' +
+                '</div>' +
+                
+                '<h2 class="invoice-type-title">' + type + '</h2>' +
+                
+                '<div class="meta-grid">' +
+                    '<div class="meta-card"><div class="meta-card-label">رقم الإيصال</div><div class="meta-card-value" style="color:#e67e22; font-family:monospace;">' + invoiceNum + '</div></div>' +
+                    '<div class="meta-card"><div class="meta-card-label">التاريخ</div><div class="meta-card-value">' + currentDate + '</div></div>' +
+                    '<div class="meta-card"><div class="meta-card-label">التوقيت</div><div class="meta-card-value" style="font-family:monospace;">' + (currentTime ? currentTime : '--:--') + '</div></div>' +
+                    '<div class="meta-card"><div class="meta-card-label">حالة الفاتورة</div><div class="meta-card-value" style="color:#2ecc71;">✓ مدفوعة بالكامل</div></div>' +
+                '</div>' +
+                
+                '<table class="items-table">' +
+                    '<thead>' +
+                        '<tr>' +
+                            '<th style="width: 5%; text-align: center;">#</th>' +
+                            '<th style="width: 45%;">البيان والسلعة</th>' +
+                            '<th style="width: 15%; text-align: center;">الصنف</th>' +
+                            '<th style="width: 10%; text-align: center;">الكمية</th>' +
+                            '<th style="width: 10%; text-align: left;">السعر الفردي</th>' +
+                            '<th style="width: 15%; text-align: left;">الإجمالي</th>' +
+                        '</tr>' +
+                    '</thead>' +
+                    '<tbody>' + rowsHtml + '</tbody>' +
+                '</table>' +
+                
+                '<div class="summary-wrapper">' +
+                    '<div class="summary-box">' +
+                        '<div class="summary-row"><span>المجموع الفرعي:</span><span style="font-family: monospace;">' + totalAmount.toFixed(2) + ' د.ت</span></div>' +
+                        '<div class="summary-row"><span>الأداءات والرسوم:</span><span style="font-family: monospace;">0.00 د.ت</span></div>' +
+                        '<div class="summary-row total-row"><span>الإجمالي المستحق:</span><span style="font-family: monospace;">' + totalAmount.toFixed(2) + ' د.ت</span></div>' +
+                    '</div>' +
+                '</div>' +
+                
+                '<div class="invoice-footer">' +
+                    '<p>شكراً لتعاملكم معنا واختياركم <b>Mobile Shop Béja</b></p>' +
+                    '<p style="font-size: 11px; color:#94a3b8;">يرجى التثبت من السلع الإلكترونية والقطع وتجربتها داخل المحل.</p>' +
+                '</div>' +
+            '</div>' +
+            '<script>window.onload = function() { window.print(); setTimeout(() => window.close(), 800); };<\/script>' +
+        '</body>' +
+        '</html>');
+        win.document.close();
     }
 
     function renderStock(data = stock) {
@@ -459,8 +544,9 @@
             sV += l.val; sP += l.prf;
             let inv = l.invoice ? l.invoice : "---";
             let dt = l.date ? l.date : "اليوم";
+            let tm = l.time ? l.time : "--:--";
             
-            lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + l.time + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
+            lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
         });
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
