@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v25.4 Pro Ultimate (Fully Checked)</title>
+    <title>Mobile Shop Béja - Cloud System v25.6 Pro Ultimate</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -39,8 +39,7 @@
         .warning-title { font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
         .warning-list { margin: 0; padding-right: 20px; font-size: 13px; }
 
-        .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
-        .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
+        .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
         
         .quick-sell-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding: 8px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -147,15 +146,13 @@
     </div>
 
     <div class="barcode-listener-zone">
-        <h4 style="margin: 0 0 10px 0; color: #d35400;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
-        <button id="toggleCameraBtn" class="btn btn-primary" style="margin-bottom: 12px; padding: 12px 20px; font-size: 15px; width: 90%; max-width: 300px;" onclick="toggleCameraScanner()">
+        <h4 style="margin: 0 0 12px 0; color: #d35400; font-size: 16px;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
+        <button id="toggleCameraBtn" class="btn btn-primary" style="padding: 14px 20px; font-size: 15px; width: 90%; max-width: 300px;" onclick="toggleCameraScanner()">
             📷 فتح كاميرا الهاتف للمسح المباشر
         </button>
         <div id="camera-scanner-container">
             <div id="interactive-reader" style="width: 100%;"></div>
         </div>
-        <div style="color: #7f8c8d; font-size: 12px; margin: 5px 0;">أو الكتابة/المسح عبر جهاز خارجي هنا:</div>
-        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="انتظار مسح ال... للبيع..." autocomplete="off">
     </div>
 
     <div class="section-box cart-box" id="cartSection">
@@ -380,35 +377,12 @@
             document.getElementById('loginScreen').style.display = "none"; document.getElementById('mainApp').style.display = "block";
             if(role === "admin") { document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block"); }
             document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير (المالك)" : "🧑‍💼 الموظف";
-            renderStock(); renderJard(); renderCart(); focusBarcodeField();
+            renderStock(); renderJard(); renderCart();
         } else { alert("❌ كلمة السر خاطئة"); }
     }
 
-    function focusBarcodeField() { 
-        if (isPromptOpen) return;
-        const bInput = document.getElementById('barcodeScannerInput'); 
-        if(bInput) bInput.focus(); 
-    }
-    
-    document.addEventListener('click', function(e) { 
-        if(document.getElementById('mainApp').style.display === "block") { 
-            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target) && !e.target.classList.contains('quick-btn')) { 
-                focusBarcodeField(); 
-            } 
-        } 
-    });
-    
-    document.getElementById('barcodeScannerInput').addEventListener('keypress', function(e) { 
-        if (e.key === 'Enter') { 
-            e.preventDefault(); 
-            processScannedCode(this.value.trim()); 
-            this.value = ""; 
-            focusBarcodeField(); 
-        } 
-    });
-
     function processScannedCode(scannedText) {
-        if(!scannedText) return; 
+        if(!scannedText || isPromptOpen) return; 
         let cleanCode = scannedText.replace("MSB_ID:", "").trim();
         const item = stock.find(i => i.id === cleanCode || i.id === scannedText);
         if(item) { 
@@ -417,17 +391,18 @@
         } else { 
             if(currentRole === 'admin') {
                 playBarcodeBeep();
-                // تم الإصلاح: إيقاف الكاميرا فوراً إذا كانت تعمل لتفادي التشنج قبل ظهور الـ Confirm
-                if(html5QrCodeScanner) { stopCamera(); }
+                stopCamera();
                 
                 isPromptOpen = true;
-                let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
-                isPromptOpen = false;
-                if(confirmAdd) {
-                    document.getElementById('pId').value = cleanCode;
-                    document.getElementById('pName').focus();
-                    document.getElementById('addProductSection').scrollIntoView({ behavior: 'smooth' });
-                } else { focusBarcodeField(); }
+                setTimeout(() => {
+                    let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
+                    isPromptOpen = false;
+                    if(confirmAdd) {
+                        document.getElementById('pId').value = cleanCode;
+                        document.getElementById('pName').focus();
+                        document.getElementById('addProductSection').scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 300);
             } else { alert("⚠️ الكود الممسوح غير مدرج! يرجى إعلام المدير لإضافته للمخزن."); }
         }
     }
@@ -437,8 +412,7 @@
         if (container.style.display === 'none' || container.style.display === '') {
             container.style.display = 'block'; btn.innerText = "🛑 إيقاف تشغيل الكاميرا"; btn.className = "btn btn-danger";
             html5QrCodeScanner = new Html5Qrcode("interactive-reader");
-            // تم الإصلاح: معالجة البيانات بعد إغلاق الكاميرا لتفادي التداخل البرمجي
-            html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 230 } }, (decodedText) => { stopCamera(); processScannedCode(decodedText); }, (err) => {}).catch(err => { alert("❌ فشل تشغيل الكاميرا."); stopCamera(); });
+            html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 230 } }, (decodedText) => { processScannedCode(decodedText); }, (err) => {}).catch(err => { alert("❌ فشل تشغيل الكاميرا."); stopCamera(); });
         } else { stopCamera(); }
     }
 
@@ -446,7 +420,7 @@
         const container = document.getElementById('camera-scanner-container'); const btn = document.getElementById('toggleCameraBtn');
         if(!container) return;
         container.style.display = 'none'; btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر"; btn.className = "btn btn-primary";
-        if (html5QrCodeScanner) { html5QrCodeScanner.stop().then(() => { html5QrCodeScanner = null; focusBarcodeField(); }).catch(err => console.log(err)); }
+        if (html5QrCodeScanner) { html5QrCodeScanner.stop().then(() => { html5QrCodeScanner = null; }).catch(err => console.log(err)); }
     }
 
     async function clearMonthlyLogsAndArchive() {
@@ -465,7 +439,6 @@
             }
         }
         isPromptOpen = false;
-        focusBarcodeField();
     }
 
     function addQuickItem(name, price, cost) {
@@ -491,7 +464,7 @@
             logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: "🛠️ صيانة: " + name, val: total, prf: total - cost, itemCleanName: svcType, itemQtySold: 1, isService: true }); 
             cloudSaveLogs();
             printMultipleInvoice("إيصال دفع / فاتورة صيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
-            document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
+            document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = "";
         } else alert("الرجاء إدخال البيانات المطلوبة.");
     }
 
@@ -504,27 +477,27 @@
             if(exists) { alert("❌ هذا الكود مسجل مسبقاً لمنتج آخر!"); return; }
             stock.push({ id, n, cat, m, q, c, p }); cloudSaveStock();
             alert("✅ تم حفظ المنتج الجديد بنجاح.");
-            document.getElementById('pId').value = ""; document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; document.getElementById('pCost').value = ""; document.getElementById('pPrice').value = ""; focusBarcodeField();
+            document.getElementById('pId').value = ""; document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; document.getElementById('pCost').value = ""; document.getElementById('pPrice').value = "";
         } else alert("يرجى ملء الحقول الأساسية.");
     }
 
     function addToCart(index) {
-        let item = stock[index]; if(item.q <= 0) { alert("❌ الكمية نفدت!"); focusBarcodeField(); return; }
+        let item = stock[index]; if(item.q <= 0) { alert("❌ الكمية نفدت!"); return; }
         isPromptOpen = true;
         let qty = parseInt(prompt("أدخل الكمية المطلوبة من [ " + item.n + " ]:", 1)); 
-        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة أو تجاوزت المخزون!"); isPromptOpen = false; focusBarcodeField(); return; }
+        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة أو تجاوزت المخزون!"); isPromptOpen = false; return; }
         let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p)); 
         isPromptOpen = false;
-        if(isNaN(price) || price < 0) { focusBarcodeField(); return; }
+        if(isNaN(price) || price < 0) { return; }
         
         let existing = cart.find(c => c.stockId === item.id);
         if(existing) { 
-            if ((existing.qty + qty) > item.q) { alert("❌ المجموع يجاوز الكمية المتاحة بالمخزن!"); focusBarcodeField(); return; }
+            if ((existing.qty + qty) > item.q) { alert("❌ المجموع يجاوز الكمية المتاحة بالمخزن!"); return; }
             existing.qty += qty; existing.finalPrice = price; 
         } else { 
             cart.push({ stockId: item.id, n: item.n, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c }); 
         }
-        cloudSaveCart(); focusBarcodeField();
+        cloudSaveCart();
     }
 
     function renderCart() {
@@ -547,8 +520,8 @@
         document.getElementById('cartTotalText').innerText = total.toFixed(2);
     }
 
-    function removeFromCart(idx) { cart.splice(idx, 1); cloudSaveCart(); focusBarcodeField(); }
-    function clearCart() { cart = []; cloudSaveCart(); focusBarcodeField(); }
+    function removeFromCart(idx) { cart.splice(idx, 1); cloudSaveCart(); }
+    function clearCart() { cart = []; cloudSaveCart(); }
 
     async function checkoutCart() {
         if(cart.length === 0) return;
@@ -573,13 +546,13 @@
         
         printMultipleInvoice("إيصال دفع / فاتورة", cart, invoiceNum, currentDate, currentTime); 
         cart = []; 
-        await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs(); focusBarcodeField();
+        await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs();
     }
 
     function printSticker(item) {
         const win = window.open('', '_blank', 'width=350,height=220');
         const qrImgSrc = document.querySelector("#qrcode img").src;
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 4px; text-align: center; background: #fff; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; } .shop-title { font-size: 10px; font-weight: bold; color: #e67e22; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; } .item-name { font-size: 11px; font-weight: bold; color: #2c3e50; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .sticker-main { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; } .qr-side img { width: 42px; height: 42px; } .price-side { text-align: right; } .price-tag { font-size: 14px; font-weight: 800; color: #000; margin: 0; } .code-text { font-size: 8px; font-family: monospace; color: #7f8c8d; margin-top: 1px; }</style></head><body><div class="shop-title">Mobile Shop Béja</div><div class="item-name">' + item.n + ' (' + item.m + ')</div><div class="sticker-main"><div class="qr-side"><img src="' + qrImgSrc + '"></div><div class="price-side"><div class="price-tag">' + item.p.toFixed(2) + ' د.ت</div><div class="code-text">كود: ' + item.id + '</div></div></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 400);}<\/script></body></html>');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 4px; text-align: center; background: #fff; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; } .shop-title { font-size: 10px; font-weight: bold; color: #e67e22; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; } .item-name { font-size: 11px; font-weight: bold; color: #2c3e50; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .sticker-main { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; } .qr-side img { width: 42px; height: 42px; } .price-side { text-align: right; } .price-tag { font-size: 14px; font-weight: 800; color: #000; margin: 0; } .code-text { font-size: 8px; font-family: monospace; color: #7f8c8d; margin-top: 1px; }</style></head><body><div class="shop-title">Mobile Shop Béja</div><div class="item-name">' + item.n + ' (' + item.m + ')</div><div class="sticker-main"><div class="qr-side"><img src="' + qrImgSrc + '"></div><div class="price-side"><div class="price-tag">' + item.p.toFixed(2) + ' د.ت</div><div class="code-text">كود: ' + item.id + '</div></div></div>' + '<script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 400);};<\/script>' + '</body></html>');
         win.document.close();
     }
 
@@ -589,7 +562,7 @@
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
             rowsHtml += '<tr><td>' + (item.m ? item.n + ' - ' + item.m : item.n) + '</td><td style="text-align: center; font-weight: bold;">' + item.qty + '</td><td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }.invoice-wrapper { max-width: 850px; margin: 0 auto; }.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }.brand-side { display: flex; align-items: center; gap: 15px; }.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }.brand-title-text span { color: #e67e22; }.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }.meta-label { font-weight: bold; color: #64748b; }.meta-val { color: #1e293b; font-weight: 600; }.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }.items-luxury-table tr:last-child td { border-bottom: none; }.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }.sig-box { text-align: center; width: 150px; }.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }</style></head><body><img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'"><div class="invoice-wrapper"><div class="header-grid"><div class="brand-side"><img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'"><div><h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1><p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p></div></div><div style="text-align: left; font-size: 12px; color: #64748b;"><b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026</div></div><div class="invoice-main-title">' + type + '</div><div class="meta-container-box"><div class="meta-inner-grid"><div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div><div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">✓ مدفوع بالكامل</span></div><div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div><div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div></div></div><table class="items-luxury-table"><thead><tr><th style="width: 50%; text-align: right;">المنتج / الخدمة</th><th style="width: 12%; text-align: center;">الكمية</th><th style="width: 18%; text-align: center;">السعر</th><th style="width: 20%; text-align: center;">المجموع</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div class="bottom-pricing-section"><div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div><div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div></div><div class="auth-signatures-space"><div class="sig-box"><div class="sig-title">توقيع المسؤول</div><div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div></div><div class="sig-box"><div class="sig-title">ختم المتجر الرسمي</div><div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">MSB BEJA</div></div></div><div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;"><p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p><p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p></div></div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script></body></html>');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }.invoice-wrapper { max-width: 850px; margin: 0 auto; }.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }.brand-side { display: flex; align-items: center; gap: 15px; }.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }.brand-title-text span { color: #e67e22; }.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }.meta-label { font-weight: bold; color: #64748b; }.meta-val { color: #1e293b; font-weight: 600; }.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }.items-luxury-table tr:last-child td { border-bottom: none; }.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }.sig-box { text-align: center; width: 150px; }.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }</style></head><body><img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'"><div class="invoice-wrapper"><div class="header-grid"><div class="brand-side"><img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'"><div><h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1><p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p></div></div><div style="text-align: left; font-size: 12px; color: #64748b;"><b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026</div></div><div class="invoice-main-title">' + type + '</div><div class="meta-container-box"><div class="meta-inner-grid"><div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div><div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">✓ مدفوع بالكامل</span></div><div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div><div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div></div></div><table class="items-luxury-table"><thead><tr><th style="width: 50%; text-align: right;">المنتج / الخدمة</th><th style="width: 12%; text-align: center;">الكمية</th><th style="width: 18%; text-align: center;">السعر</th><th style="width: 20%; text-align: center;">المجموع</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div class="bottom-pricing-section"><div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div><div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div></div><div class="auth-signatures-space"><div class="sig-box"><div class="sig-title">توقيع المسؤول</div><div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div></div><div class="sig-box"><div class="sig-title">ختم المتجر الرسمي</div><div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">MSB BEJA</div></div></div><div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;"><p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>. رضاكم هو غايتنا دائماً!</p><p style="color: #cbd5e1; font-size: 10px;">القطع الإلكترونية والاكسسوارات الفنية تُجرب وتُفحص بالكامل قبل مغادرة المحل.</p></div></div>' + '<script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script>' + '</body></html>');
         win.document.close();
     }
 
@@ -621,10 +594,12 @@
         let serviceCountMap = {}; 
         let strategicIncomeBase = 0; 
 
-        logs.forEach((l, index) => {
+        logs.forEach((l) => {
             sV += l.val; sP += l.prf;
             let inv = l.invoice ? l.invoice : "---"; let dt = l.date ? l.date : "اليوم"; let tm = l.time ? l.time : "--:--";
-            lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
+            
+            // إصلاح ثغرة الحذف القائم على الـ Index عبر تمرير كود الفاتورة الفريد
+            lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(\'' + inv + '\')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
             
             if (l.txt.includes("🛠️ صيانة:") || l.isService) {
                 strategicIncomeBase += l.prf; 
@@ -676,6 +651,8 @@
         document.getElementById('valInvestment').innerText = investment.toFixed(2) + " د.ت";
         document.getElementById('valSavings').innerText = savings.toFixed(2) + " د.ت";
         document.getElementById('valPersonal').innerText = personal.toFixed(2) + " د.ت";
+        
+        // إصلاح ثغرة الحسابات الصفرية والتأكد من عدم ظهور تشوهات الرسوم البيانية (NaN)
         if (totalSales > 0) {
             let liabilityPercent = Math.min((totalSales / FIXED_LIABILITIES) * 100, 100);
             document.getElementById('barLiabilities').style.width = liabilityPercent + "%";
@@ -697,25 +674,32 @@
         document.getElementById("btnPrintStickerBtn").onclick = function() { printSticker(item); };
     }
     
-    function closeQR() { document.getElementById("qrModal").style.display = "none"; focusBarcodeField(); }
-    function search() { const t = document.getElementById('searchBox').value.toLowerCase(); renderStock(stock.filter(i => i.n.toLowerCase().includes(t) || i.m.toLowerCase().includes(t))); }
+    function closeQR() { document.getElementById("qrModal").style.display = "none"; }
     
-    // تم الإصلاح: تحويل دالة حذف منتج لدالة سحابية متزامنة تمنع التداخل البرمجي
+    function search() { 
+        const t = document.getElementById('searchBox').value.toLowerCase().trim(); 
+        if(!t) { renderStock(stock); return; }
+        renderStock(stock.filter(i => 
+            (i.n && i.n.toLowerCase().includes(t)) || 
+            (i.m && i.m.toLowerCase().includes(t)) ||
+            (i.cat && i.cat.toLowerCase().includes(t)) ||
+            (i.id && i.id.toLowerCase().includes(t))
+        )); 
+    }
+    
     async function deleteProduct(id) { 
         if(confirm("حذف المنتج نهائياً من المخزن السحابي؟")) { 
             stock = stock.filter(item => item.id !== id); 
             await cloudSaveStock(); 
         } 
-        focusBarcodeField(); 
     }
     
-    // تم الإصلاح: تحويل دالة حذف عملية من الجرد لدالة متزامنة لمنع الـ Interval من إعادتها
-    async function deleteLog(i) { 
+    async function deleteLog(invoiceId) { 
         if(confirm("إزالة العملية؟")) { 
-            logs.splice(i,1); 
+            // إصلاح دالة الحذف لتعتمد على المعرف الفريد للفاتورة وتلافي أخطاء الفلترة
+            logs = logs.filter(l => l.invoice !== invoiceId); 
             await cloudSaveLogs(); 
         } 
-        focusBarcodeField(); 
     }
 </script>
 </body>
