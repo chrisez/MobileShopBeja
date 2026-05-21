@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v25.3 Financial Stable</title>
+    <title>Mobile Shop Béja - Cloud System v25.4 Pro Ultimate (Fully Checked)</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -17,7 +17,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: #333; font-size: 14px; }
         
-        /* شاشة الدخول */
         .login-screen { max-width: 400px; margin: 40px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; border-top: 6px solid var(--primary); }
         .logo-container { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 15px; display: inline-block; }
         .logo-img { width: 140px; height: auto; border-radius: 8px; }
@@ -26,7 +25,6 @@
         .login-group label { font-weight: bold; margin-bottom: 5px; color: var(--dark); }
         .login-group input, .login-group select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
 
-        /* الواجهة الرئيسية */
         .main-app { display: none; max-width: 950px; margin: 0 auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .user-bar { background: var(--dark); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .nav-logo { width: 45px; border-radius: 5px; background: white; padding: 2px; vertical-align: middle; }
@@ -37,24 +35,25 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .form-grid input, .form-grid select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         
-        /* صندوق تنبيه النواقص الذكي */
         .warning-box { background: #fdf2f2; border: 1px solid #f8b4b4; color: #9b1c1c; border-radius: 10px; padding: 12px 15px; margin-bottom: 15px; display: none; }
         .warning-title { font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
         .warning-list { margin: 0; padding-right: 20px; font-size: 13px; }
 
-        /* الباركود والكاميرا */
         .barcode-listener-zone { background: #fff3cd; border: 2px dashed #ffc107; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         .barcode-input { width: 80%; max-width: 300px; padding: 12px; border: 2px solid #ffc107; border-radius: 6px; font-size: 16px; text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
         #camera-scanner-container { max-width: 350px; margin: 15px auto; display: none; border: 3px solid var(--primary); border-radius: 10px; overflow: hidden; background: #000; position: relative; }
         
-        /* الإحصائيات والأكثر مبيعاً */
-        .analytics-container { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        .quick-sell-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; padding: 8px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .quick-btn { background: white; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12.5px; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .quick-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .analytics-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .top-selling-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; }
         .top-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #edf2f7; }
         .top-item-row:last-child { border-bottom: none; }
-        .top-badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .top-badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .top-badge-svc { background: var(--success); }
 
-        /* لوحة تقسيم الأرباح والمداخيل */
         .profit-dashboard { background: #ffffff; border: 1px solid #e0e6ed; border-radius: 14px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); }
         .profit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
         .profit-card { background: #f8fafc; border: 1px solid #edf2f7; padding: 12px; border-radius: 10px; text-align: center; position: relative; transition: 0.3s; }
@@ -62,7 +61,6 @@
         .card-title { font-size: 12.5px; color: #64748b; font-weight: bold; margin-bottom: 5px; }
         .card-value { font-size: 16px; font-weight: bold; color: var(--dark); margin-bottom: 10px; }
         
-        /* أشرطة التقدم الملونة */
         .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; width: 85%; margin: 0 auto; }
         .progress-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1s ease-in-out; }
         .fill-liabilities { background: var(--danger); }
@@ -71,7 +69,6 @@
         .fill-personal { background: var(--success); }
         .percentage-tag { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-top: 4px; }
 
-        /* الجداول */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 650px; }
         th, td { padding: 10px 8px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
@@ -104,6 +101,7 @@
 
         @media (max-width: 900px) {
             .profit-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .analytics-container { grid-template-columns: 1fr; }
         }
         @media (max-width: 500px) {
             .profit-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -157,11 +155,19 @@
             <div id="interactive-reader" style="width: 100%;"></div>
         </div>
         <div style="color: #7f8c8d; font-size: 12px; margin: 5px 0;">أو الكتابة/المسح عبر جهاز خارجي هنا:</div>
-        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="انتظار مسح الـ QR للبيع..." autocomplete="off">
+        <input type="text" id="barcodeScannerInput" class="barcode-input" placeholder="انتظار مسح ال... للبيع..." autocomplete="off">
     </div>
 
     <div class="section-box cart-box" id="cartSection">
         <h3 style="color: #d35400; border-right-color: #f1c40f;">🛒 سلة المشتريات الحالية (متزامنة سحابياً 🔄)</h3>
+        
+        <div class="quick-sell-bar">
+            <span style="font-size:12px; font-weight:bold; color:#7f8c8d; align-self:center; margin-left:5px;">⚡ بيع سريع:</span>
+            <button onclick="addQuickItem('شحن رصيد إلكتروني', 5.00, 0.50)" class="quick-btn">📱 شحن رصيد</button>
+            <button onclick="addQuickItem('حماية شاشة شعبية', 7.00, 2.00)" class="quick-btn">📱 حماية شاشة</button>
+            <button onclick="addQuickItem('كابل شحن عادي', 10.00, 3.50)" class="quick-btn">🔌 كابل عادي</button>
+        </div>
+
         <div class="table-container">
             <table>
                 <thead>
@@ -182,7 +188,14 @@
     <div class="section-box">
         <h3 style="color: var(--success); border-right-color: var(--success);">🛠️ خدمات الصيانة</h3>
         <div class="form-grid">
-            <input type="text" id="svcName" placeholder="وصف العطل">
+            <select id="svcTypeSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="تغيير شاشة">تغيير شاشة डिस्प्ले</option>
+                <option value="كونيكتور شحن">إصلاح كونيكتور شحن</option>
+                <option value="تغيير بطارية">تغيير بطارية أصلي</option>
+                <option value="سوفتوير وفك قفل">سوفتوير وفك قفل</option>
+                <option value="أخرى">عطل آخر / فحص فني</option>
+            </select>
+            <input type="text" id="svcName" placeholder="تفاصيل العطل (مثال: ايفون 11)">
             <input type="number" id="svcTotal" placeholder="المبلغ المطلوب">
             <input type="number" id="svcCost" placeholder="تكلفة القطع (أدمين)" class="admin-only">
         </div>
@@ -223,9 +236,15 @@
 
     <div class="analytics-container admin-only">
         <div class="top-selling-card">
-            <h3 style="color: var(--accent-purple); border-right-color: var(--accent-purple); margin-bottom: 10px;">📈 المنتجات الخمسة الأكثر مبيعاً وحركة (Top 5 Selling)</h3>
+            <h3 style="color: var(--accent-purple); border-right-color: var(--accent-purple); margin-bottom: 10px;">📈 السلع الـ 5 الأكثر مبيعاً وحركة</h3>
             <div id="topSellingList">
                 <p style="color: #64748b; text-align: center; font-size: 13px;">لا توجد مبيعات مسجلة في هذا الشهر حالياً.</p>
+            </div>
+        </div>
+        <div class="top-selling-card">
+            <h3 style="color: var(--success); border-right-color: var(--success); margin-bottom: 10px;">🛠️ خدمات الصيانة الـ 5 الأكثر طلباً</h3>
+            <div id="topServiceList">
+                <p style="color: #64748b; text-align: center; font-size: 13px;">لا توجد خدمات صيانة مسجلة حالياً.</p>
             </div>
         </div>
     </div>
@@ -258,7 +277,7 @@
                 <tbody id="logBody"></tbody>
             </table>
         </div>
-        <button onclick="clearMonthlyLogs()" class="btn btn-danger btn-block" style="margin-top:15px; background-color:#c0392b; padding:12px;">🧹 تصفير السجلات وبدء شهر جديد</button>
+        <button onclick="clearMonthlyLogsAndArchive()" class="btn btn-danger btn-block" style="margin-top:15px; background-color:#c0392b; padding:12px;">🧹 ترحيل البيانات للأرشيف وبدء شهر جديد</button>
     </div>
 
     <div class="profit-dashboard admin-only" id="financeDashboard">
@@ -373,7 +392,7 @@
     
     document.addEventListener('click', function(e) { 
         if(document.getElementById('mainApp').style.display === "block") { 
-            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target)) { 
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && !document.getElementById('camera-scanner-container').contains(e.target) && !e.target.classList.contains('quick-btn')) { 
                 focusBarcodeField(); 
             } 
         } 
@@ -398,6 +417,9 @@
         } else { 
             if(currentRole === 'admin') {
                 playBarcodeBeep();
+                // تم الإصلاح: إيقاف الكاميرا فوراً إذا كانت تعمل لتفادي التشنج قبل ظهور الـ Confirm
+                if(html5QrCodeScanner) { stopCamera(); }
+                
                 isPromptOpen = true;
                 let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
                 isPromptOpen = false;
@@ -415,33 +437,58 @@
         if (container.style.display === 'none' || container.style.display === '') {
             container.style.display = 'block'; btn.innerText = "🛑 إيقاف تشغيل الكاميرا"; btn.className = "btn btn-danger";
             html5QrCodeScanner = new Html5Qrcode("interactive-reader");
-            html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 230 } }, (decodedText) => { processScannedCode(decodedText); stopCamera(); }, (err) => {}).catch(err => { alert("❌ فشل تشغيل الكاميرا."); stopCamera(); });
+            // تم الإصلاح: معالجة البيانات بعد إغلاق الكاميرا لتفادي التداخل البرمجي
+            html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 230, height: 230 } }, (decodedText) => { stopCamera(); processScannedCode(decodedText); }, (err) => {}).catch(err => { alert("❌ فشل تشغيل الكاميرا."); stopCamera(); });
         } else { stopCamera(); }
     }
 
     function stopCamera() {
         const container = document.getElementById('camera-scanner-container'); const btn = document.getElementById('toggleCameraBtn');
+        if(!container) return;
         container.style.display = 'none'; btn.innerText = "📷 فتح كاميرا الهاتف للمسح المباشر"; btn.className = "btn btn-primary";
         if (html5QrCodeScanner) { html5QrCodeScanner.stop().then(() => { html5QrCodeScanner = null; focusBarcodeField(); }).catch(err => console.log(err)); }
     }
 
-    async function clearMonthlyLogs() {
+    async function clearMonthlyLogsAndArchive() {
         isPromptOpen = true;
-        if (confirm("⚠️ تنبيه هام جداً:\nهل أنت متأكد تماماً من رغبتك في تفريغ وتصفير جرد الأرباح والسجلات لبدء الشهر المقبل؟")) {
-            if (confirm("🔒 تأكيد أخير:\nسيتم حذف سجل العمليات بالكامل لتصفير العدادات، بينما ستبقى السلع في المخزن كما هي. هل نتابع؟")) {
-                logs = []; await cloudSaveLogs(); alert("🧹 تم تصفير سجلات الأرباح السحابية بنجاح!"); 
+        if (confirm("⚠️ أرشفة الجرد الشهري:\nهل تريد ترحيل سجل مبيعات هذا الشهر بالكامل إلى الأرشيف السحابي وبدء شهر جديد؟")) {
+            try {
+                let archiveId = "ARC-" + Date.now();
+                let archivePayload = { archiveId: archiveId, dateArchived: new Date().toLocaleDateString('ar-TN'), data: logs };
+                await fetch(FIREBASE_URL + "/archives/" + archiveId + ".json", { method: 'PUT', body: JSON.stringify(archivePayload) });
+                
+                logs = []; 
+                await cloudSaveLogs(); 
+                alert("📦 تم ترحيل وحفظ البيانات في الأرشيف السحابي بنجاح، وتصفير العداد المالي الحالي!");
+            } catch (e) {
+                alert("❌ حدث خطأ أثناء الاتصال بالسيرفر لحفظ الأرشيف.");
             }
         }
         isPromptOpen = false;
         focusBarcodeField();
     }
 
+    function addQuickItem(name, price, cost) {
+        playBarcodeBeep();
+        let existing = cart.find(c => c.stockId === "QUICK-" + name);
+        if(existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ stockId: "QUICK-" + name, n: name, m: "بيع سريع", cat: "أخرى", qty: 1, finalPrice: price, cost: cost });
+        }
+        cloudSaveCart();
+    }
+
     function addService() {
-        const name = document.getElementById('svcName').value, cost = parseFloat(document.getElementById('svcCost').value) || 0, total = parseFloat(document.getElementById('svcTotal').value) || 0;
-        if(name && total > 0) {
-            const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
+        const svcType = document.getElementById('svcTypeSelect').value;
+        const subDetails = document.getElementById('svcName').value;
+        const cost = parseFloat(document.getElementById('svcCost').value) || 0, total = parseFloat(document.getElementById('svcTotal').value) || 0;
+        
+        let name = svcType + (subDetails ? " (" + subDetails + ")" : "");
+        if(total > 0) {
+            const invoiceNum = "INV-" + Date.now().toString().slice(-4) + "-" + Math.floor(100 + Math.random() * 900);
             const currentDate = new Date().toLocaleDateString('ar-TN'); const currentTime = new Date().toLocaleTimeString('ar-TN');
-            logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: "🛠️ صيانة: " + name, val: total, prf: total - cost, itemCleanName: "خدمات صيانة الفنية", itemQtySold: 1 }); 
+            logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: "🛠️ صيانة: " + name, val: total, prf: total - cost, itemCleanName: svcType, itemQtySold: 1, isService: true }); 
             cloudSaveLogs();
             printMultipleInvoice("إيصال دفع / فاتورة صيانة", [{ n: name, cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
             document.getElementById('svcName').value = ""; document.getElementById('svcTotal').value = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = ""; focusBarcodeField();
@@ -486,7 +533,16 @@
         cBox.style.display = 'block'; cBody.innerHTML = ''; let total = 0;
         cart.forEach((cItem, idx) => {
             let subtotal = cItem.qty * cItem.finalPrice; total += subtotal;
-            cBody.innerHTML += '<tr><td><b>' + cItem.n + ' (' + cItem.m + ')</b></td><td>' + cItem.qty + '</td><td>' + cItem.finalPrice.toFixed(2) + '</td><td><b>' + subtotal.toFixed(2) + ' د.ت</b></td><td><button onclick="removeFromCart(' + idx + ')" style="background:none; border:none; color:var(--danger); cursor:pointer;">❌</button></td></tr>';
+            
+            let stockWarningText = "";
+            if(!cItem.stockId.startsWith("QUICK-")) {
+                let sItem = stock.find(s => s.id === cItem.stockId);
+                if (sItem && (sItem.q - cItem.qty) <= 1) {
+                    stockWarningText = '<br><span style="color:#d35400; font-size:11px; font-weight:bold;">⚠️ قطعة أخيرة في المخزن!</span>';
+                }
+            }
+
+            cBody.innerHTML += '<tr><td><b>' + cItem.n + ' (' + cItem.m + ')</b>' + stockWarningText + '</td><td>' + cItem.qty + '</td><td>' + cItem.finalPrice.toFixed(2) + '</td><td><b>' + subtotal.toFixed(2) + ' د.ت</b></td><td><button onclick="removeFromCart(' + idx + ')" style="background:none; border:none; color:var(--danger); cursor:pointer;">❌</button></td></tr>';
         });
         document.getElementById('cartTotalText').innerText = total.toFixed(2);
     }
@@ -496,25 +552,22 @@
 
     async function checkoutCart() {
         if(cart.length === 0) return;
-        const invoiceNum = "INV-" + Math.floor(100000 + Math.random() * 900000);
+        const invoiceNum = "INV-" + Date.now().toString().slice(-4) + "-" + Math.floor(100 + Math.random() * 900);
         const currentDate = new Date().toLocaleDateString('ar-TN'); const currentTime = new Date().toLocaleTimeString('ar-TN');
         
         cart.forEach(cItem => {
-            let targetItem = stock.find(s => s.id === cItem.stockId);
-            if(targetItem) {
-                targetItem.q -= cItem.qty; 
-                let itemTotalSale = cItem.qty * cItem.finalPrice; 
+            if(cItem.stockId.startsWith("QUICK-")) {
+                let itemTotalSale = cItem.qty * cItem.finalPrice;
                 let itemTotalCost = cItem.qty * cItem.cost;
-                logs.push({ 
-                    invoice: invoiceNum, 
-                    date: currentDate, 
-                    time: currentTime, 
-                    txt: cItem.n + ' (' + cItem.m + ')', 
-                    val: itemTotalSale, 
-                    prf: itemTotalSale - itemTotalCost, 
-                    itemCleanName: cItem.n, 
-                    itemQtySold: cItem.qty 
-                });
+                logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: cItem.n, val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: cItem.n, itemQtySold: cItem.qty });
+            } else {
+                let targetItem = stock.find(s => s.id === cItem.stockId);
+                if(targetItem) {
+                    targetItem.q -= cItem.qty; 
+                    let itemTotalSale = cItem.qty * cItem.finalPrice; 
+                    let itemTotalCost = cItem.qty * cItem.cost;
+                    logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: cItem.n + ' (' + cItem.m + ')', val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: cItem.n, itemQtySold: cItem.qty });
+                }
             }
         });
         
@@ -526,35 +579,13 @@
     function printSticker(item) {
         const win = window.open('', '_blank', 'width=350,height=220');
         const qrImgSrc = document.querySelector("#qrcode img").src;
-        
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">' +
-        '<style>' +
-            'body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 4px; text-align: center; background: #fff; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; } ' +
-            '.shop-title { font-size: 10px; font-weight: bold; color: #e67e22; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; } ' +
-            '.item-name { font-size: 11px; font-weight: bold; color: #2c3e50; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } ' +
-            '.sticker-main { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; } ' +
-            '.qr-side img { width: 42px; height: 42px; } ' +
-            '.price-side { text-align: right; } ' +
-            '.price-tag { font-size: 14px; font-weight: 800; color: #000; margin: 0; } ' +
-            '.code-text { font-size: 8px; font-family: monospace; color: #7f8c8d; margin-top: 1px; }' +
-        '</style></head><body>' +
-            '<div class="shop-title">Mobile Shop Béja</div>' +
-            '<div class="item-name">' + item.n + ' (' + item.m + ')</div>' +
-            '<div class="sticker-main">' +
-                '<div class="qr-side"><img src="' + qrImgSrc + '"></div>' +
-                '<div class="price-side">' +
-                    '<div class="price-tag">' + item.p.toFixed(2) + ' د.ت</div>' +
-                    '<div class="code-text">كود: ' + item.id + '</div>' +
-                '</div>' +
-            '</div>' +
-            '<script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 400);}<\/script>' +
-        '</body></html>');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 4px; text-align: center; background: #fff; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; } .shop-title { font-size: 10px; font-weight: bold; color: #e67e22; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; } .item-name { font-size: 11px; font-weight: bold; color: #2c3e50; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .sticker-main { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; } .qr-side img { width: 42px; height: 42px; } .price-side { text-align: right; } .price-tag { font-size: 14px; font-weight: 800; color: #000; margin: 0; } .code-text { font-size: 8px; font-family: monospace; color: #7f8c8d; margin-top: 1px; }</style></head><body><div class="shop-title">Mobile Shop Béja</div><div class="item-name">' + item.n + ' (' + item.m + ')</div><div class="sticker-main"><div class="qr-side"><img src="' + qrImgSrc + '"></div><div class="price-side"><div class="price-tag">' + item.p.toFixed(2) + ' د.ت</div><div class="code-text">كود: ' + item.id + '</div></div></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 400);}<\/script></body></html>');
         win.document.close();
     }
 
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
         const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
-        itemsList.forEach((item, index) => {
+        itemsList.forEach((item) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal;
             rowsHtml += '<tr><td>' + (item.m ? item.n + ' - ' + item.m : item.n) + '</td><td style="text-align: center; font-weight: bold;">' + item.qty + '</td><td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
@@ -585,7 +616,9 @@
 
     function renderJard() {
         if(currentRole !== 'admin') return; const lb = document.getElementById('logBody'); if(!lb) return; lb.innerHTML = '';
-        let sV = 0, sP = 0; let salesCountMap = {};
+        let sV = 0, sP = 0; 
+        let salesCountMap = {};
+        let serviceCountMap = {}; 
         let strategicIncomeBase = 0; 
 
         logs.forEach((l, index) => {
@@ -593,30 +626,37 @@
             let inv = l.invoice ? l.invoice : "---"; let dt = l.date ? l.date : "اليوم"; let tm = l.time ? l.time : "--:--";
             lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
             
-            if (l.txt.includes("🛠️ صيانة:")) {
+            if (l.txt.includes("🛠️ صيانة:") || l.isService) {
                 strategicIncomeBase += l.prf; 
+                if (l.itemCleanName) { serviceCountMap[l.itemCleanName] = (serviceCountMap[l.itemCleanName] || 0) + 1; }
             } else {
                 strategicIncomeBase += l.val; 
-            }
-
-            if (l.itemCleanName && l.itemQtySold) {
-                salesCountMap[l.itemCleanName] = (salesCountMap[l.itemCleanName] || 0) + l.itemQtySold;
+                if (l.itemCleanName && l.itemQtySold) { salesCountMap[l.itemCleanName] = (salesCountMap[l.itemCleanName] || 0) + l.itemQtySold; }
             }
         });
         
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
         calculateFinancialDivision(strategicIncomeBase);
-        renderTopSelling(salesCountMap);
+        renderTopSelling(salesCountMap, serviceCountMap);
     }
 
-    function renderTopSelling(salesMap) {
-        const listContainer = document.getElementById('topSellingList'); if(!listContainer) return;
-        let sortedArray = []; for (let key in salesMap) { sortedArray.push({ name: key, qty: salesMap[key] }); }
-        sortedArray.sort((a, b) => b.qty - a.qty);
-        let top5 = sortedArray.slice(0, 5);
-        if (top5.length === 0) { listContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 13px;">لا توجد مبيعات مسجلة في هذا الشهر حالياً.</p>'; return; }
-        listContainer.innerHTML = top5.map((item, idx) => '<div class="top-item-row"><div><b>#' + (idx+1) + '</b> ' + item.name + '</div><span class="top-badge">بيع منها: ' + item.qty + ' قطع</span></div>').join('');
+    function renderTopSelling(salesMap, serviceMap) {
+        const listContainer = document.getElementById('topSellingList');
+        const svcContainer = document.getElementById('topServiceList');
+        if(!listContainer || !svcContainer) return;
+        
+        let sortedSales = []; for (let key in salesMap) { sortedSales.push({ name: key, qty: salesMap[key] }); }
+        sortedSales.sort((a, b) => b.qty - a.qty);
+        let top5Sales = sortedSales.slice(0, 5);
+        if (top5Sales.length === 0) { listContainer.innerHTML = '<p style="color:#64748b; text-align:center; font-size:13px;">لا توجد مبيعات حالياً.</p>'; }
+        else { listContainer.innerHTML = top5Sales.map((item, idx) => '<div class="top-item-row"><div><b>#' + (idx+1) + '</b> ' + item.name + '</div><span class="top-badge">' + item.qty + ' قطع</span></div>').join(''); }
+        
+        let sortedSvcs = []; for (let key in serviceMap) { sortedSvcs.push({ name: key, qty: serviceMap[key] }); }
+        sortedSvcs.sort((a, b) => b.qty - a.qty);
+        let top5Svcs = sortedSvcs.slice(0, 5);
+        if (top5Svcs.length === 0) { svcContainer.innerHTML = '<p style="color:#64748b; text-align:center; font-size:13px;">لا توجد عمليات صيانة حالياً.</p>'; }
+        else { svcContainer.innerHTML = top5Svcs.map((item, idx) => '<div class="top-item-row"><div><b>#' + (idx+1) + '</b> ' + item.name + '</div><span class="top-badge top-badge-svc">' + item.qty + ' عمليات</span></div>').join(''); }
     }
 
     function calculateFinancialDivision(totalSales) {
@@ -660,15 +700,23 @@
     function closeQR() { document.getElementById("qrModal").style.display = "none"; focusBarcodeField(); }
     function search() { const t = document.getElementById('searchBox').value.toLowerCase(); renderStock(stock.filter(i => i.n.toLowerCase().includes(t) || i.m.toLowerCase().includes(t))); }
     
-    function deleteProduct(id) { 
+    // تم الإصلاح: تحويل دالة حذف منتج لدالة سحابية متزامنة تمنع التداخل البرمجي
+    async function deleteProduct(id) { 
         if(confirm("حذف المنتج نهائياً من المخزن السحابي؟")) { 
             stock = stock.filter(item => item.id !== id); 
-            cloudSaveStock(); 
+            await cloudSaveStock(); 
         } 
         focusBarcodeField(); 
     }
     
-    function deleteLog(i) { if(confirm("إزالة العملية؟")) { logs.splice(i,1); cloudSaveLogs(); } focusBarcodeField(); }
+    // تم الإصلاح: تحويل دالة حذف عملية من الجرد لدالة متزامنة لمنع الـ Interval من إعادتها
+    async function deleteLog(i) { 
+        if(confirm("إزالة العملية؟")) { 
+            logs.splice(i,1); 
+            await cloudSaveLogs(); 
+        } 
+        focusBarcodeField(); 
+    }
 </script>
 </body>
 </html>
