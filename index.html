@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v25.2 Stable</title>
+    <title>Mobile Shop Béja - Cloud System v25.3 Financial Stable</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -263,7 +263,7 @@
 
     <div class="profit-dashboard admin-only" id="financeDashboard">
         <h3 style="color: var(--primary); border-right-color: var(--primary); margin-bottom: 5px;">💼 لوحة التخطيط المالي الاستراتيجي الفاخرة</h3>
-        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">خصم آلي للالتزامات الثابتة (335 د.ت)، مع تقسيم **باقي المدخول الإجمالي** (30% إعادة استثمار | 40% ادخار | 30% شخصي)</p>
+        <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">خصم آلي للالتزامات الثابتة (335 د.ت) من **(المدخول الإجمالي للسلع + صافي ربح الصيانة)**، ثم تقسيم الباقي: (30% استثمار | 40% ادخار | 30% شخصي)</p>
         
         <div class="profit-grid">
             <div class="profit-card" style="border-top: 4px solid var(--danger);">
@@ -279,7 +279,7 @@
                 <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(شراء سلعة وتكبير المحل)</div>
                 <div id="valInvestment" class="card-value" style="color: var(--accent-blue);">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barInvestment" class="progress-fill fill-investment"></div></div>
-                <span class="percentage-tag">مخصص: 30% من المدخول الباقي</span>
+                <span class="percentage-tag">مخصص: 30% من الوعاء الهجين</span>
             </div>
 
             <div class="profit-card" style="border-top: 4px solid var(--accent-gold);">
@@ -287,7 +287,7 @@
                 <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(احتياطي وأمان للمحل)</div>
                 <div id="valSavings" class="card-value" style="color: #d4ac0d;">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barSavings" class="progress-fill fill-savings"></div></div>
-                <span class="percentage-tag">مخصص: 40% من المدخول الباقي</span>
+                <span class="percentage-tag">مخصص: 40% من الوعاء الهجين</span>
             </div>
             
             <div class="profit-card" style="border-top: 4px solid var(--success);">
@@ -295,7 +295,7 @@
                 <div style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">(الراتب الصافي المتاح للملك)</div>
                 <div id="valPersonal" class="card-value" style="color: var(--success);">0.00 د.ت</div>
                 <div class="progress-bar-bg"><div id="barPersonal" class="progress-fill fill-personal"></div></div>
-                <span class="percentage-tag">مخصص: 30% من المدخول الباقي</span>
+                <span class="percentage-tag">مخصص: 30% من الوعاء الهجين</span>
             </div>
         </div>
     </div>
@@ -317,7 +317,7 @@
     const FIREBASE_URL = "https://mobileshopbeja-default-rtdb.europe-west1.firebasedatabase.app";
     const PASS_ADMIN = "MSBA1122", PASS_WORKER = "MSB123";
     let stock = []; let logs = []; let cart = []; let currentRole = ""; let html5QrCodeScanner = null;
-    let isPromptOpen = false; // متغير علمي لمنع سرقة الـ focus أثناء فتح النوافذ المنبثقة
+    let isPromptOpen = false; 
 
     function playBarcodeBeep() {
         try {
@@ -453,7 +453,6 @@
         const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value, m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
         if(n && m && q >= 0) {
             if(!id) { id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); }
-            // منع التكرار بنفس الـ ID
             let exists = stock.find(item => item.id === id);
             if(exists) { alert("❌ هذا الكود مسجل مسبقاً لمنتج آخر!"); return; }
             stock.push({ id, n, cat, m, q, c, p }); cloudSaveStock();
@@ -587,12 +586,19 @@
     function renderJard() {
         if(currentRole !== 'admin') return; const lb = document.getElementById('logBody'); if(!lb) return; lb.innerHTML = '';
         let sV = 0, sP = 0; let salesCountMap = {};
-        
+        let strategicIncomeBase = 0; 
+
         logs.forEach((l, index) => {
             sV += l.val; sP += l.prf;
             let inv = l.invoice ? l.invoice : "---"; let dt = l.date ? l.date : "اليوم"; let tm = l.time ? l.time : "--:--";
             lb.innerHTML += '<tr><td><code>' + inv + '</code></td><td>' + dt + '</td><td>' + tm + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td><button onclick="deleteLog(' + index + ')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
             
+            if (l.txt.includes("🛠️ صيانة:")) {
+                strategicIncomeBase += l.prf; 
+            } else {
+                strategicIncomeBase += l.val; 
+            }
+
             if (l.itemCleanName && l.itemQtySold) {
                 salesCountMap[l.itemCleanName] = (salesCountMap[l.itemCleanName] || 0) + l.itemQtySold;
             }
@@ -600,7 +606,7 @@
         
         document.getElementById('sumSales').innerText = sV.toFixed(2) + " د.ت";
         document.getElementById('sumProfit').innerText = sP.toFixed(2) + " د.ت";
-        calculateFinancialDivision(sV);
+        calculateFinancialDivision(strategicIncomeBase);
         renderTopSelling(salesCountMap);
     }
 
