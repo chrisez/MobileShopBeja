@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System v26.7 - Fixed</title>
+    <title>Mobile Shop Béja - System</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -148,7 +148,7 @@
     <div class="logo-container">
         <img src="logo.png" alt="MSB Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/140x140?text=MSB+LOGO'">
     </div>
-    <h2 style="color: var(--primary); margin: 0 0 20px 0;">نظام Mobile Shop Béجا سحابي</h2>
+    <h2 style="color: var(--primary); margin: 0 0 20px 0;">Mobile Shop Béja - System</h2>
     <div class="login-group">
         <label>نوع الحساب</label>
         <select id="loginRole">
@@ -335,9 +335,9 @@
                 <h2>📊 الجرد اليومي والأرباح المتقدمة</h2>
                 <button onclick="exportToExcelCSV()" class="btn" style="background:#27ae60; padding:8px 14px; font-size:13px;">📥 تحميل الجرد كملف Excel (CSV)</button>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div style="grid-template-columns: 1fr 1fr 1fr; display: grid; gap: 10px; margin-bottom: 15px;">
                 <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; opacity: 0.8;">المداخيل الإجمالية</div>
+                    <div style="font-size: 11px; opacity: 0.8;">المداخيل الإجمالية للسلع</div>
                     <div id="sumSales" style="font-size: 18px; font-weight: bold;">0.00</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
@@ -345,7 +345,7 @@
                     <div id="sumDebts" style="font-size: 18px; font-weight: bold; color:#ff7675;">0.00</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; opacity: 0.8;">الربح الصافي الإجمالي</div>
+                    <div style="font-size: 11px; opacity: 0.8;">الربح الصافي الشامل</div>
                     <div id="sumProfit" class="blur-sensitive" style="font-size: 18px; font-weight: bold;">0.00</div>
                 </div>
             </div>
@@ -433,11 +433,19 @@
         "35759111": "Infinix Hot 30i", "35824111": "Tecno Spark 10 Pro"
     };
 
+    // عزل مطلق ومثالي للصفحات يمنع تداخل أي واجهتين معاً
     function switchPage(pageId, tabButton) {
         stopCamera();
-        document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active-page'));
+        document.querySelectorAll('.app-page').forEach(page => {
+            page.classList.remove('active-page');
+            page.style.display = 'none'; 
+        });
+        
         const targetPage = document.getElementById(pageId);
-        if(targetPage) targetPage.classList.add('active-page');
+        if(targetPage) {
+            targetPage.classList.add('active-page');
+            targetPage.style.display = 'block';
+        }
         
         document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active-tab'));
         if(tabButton) tabButton.classList.add('active-tab');
@@ -762,12 +770,12 @@
             debtDescriptionItems.push(cItem.qty + "x " + cItem.n + (cItem.imei ? " ("+cItem.imei+")" : ""));
 
             if(cItem.stockId.startsWith("QUICK-")) {
-                logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: displayItemName, val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: cItem.n, itemQtySold: cItem.qty, status: isDebt ? "آجل" : "نقدي" });
+                logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: displayItemName, val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: cItem.n, itemQtySold: cItem.qty, isService: false, status: isDebt ? "آجل" : "نقدي" });
             } else {
                 let targetItem = stock.find(s => s.id === cItem.stockId);
                 if(targetItem) {
                     targetItem.q -= cItem.qty;
-                    logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: targetItem.n + ' (' + targetItem.m + ')' + (cItem.imei ? " [IMEI: " + cItem.imei + "]" : ""), val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: targetItem.n, itemQtySold: cItem.qty, status: isDebt ? "آجل" : "نقدي" });
+                    logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: targetItem.n + ' (' + targetItem.m + ')' + (cItem.imei ? " [IMEI: " + cItem.imei + "]" : ""), val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: targetItem.n, itemQtySold: cItem.qty, isService: false, status: isDebt ? "آجل" : "نقدي" });
                 }
             }
         });
@@ -784,13 +792,11 @@
         await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs();
     }
 
-    // إصلاح وعرض صفحة الديون بطريقة المعرفات الآمنة الفريدة
     function renderDebts() {
         const dBody = document.getElementById('debtsBody'); if(!dBody) return; dBody.innerHTML = '';
         if(debts.length === 0) { dBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">لا توجد ديون معلقة حالياً بالحساب السحابي.</td></tr>'; return; }
         
         debts.forEach((d) => {
-            // استخدام المعرف الفريد d.id لحماية الاستدعاء والتعديل الآمن
             dBody.innerHTML += '<tr class="debt-row">' +
                 '<td><b>👤 ' + d.customer + '</b></td>' +
                 '<td>' + d.desc + '</td>' +
@@ -804,7 +810,6 @@
         });
     }
 
-    // إصلاح دالة معالجة سداد الديون والكريديت والربط السحابي الدقيق
     async function settleDebt(debtId, isPartial = false) {
         let targetDebtIdx = debts.findIndex(d => d.id === debtId || String(d.id) === String(debtId));
         if(targetDebtIdx === -1) { alert("❌ لم يتم العثور على ملف الدين، يرجى التحديث."); return; }
@@ -812,7 +817,7 @@
         
         if(!isPartial) {
             if(confirm("💳 تأكيد خلاص كامل الديون المترتبة على الحريف ("+settled.customer+") بقيمة ("+settled.amount.toFixed(2)+" د.ت)؟")) {
-                logs.push({ invoice: "SETTLE-FULL-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: "💰 استخلاص دين: " + settled.customer, val: settled.amount, prf: 0, status: "خلاص دين" });
+                logs.push({ invoice: "SETTLE-FULL-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: "💰 استخلاص دين: " + settled.customer, val: settled.amount, prf: 0, isService: false, status: "خلاص دين" });
                 debts.splice(targetDebtIdx, 1); 
                 await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم تحديث وقيد الحساب بنجاح.");
             }
@@ -821,7 +826,7 @@
             if (isNaN(payAmount) || payAmount <= 0 || payAmount > settled.amount) { alert("❌ مبلغ غير صالح أو يتجاوز قيمة الدين!"); return; }
             
             settled.amount -= payAmount;
-            logs.push({ invoice: "SETTLE-PART-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: `🪙 خلاص جزئي: ${settled.customer}`, val: payAmount, prf: 0, status: "خلاص دين جزئي" });
+            logs.push({ invoice: "SETTLE-PART-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: `🪙 خلاص جزئي: ${settled.customer}`, val: payAmount, prf: 0, isService: false, status: "خلاص دين جزئي" });
             
             if(settled.amount <= 0) { debts.splice(targetDebtIdx, 1); }
             await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم قيد الدفعة في الجرد وتحديث الدين المتبقي.");
@@ -834,13 +839,14 @@
         win.document.close();
     }
 
+    // الفاتورة الفاخرة بدون الختم أو الإمضاء وبعنوان شارع 18 جانفي باجة
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
         const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
         itemsList.forEach((item) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal; let imeiDetails = item.imei ? `<br><span style="font-size:11px; color:#64748b;">IMEI: ${item.imei}</span>` : "";
             rowsHtml += '<tr><td>' + (item.m ? item.n + ' - ' + item.m : item.n) + imeiDetails + '</td><td style="text-align: center; font-weight: bold;">' + item.qty + '</td><td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
         });
-        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }.invoice-wrapper { max-width: 850px; margin: 0 auto; }.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }.brand-side { display: flex; align-items: center; gap: 15px; }.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }.brand-title-text span { color: #e67e22; }.brand-subtitle-details { font-size: 12px; color: #64748b; margin: 5px 0 0 0; font-weight: normal; }.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }.meta-label { font-weight: bold; color: #64748b; }.meta-val { color: #1e293b; font-weight: 600; }.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }.items-luxury-table tr:last-child td { border-bottom: none; }.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }.auth-signatures-space { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 0 20px; }.sig-box { text-align: center; width: 150px; }.sig-title { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 40px; }.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }</style></head><body><img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'"><div class="invoice-wrapper"><div class="header-grid"><div class="brand-side"><img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'"><div><h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1><p class="brand-subtitle-details">باجة - نهج الاستقلال (بجانب الفتح) | هاتف: 29.150.225</p></div></div><div style="text-align: left; font-size: 12px; color: #64748b;"><b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026</div></div><div class="invoice-main-title">' + type + '</div><div class="meta-container-box"><div class="meta-inner-grid"><div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div><div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">' + (type.includes("بالآجل") ? "⚠️ مؤجل بـ الدفتر" : "✓ مدفوع بالكامل") + '</span></div><div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div><div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div></div></div><table class="items-luxury-table"><thead><tr><th style="width: 50%; text-align: right;">المنتج / الخدمة</th><th style="width: 12%; text-align: center;">الكمية</th><th style="width: 18%; text-align: center;">السعر</th><th style="width: 20%; text-align: center;">المجموع</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div class="bottom-pricing-section"><div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div><div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div></div><div class="auth-signatures-space"><div class="sig-box"><div class="sig-title">توقيع المسؤول</div><div style="font-family: cursive; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">Mobile Shop</div></div><div class="sig-box"><div class="sig-title">ختم المتجر الرسمي</div><div style="width: 80px; height: 80px; border: 3px double #2c3e50; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #2c3e50; transform: rotate(-5deg);">MSB BEJA</div></div></div><div class="invoice-footer-notes-text" style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 50px; border-top: 1px dashed #e2e8f0; padding-top: 15px;"><p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>.</p></div></div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script></body></html>');
+        win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", Tahoma, sans-serif; color: #1e293b; margin: 0; padding: 40px; background-color: #fff; position: relative; min-height: 100vh; box-sizing: border-box; }.watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); width: 450px; height: auto; opacity: 0.06; z-index: -1; pointer-events: none; }.invoice-wrapper { max-width: 850px; margin: 0 auto; }.header-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }.brand-side { display: flex; align-items: center; gap: 15px; }.brand-logo-top { width: 75px; height: auto; object-fit: contain; background: transparent; }.brand-title-text { font-size: 26px; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }.brand-title-text span { color: #e67e22; }.brand-subtitle-details { font-size: 13px; color: #64748b; margin: 5px 0 0 0; font-weight: 600; }.invoice-main-title { font-size: 24px; font-weight: 800; text-align: center; color: #1e293b; margin: 25px 0 15px 0; letter-spacing: 0.5px; }.meta-container-box { border: 1.5px solid #2c3e50; border-radius: 14px; padding: 15px 25px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.9); }.meta-inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; }.meta-item-row { display: flex; justify-content: flex-start; gap: 8px; }.meta-label { font-weight: bold; color: #64748b; }.meta-val { color: #1e293b; font-weight: 600; }.items-luxury-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 30px; border-radius: 12px 12px 0 0; overflow: hidden; border: 1px solid #cbd5e1; }.items-luxury-table th { background: #1e293b; color: #ffffff; padding: 14px 12px; font-size: 14px; font-weight: 700; border: none; }.items-luxury-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #334155; }.items-luxury-table tr:last-child td { border-bottom: none; }.items-luxury-table tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }.bottom-pricing-section { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 15px; background: rgba(248, 250, 252, 0.85); border-radius: 10px; border: 1px solid #e2e8f0; }.total-badge-price { font-size: 20px; font-weight: 800; color: #e67e22; }.footer-notes-text { text-align: center; font-size: 11px; color: #94a3b8; margin-top: 60px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }@media print { body { padding: 0; } .items-luxury-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .watermark-bg { -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 0.06 !important; } }</style></head><body><img src="logo.png" class="watermark-bg" onerror="this.style.display=\'none\'"><div class="invoice-wrapper"><div class="header-grid"><div class="brand-side"><img src="logo.png" class="brand-logo-top" onerror="this.src=\'https://via.placeholder.com/75?text=MSB\'"><div><h1 class="brand-title-text">Mobile Shop <span>Béja</span></h1><p class="brand-subtitle-details">شارع 18 جانفي باجة | هاتف: 29.150.225</p></div></div><div style="text-align: left; font-size: 12px; color: #64748b;"><b>رقم إيداع المحل المالي</b><br>MSB-SOUK-2026</div></div><div class="invoice-main-title">' + type + '</div><div class="meta-container-box"><div class="meta-inner-grid"><div class="meta-item-row"><span class="meta-label">الرقم المرجعي للإيصال:</span><span class="meta-val" style="font-family: monospace; color: #e67e22;">' + invoiceNum + '</span></div><div class="meta-item-row"><span class="meta-label">حالة السداد الحالية:</span><span class="meta-val" style="color: #2ecc71;">' + (type.includes("بالآجل") ? "⚠️ مؤجل بـ الدفتر" : "✓ مدفوع بالكامل") + '</span></div><div class="meta-item-row"><span class="meta-label">تاريخ تحرير الفاتورة:</span><span class="meta-val">' + currentDate + '</span></div><div class="meta-item-row"><span class="meta-label">توقيت تسجيل العملية:</span><span class="meta-val" style="font-family: monospace;">' + (currentTime ? currentTime : '--:--') + '</span></div></div></div><table class="items-luxury-table"><thead><tr><th style="width: 50%; text-align: right;">المنتج / الخدمة</th><th style="width: 12%; text-align: center;">الكمية</th><th style="width: 18%; text-align: center;">السعر</th><th style="width: 20%; text-align: center;">المجموع</th></tr></thead><tbody>' + rowsHtml + '</tbody></table><div class="bottom-pricing-section"><div style="font-size: 13px; color: #64748b;">الرسوم المضافة والتخفيضات: <span style="font-weight: bold; color: #1e293b;">0.00 د.ت</span></div><div class="total-badge-price">المجموع الإجمالي: ' + totalAmount.toFixed(2) + ' د.ت</div></div><div class="footer-notes-text"><p>شكراً لزيارتكم وثقتكم بنا في <b>Mobile Shop Béja</b>.</p></div></div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 1000); };<\/script></body></html>');
         win.document.close();
     }
 
@@ -868,22 +874,28 @@
 
     function renderJard() {
         const lb = document.getElementById('logBody'); const wlb = document.getElementById('workerLogBody'); if(!lb || !wlb) return;
-        lb.innerHTML = ''; wlb.innerHTML = ''; let sV = 0, sP = 0; let salesCountMap = {}; let serviceCountMap = {}; let strategicIncomeBase = 0;
+        lb.innerHTML = ''; wlb.innerHTML = ''; let sV = 0, sP = 0; let salesCountMap = {}; let serviceCountMap = {}; 
+        
+        // المتغير الاستراتيجي الدقيق لحساب الخطة المالية الجديدة
+        let strategicIncomeBase = 0;
 
         logs.forEach((l) => {
             let statusText = l.status ? l.status : "نقدي";
             let stateBadge = statusText === "آجل" ? '<span class="debt-badge" style="background:#e74c3c;">على الحساب</span>' : (statusText.includes("جزئي") ? '<span class="debt-badge" style="background:#3498db;">خلاص جزئي</span>' : '<span class="debt-badge" style="background:#2ecc71;">مدفوع</span>');
+            
             if(currentRole === 'admin') {
                 sV += l.val; sP += l.prf;
                 lb.innerHTML += '<tr><td><code>' + l.invoice + '</code></td><td>' + l.date + '</td><td>' + l.time + '</td><td>' + l.txt + '</td><td>' + l.val.toFixed(2) + '</td><td class="blur-sensitive">' + l.prf.toFixed(2) + '</td><td>' + stateBadge + '</td><td><button onclick="deleteLog(\'' + l.invoice + '\')" style="background:none; border:none; color:white; cursor:pointer;">❌</button></td></tr>';
             }
             wlb.innerHTML += '<tr><td><code>' + l.invoice + '</code></td><td>' + l.date + ' ' + l.time + '</td><td>' + l.txt + '</td><td><b>' + l.val.toFixed(2) + ' د.ت</b> (' + statusText + ')</td></tr>';
             
-            if (l.txt.includes("🛠️ صيانة:") || l.isService) {
-                strategicIncomeBase += l.prf; if (l.itemCleanName) serviceCountMap[l.itemCleanName] = (serviceCountMap[l.itemCleanName] || 0) + 1;
+            // التعديل الجوهري: إذا كانت العملية صيانة يحسب الأرباح فقط، وإذا كانت منتج يحسب كامل المداخيل
+            if (l.isService === true || l.txt.includes("🛠️ صيانة:")) {
+                strategicIncomeBase += l.prf; // الأرباح فقط بالنسبة للصيانة
+                if (l.itemCleanName) serviceCountMap[l.itemCleanName] = (serviceCountMap[l.itemCleanName] || 0) + 1;
             } else {
                 if(statusText !== "خلاص دين" && statusText !== "خلاص دين جزئي") {
-                    strategicIncomeBase += l.val;
+                    strategicIncomeBase += l.val; // المداخيل الإجمالية بالنسبة للسلع المباعة
                 }
                 if (l.itemCleanName && l.itemQtySold) salesCountMap[l.itemCleanName] = (salesCountMap[l.itemCleanName] || 0) + l.itemQtySold;
             }
