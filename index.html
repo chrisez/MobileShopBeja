@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - Cloud System Multi-Page v26.6 - Fixed</title>
+    <title>Mobile Shop Béja - Cloud System v26.7 - Fixed</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -43,13 +43,11 @@
         .app-page.active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تحسين شريط التنقل ليتناسب مع الحاسوب والموبايل معاً */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--box-bg); height: 65px; display: none; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-color); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 999; }
         .nav-tab { background: none; border: none; color: #7f8c8d; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; height: 100%; gap: 4px; }
         .nav-tab span { font-size: 20px; }
         .nav-tab.active-tab { color: var(--primary); border-top: 3px solid var(--primary); background: rgba(230, 126, 34, 0.05); }
 
-        /* تحسين مظهر الشريط على شاشات الحاسوب الكبيرة */
         @media (min-width: 900px) {
             .bottom-nav { max-width: 600px; margin: 0 auto; border-radius: 15px 15px 0 0; border: 1px solid var(--border-color); border-bottom: none; }
         }
@@ -309,7 +307,7 @@
                         <tr><th>الحريف / الهاتف</th><th>البيان والعملية</th><th>التاريخ</th><th>المبلغ المتبقي</th><th>إجراء</th></tr>
                     </thead>
                     <tbody id="debtsBody">
-                        <tr><td colspan="5" style="text-align:center; color:#7f8c8d;">لا توجد ديون معلقة حالياً.</td></tr>
+                        <tr><td colspan="5" style="text-align:center; color:#7f8c8d;">جاري تحميل الديون المستحقة...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -319,7 +317,7 @@
     <div id="page-reports" class="app-page admin-only">
         <div class="analytics-container">
             <div class="top-selling-card">
-                <h3 style="color: var(--accent-purple); border-right-color: var(--accent-purple); margin-bottom: 10px;">📈 السلع الـ 5 الأكثر مبيعاًوحركة</h3>
+                <h3 style="color: var(--accent-purple); border-right-color: var(--accent-purple); margin-bottom: 10px;">📈 السلع الـ 5 الأكثر مبيعاً وحركة</h3>
                 <div id="topSellingList">
                     <p style="color: #64748b; text-align: center; font-size: 13px;">لا توجد مبيعات.</p>
                 </div>
@@ -444,7 +442,6 @@
         document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active-tab'));
         if(tabButton) tabButton.classList.add('active-tab');
         
-        // ميزة تركيز آلي للحاسوب عند الدخول لصفحة المبيعات
         if(pageId === 'page-sales') {
             setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
         }
@@ -742,7 +739,6 @@
 
     function removeFromCart(idx) { cart.splice(idx, 1); cloudSaveCart(); }
     
-    // إصلاح مشكلة عدم مسح البيانات النصية للواجهة عند التصفير
     function clearCart() { 
         cart = []; 
         document.getElementById('cashReceived').value = ""; 
@@ -750,11 +746,10 @@
         cloudSaveCart(); 
     }
 
-    // إصلاح آمن ومستقر لمعالجة المخزون والتداخل السحابي الحرج
     async function checkoutCart(isDebt = false) {
         if(cart.length === 0) return; let customerName = "حريف نقدي";
         if (isDebt) {
-            isPromptOpen = true; customerName = prompt("أدخل اسم ورقم هاتف الحريف:", ""); isPromptOpen = false;
+            isPromptOpen = true; customerName = prompt("أدخل اسم ورقم هاتف الحريف لقيد الكريديت:", ""); isPromptOpen = false;
             if(!customerName) { alert("❌ يجب تحديد الاسم!"); return; }
         }
         const invoiceNum = "INV-" + Date.now().toString().slice(-4) + "-" + Math.floor(100 + Math.random() * 900);
@@ -771,7 +766,7 @@
             } else {
                 let targetItem = stock.find(s => s.id === cItem.stockId);
                 if(targetItem) {
-                    targetItem.q -= cItem.qty; // سحب آمن وفوري للمخزون محلياً
+                    targetItem.q -= cItem.qty;
                     logs.push({ invoice: invoiceNum, date: currentDate, time: currentTime, txt: targetItem.n + ' (' + targetItem.m + ')' + (cItem.imei ? " [IMEI: " + cItem.imei + "]" : ""), val: itemTotalSale, prf: itemTotalSale - itemTotalCost, itemCleanName: targetItem.n, itemQtySold: cItem.qty, status: isDebt ? "آجل" : "نقدي" });
                 }
             }
@@ -783,43 +778,53 @@
         }
         printMultipleInvoice(isDebt ? "فاتورة بيع بالآجل" : "فاتورة بيع نقدية", cart, invoiceNum, currentDate, currentTime); 
         
-        // التصفير المباشر والأمن للواجهة والسحابة
         cart = []; 
         document.getElementById('cashReceived').value = ""; 
         document.getElementById('cashChangeText').innerText = "0.00";
         await cloudSaveCart(); await cloudSaveStock(); await cloudSaveLogs();
     }
 
+    // إصلاح وعرض صفحة الديون بطريقة المعرفات الآمنة الفريدة
     function renderDebts() {
         const dBody = document.getElementById('debtsBody'); if(!dBody) return; dBody.innerHTML = '';
-        if(debts.length === 0) { dBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">لا توجد ديون حالياً.</td></tr>'; return; }
-        debts.forEach((d, idx) => {
+        if(debts.length === 0) { dBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#7f8c8d;">لا توجد ديون معلقة حالياً بالحساب السحابي.</td></tr>'; return; }
+        
+        debts.forEach((d) => {
+            // استخدام المعرف الفريد d.id لحماية الاستدعاء والتعديل الآمن
             dBody.innerHTML += '<tr class="debt-row">' +
                 '<td><b>👤 ' + d.customer + '</b></td>' +
                 '<td>' + d.desc + '</td>' +
                 '<td>' + d.date + '</td>' +
                 '<td style="color:var(--danger); font-weight:bold;">' + d.amount.toFixed(2) + ' د.ت</td>' +
-                '<td><button onclick="settleDebt(' + idx + ', false)" class="btn btn-success" style="padding:4px 8px; font-size:12px; margin-left:5px;">✅ خلاص كامل</button> <button onclick="settleDebt(' + idx + ', true)" class="btn" style="background:var(--accent-blue); padding:4px 8px; font-size:12px;">🪙 خلاص جزئي</button></td>' +
+                '<td>' +
+                    '<button onclick="settleDebt(\'' + d.id + '\', false)" class="btn btn-success" style="padding:5px 10px; font-size:12px; margin-left:5px;">✅ خلاص كامل</button>' +
+                    '<button onclick="settleDebt(\'' + d.id + '\', true)" class="btn" style="background:var(--accent-blue); padding:5px 10px; font-size:12px;">🪙 خلاص جزئي</button>' +
+                '</td>' +
             '</tr>';
         });
     }
 
-    // إصلاح دالة تتبع التكلفة والربح الحقيقي عند استرجاع الكريديت والديون المعلقة
-    async function settleDebt(idx, isPartial = false) {
-        let settled = debts[idx];
+    // إصلاح دالة معالجة سداد الديون والكريديت والربط السحابي الدقيق
+    async function settleDebt(debtId, isPartial = false) {
+        let targetDebtIdx = debts.findIndex(d => d.id === debtId || String(d.id) === String(debtId));
+        if(targetDebtIdx === -1) { alert("❌ لم يتم العثور على ملف الدين، يرجى التحديث."); return; }
+        let settled = debts[targetDebtIdx];
+        
         if(!isPartial) {
-            if(confirm("💳 خلاص كامل الديون بقيمة ("+settled.amount.toFixed(2)+" د.ت)؟")) {
-                // الأرباح تحدد كصفر هنا لأن ربح القطعة الأصلي تم احتسابه فعلياً عند البيع أول مرة
+            if(confirm("💳 تأكيد خلاص كامل الديون المترتبة على الحريف ("+settled.customer+") بقيمة ("+settled.amount.toFixed(2)+" د.ت)؟")) {
                 logs.push({ invoice: "SETTLE-FULL-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: "💰 استخلاص دين: " + settled.customer, val: settled.amount, prf: 0, status: "خلاص دين" });
-                debts.splice(idx, 1); await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم تحديث الحساب.");
+                debts.splice(targetDebtIdx, 1); 
+                await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم تحديث وقيد الحساب بنجاح.");
             }
         } else {
-            isPromptOpen = true; let payAmount = parseFloat(prompt(`المبلغ المستحق (${settled.amount.toFixed(2)} د.ت)\nأدخل القيمة المدفوعة:`, "")); isPromptOpen = false;
-            if (isNaN(payAmount) || payAmount <= 0 || payAmount > settled.amount) { alert("❌ مبلغ غير صالح!"); return; }
+            isPromptOpen = true; let payAmount = parseFloat(prompt(`المبلغ المستحق على الحريف (${settled.amount.toFixed(2)} د.ت)\nأدخل القيمة المدفوعة نقداً حالياً:`, "")); isPromptOpen = false;
+            if (isNaN(payAmount) || payAmount <= 0 || payAmount > settled.amount) { alert("❌ مبلغ غير صالح أو يتجاوز قيمة الدين!"); return; }
+            
             settled.amount -= payAmount;
             logs.push({ invoice: "SETTLE-PART-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: `🪙 خلاص جزئي: ${settled.customer}`, val: payAmount, prf: 0, status: "خلاص دين جزئي" });
-            if(settled.amount <= 0) { debts.splice(idx, 1); }
-            await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم قيد الدفعة.");
+            
+            if(settled.amount <= 0) { debts.splice(targetDebtIdx, 1); }
+            await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم قيد الدفعة في الجرد وتحديث الدين المتبقي.");
         }
     }
 
@@ -877,7 +882,6 @@
             if (l.txt.includes("🛠️ صيانة:") || l.isService) {
                 strategicIncomeBase += l.prf; if (l.itemCleanName) serviceCountMap[l.itemCleanName] = (serviceCountMap[l.itemCleanName] || 0) + 1;
             } else {
-                // احتساب المداخيل الاستراتيجية الهجينة (تستثني مبالغ الديون المسترجعة منعاً للتكرار المالي)
                 if(statusText !== "خلاص دين" && statusText !== "خلاص دين جزئي") {
                     strategicIncomeBase += l.val;
                 }
@@ -937,12 +941,14 @@
         document.getElementById("btnPrintStickerBtn").onclick = function() { printSticker(item); };
     }
     function closeQR() { document.getElementById("qrModal").style.display = "none"; }
+    
     function search() { 
         const t = document.getElementById('searchBox').value.toLowerCase().trim(); if(!t) { renderStock(stock); return; }
         renderStock(stock.filter(i => (i.n && i.n.toLowerCase().includes(t)) || (i.m && i.m.toLowerCase().includes(t)) || (i.cat && i.cat.toLowerCase().includes(t)) || (i.id && i.id.toLowerCase().includes(t)))); 
     }
-    async function deleteProduct(id) { if(currentRole !== 'admin') return; if(confirm("حذف المنتج؟")) { stock = stock.filter(item => item.id !== id); await cloudSaveStock(); } }
-    async function deleteLog(invoiceId) { if(currentRole !== 'admin') return; if(confirm("إزالة العملية؟")) { logs = logs.filter(l => l.invoice !== invoiceId); await cloudSaveLogs(); } }
+    
+    async function deleteProduct(id) { if(currentRole !== 'admin') return; if(confirm("حذف المنتج نهائياً من السيرفر؟")) { stock = stock.filter(item => item.id !== id); await cloudSaveStock(); } }
+    async function deleteLog(invoiceId) { if(currentRole !== 'admin') return; if(confirm("إزالة العملية من سجل الجرد المالي؟")) { logs = logs.filter(l => l.invoice !== invoiceId); await cloudSaveLogs(); } }
 
     initTheme();
 </script>
