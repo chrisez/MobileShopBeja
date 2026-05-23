@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Shop Béja - System</title>
+    <title>Mobile Shop Béja - System Pro</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -492,10 +492,22 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function isImeiSoldBefore(imei) {
+        if (!imei) return false;
+        return logs.some(log => log.txt && log.txt.includes(imei));
+    }
+
     function detectDeviceModel(imei, targetSpanId) {
         const span = document.getElementById(targetSpanId);
         if(!span) return "";
         if(!imei || imei.length < 8) { span.innerText = ""; return ""; }
+        
+        if (isImeiSoldBefore(imei)) {
+            span.innerHTML = "⚠️ <span style='color:var(--danger); font-weight:bold;'>تنبيه: هذا الـ IMEI مسجل كجهاز مباع سابقاً!</span>";
+            playAudioTone(300, 'sawtooth', 0.4);
+            return "";
+        }
+
         const tac = imei.substring(0, 8);
         if(imeiDatabase[tac]) {
             span.innerText = "📱 الموديل المكتشف آلياً: " + imeiDatabase[tac];
@@ -540,6 +552,11 @@
 
     function playBarcodeBeep() { playAudioTone(1400, 'sine', 0.08); }
     function playWarningBeep() { playAudioTone(580, 'triangle', 0.25); }
+    function playSuccessBeep() { playAudioTone(1800, 'sine', 0.15); }
+    function playDebtBeep() { 
+        playAudioTone(440, 'sine', 0.15);
+        setTimeout(() => { playAudioTone(330, 'sine', 0.2); }, 150);
+    }
 
     document.getElementById('loginPass').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); checkLogin(); } });
 
@@ -677,6 +694,10 @@
         const cost = (costInput && currentRole === 'admin') ? (parseFloat(costInput.value) || 0) : 0;
         const total = parseFloat(document.getElementById('svcTotal').value) || 0;
         
+        if (imei && isImeiSoldBefore(imei)) {
+            alert("⚠️ تنبيه أمني: الرقم التسلسلي IMEI هذا مسجل مسبقاً في العمليات السابقة! يرجى التثبت.");
+        }
+
         let detectedModel = detectDeviceModel(imei, 'svcDetectedText');
         let fullDeviceDetails = subDetails + (detectedModel ? " [" + detectedModel + "]" : "");
         let name = svcType + (fullDeviceDetails ? " (" + fullDeviceDetails + ")" : "");
@@ -698,6 +719,9 @@
             if (isDebt) {
                 debts.push({ id: "DBT-" + Date.now(), customer: customerName, desc: "🛠️ صيانة: " + name + (imei ? " (IMEI: "+imei+")" : ""), date: currentDate, amount: total });
                 cloudSaveDebts();
+                playDebtBeep();
+            } else {
+                playSuccessBeep();
             }
             cloudSaveLogs();
             
@@ -717,7 +741,11 @@
         
         let c = 0;
         const costInput = document.getElementById('pCost');
-        if (costInput && currentRole === 'admin') { c = parseFloat(costInput.value) || 0; }
+        if (costInput && currentRole === 'admin') { 
+            c = parseFloat(costInput.value) || 0; 
+        } else {
+            c = 0; 
+        }
 
         if(n && m && q >= 0 && p >= 0) {
             if(!id) { id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); }
@@ -743,7 +771,10 @@
         
         let imeiInput = ""; let autoDetectedName = "";
         if(item.cat === "هواتف") {
-            imeiInput = prompt("يرجى كتابة أو مسح IMEI الهاتف:", "");
+            imeiInput = prompt("يرجى كتابة أو مسح IMEI الهاتف:", "").trim();
+            if(imeiInput && isImeiSoldBefore(imeiInput)) {
+                alert("⚠️ تحذير أمني شديد: هذا الـ IMEI مسجل كجهاز تم بيعه سابقاً بالمتجر!");
+            }
             if(imeiInput) { let tac = imeiInput.substring(0, 8); if(imeiDatabase[tac]) autoDetectedName = imeiDatabase[tac]; }
         }
         let price = parseFloat(prompt("تأكيد سعر البيع للحبة (د.ت):", item.p)); isPromptOpen = false;
@@ -840,6 +871,9 @@
         if (isDebt) {
             debts.push({ id: "DBT-" + Date.now(), customer: customerName, desc: debtDescriptionItems.join(" + "), date: currentDate, amount: cartTotal });
             await cloudSaveDebts();
+            playDebtBeep();
+        } else {
+            playSuccessBeep();
         }
         printMultipleInvoice(isDebt ? "فاتورة بيع بالآجل" : "فاتورة بيع نقدية", cart, invoiceNum, currentDate, currentTime); 
         
@@ -877,6 +911,7 @@
                 logs.push({ invoice: "SETTLE-FULL-" + Date.now().toString().slice(-3), date: new Date().toLocaleDateString('ar-TN'), time: new Date().toLocaleTimeString('ar-TN'), txt: "💰 استخلاص دين: " + settled.customer, val: settled.amount, prf: 0, isService: false, status: "خلاص دين" });
                 debts.splice(targetDebtIdx, 1); 
                 await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم تحديث وقيد الحساب بنجاح.");
+                playSuccessBeep();
             }
         } else {
             isPromptOpen = true; let payAmount = parseFloat(prompt(`المبلغ المستحق على الحريف (${settled.amount.toFixed(2)} د.ت)\nأدخل القيمة المدفوعة نقداً حالياً:`, "")); isPromptOpen = false;
@@ -887,6 +922,7 @@
             
             if(settled.amount <= 0) { debts.splice(targetDebtIdx, 1); }
             await cloudSaveDebts(); await cloudSaveLogs(); alert("✅ تم قيد الدفعة في الجرد وتحديث الدين المتبقي.");
+            playSuccessBeep();
         }
     }
 
