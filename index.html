@@ -39,9 +39,21 @@
         
         .theme-toggle-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 5px; margin-right: 10px; }
 
-        .app-page { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .app-page { display: none; position: relative; }
         .app-page.active-page { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .page-indicator-bar {
+            height: 5px;
+            background: linear-gradient(to left, var(--primary), #f39c12);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            width: 0%;
+            animation: loadBar 0.4s ease-out forwards;
+        }
+        @keyframes loadBar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--box-bg); height: 65px; display: none; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-color); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 999; }
         .nav-tab { background: none; border: none; color: #7f8c8d; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; height: 100%; gap: 4px; }
@@ -187,7 +199,7 @@
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>السلعة / الـ IMEI</th><th>الكمية المطلوب</th><th>سعر الحبة</th><th>المجموع</th><th>حذف</th></tr>
+                    <tr><th>السلعة / الـ IMEI</th><th>الكمية المطلوبة</th><th>سعر الحبة</th><th>المجموع</th><th>حذف</th></tr>
                 </thead>
                 <tbody id="cartBody"></tbody>
             </table>
@@ -208,6 +220,8 @@
     </div>
 
     <div id="page-sales" class="app-page active-page">
+        <div class="page-indicator-bar"></div>
+        
         <div class="barcode-listener-zone">
             <h4 style="margin: 0 0 12px 0; color: #d35400; font-size: 16px;">📢 السيرفر السحابي جاهز لاستقبال مسح الباركود</h4>
             <button id="toggleCameraBtn" class="btn btn-primary" style="padding: 14px 20px; font-size: 15px; width: 90%; max-width: 300px;" onclick="toggleCameraScanner()">
@@ -251,6 +265,8 @@
     </div>
 
     <div id="page-repairs" class="app-page">
+        <div class="page-indicator-bar"></div>
+        
         <div class="section-box">
             <h3 style="color: var(--success); border-right-color: var(--success);">🛠️ خدمات الصيانة ورشة العمل</h3>
             <div class="form-grid">
@@ -276,7 +292,9 @@
         </div>
     </div>
 
-    <div id="page-add-product" class="app-page admin-only">
+    <div id="page-add-product" class="app-page">
+        <div class="page-indicator-bar"></div>
+        
         <div class="section-box">
             <h3 style="color: var(--accent-blue); border-right-color: var(--accent-blue);">📦 إضافة منتج جديد للمخزن</h3>
             <div class="form-grid">
@@ -291,7 +309,7 @@
                 </select>
                 <input type="text" id="pModel" placeholder="الموديل">
                 <input type="number" id="pQty" placeholder="الكمية" value="1">
-                <input type="number" id="pCost" placeholder="التكلفة">
+                <input type="number" id="pCost" placeholder="التكلفة (مخفية عن العامل في وضعه العادي)" class="worker-cost-input">
                 <input type="number" id="pPrice" placeholder="سعر البيع">
             </div>
             <button onclick="addProduct()" class="btn btn-primary btn-block">حفظ وتوليد الـ QR للمنتج</button>
@@ -299,6 +317,8 @@
     </div>
 
     <div id="page-debts" class="app-page">
+        <div class="page-indicator-bar"></div>
+        
         <div class="section-box">
             <h3 style="color:#8e44ad; border-right-color:#8e44ad;">👥 سجل ديون الحرفاء المستحقة والكريديت</h3>
             <div class="table-container">
@@ -315,6 +335,8 @@
     </div>
 
     <div id="page-reports" class="app-page admin-only">
+        <div class="page-indicator-bar"></div>
+        
         <div class="analytics-container">
             <div class="top-selling-card">
                 <h3 style="color: var(--accent-purple); border-right-color: var(--accent-purple); margin-bottom: 10px;">📈 السلع الـ 5 الأكثر مبيعاً وحركة</h3>
@@ -394,11 +416,11 @@
     </div>
 
     <div class="bottom-nav" id="bottomNavBar">
-        <button class="nav-tab active-tab" onclick="switchPage('page-sales', this)"><span>🛒</span>المبيعات</button>
-        <button class="nav-tab" onclick="switchPage('page-repairs', this)"><span>🔧</span>الصيانة</button>
-        <button class="nav-tab admin-nav-item" onclick="switchPage('page-add-product', this)" style="display:none;"><span>📦</span>إضافة سلعة</button>
-        <button class="nav-tab" onclick="switchPage('page-debts', this)"><span>👥</span>الديون</button>
-        <button class="nav-tab admin-nav-item" onclick="switchPage('page-reports', this)" style="display:none;"><span>📊</span>التقارير</button>
+        <button id="tab-page-sales" class="nav-tab active-tab" onclick="switchPage('page-sales', this)"><span>🛒</span>المبيعات</button>
+        <button id="tab-page-repairs" class="nav-tab" onclick="switchPage('page-repairs', this)"><span>🔧</span>الصيانة</button>
+        <button id="tab-page-add-product" class="nav-tab" onclick="switchPage('page-add-product', this)"><span>📦</span>إضافة سلعة</button>
+        <button id="tab-page-debts" class="nav-tab" onclick="switchPage('page-debts', this)"><span>👥</span>الديون</button>
+        <button id="tab-page-reports" class="nav-tab admin-nav-item" onclick="switchPage('page-reports', this)" style="display:none;"><span>📊</span>التقارير</button>
     </div>
 
 </div>
@@ -433,7 +455,6 @@
         "35759111": "Infinix Hot 30i", "35824111": "Tecno Spark 10 Pro"
     };
 
-    // عزل مطلق ومثالي للصفحات يمنع تداخل أي واجهتين معاً
     function switchPage(pageId, tabButton) {
         stopCamera();
         document.querySelectorAll('.app-page').forEach(page => {
@@ -445,19 +466,35 @@
         if(targetPage) {
             targetPage.classList.add('active-page');
             targetPage.style.display = 'block';
+            
+            const bar = targetPage.querySelector('.page-indicator-bar');
+            if(bar) {
+                bar.style.animation = 'none';
+                bar.offsetHeight; 
+                bar.style.animation = 'loadBar 0.4s ease-out forwards';
+            }
         }
         
         document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active-tab'));
-        if(tabButton) tabButton.classList.add('active-tab');
+        if(tabButton) {
+            tabButton.classList.add('active-tab');
+        } else {
+            const correspondingTab = document.getElementById('tab-' + pageId);
+            if(correspondingTab) correspondingTab.classList.add('active-tab');
+        }
         
         if(pageId === 'page-sales') {
-            setTimeout(() => { document.getElementById('searchBox').focus(); }, 100);
+            setTimeout(() => { 
+                const sBox = document.getElementById('searchBox');
+                if(sBox) sBox.focus(); 
+            }, 100);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function detectDeviceModel(imei, targetSpanId) {
         const span = document.getElementById(targetSpanId);
+        if(!span) return "";
         if(!imei || imei.length < 8) { span.innerText = ""; return ""; }
         const tac = imei.substring(0, 8);
         if(imeiDatabase[tac]) {
@@ -507,7 +544,7 @@
     document.getElementById('loginPass').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); checkLogin(); } });
 
     async function cloudFetch() {
-        if(isPromptOpen) return;
+        if(isPromptOpen || currentRole === "") return;
         try {
             let resStock = await fetch(getUrl("/stock.json")); let dataStock = await resStock.json(); stock = dataStock ? Object.values(dataStock) : [];
             let resLogs = await fetch(getUrl("/logs.json")); let dataLogs = await resLogs.json(); logs = dataLogs ? Object.values(dataLogs) : [];
@@ -534,12 +571,16 @@
             
             if(role === "admin") { 
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = "block"); 
-                document.querySelectorAll('.admin-nav-item').forEach(el => el.style.display = "flex"); 
+                document.getElementById('tab-page-add-product').style.display = "flex";
+                document.getElementById('tab-page-reports').style.display = "flex";
                 document.getElementById('workerShiftBox').style.display = "none";
+                document.querySelectorAll('.worker-cost-input').forEach(el => el.style.display = "block");
             } else {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = "none");
-                document.querySelectorAll('.admin-nav-item').forEach(el => el.style.display = "none");
+                document.getElementById('tab-page-add-product').style.display = "none"; 
+                document.getElementById('tab-page-reports').style.display = "none";
                 document.getElementById('workerShiftBox').style.display = "block";
+                document.querySelectorAll('.worker-cost-input').forEach(el => el.style.display = "none"); 
             }
             document.getElementById('welcomeMsg').innerText = role === "admin" ? "👤 المدير (المالك)" : "🧑‍💼 الموظف";
             switchPage('page-sales');
@@ -557,18 +598,19 @@
             addToCart(stock.indexOf(item));
             setTimeout(() => { isScanningActive = false; }, 1000);
         } else { 
-            if(currentRole === 'admin') {
-                playBarcodeBeep(); stopCamera(); isPromptOpen = true;
-                setTimeout(() => {
-                    let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
-                    isPromptOpen = false; isScanningActive = false;
-                    if(confirmAdd) {
-                        switchPage('page-add-product');
-                        document.getElementById('pId').value = cleanCode;
-                        document.getElementById('pName').focus();
+            playBarcodeBeep(); stopCamera(); isPromptOpen = true;
+            setTimeout(() => {
+                let confirmAdd = confirm("⚠️ هذا المنتج [ " + cleanCode + " ] غير مسجل بالمخزن!\nهل تريد إضافته كمنتج جديد الآن؟");
+                isPromptOpen = false; isScanningActive = false;
+                if(confirmAdd) {
+                    if(currentRole === 'worker') {
+                        document.getElementById('tab-page-add-product').style.display = "flex";
                     }
-                }, 300);
-            } else { alert("⚠️ الكود الممسوح غير مدرج!"); isScanningActive = false; }
+                    switchPage('page-add-product');
+                    document.getElementById('pId').value = cleanCode;
+                    document.getElementById('pName').focus();
+                }
+            }, 300);
         }
     }
 
@@ -591,7 +633,7 @@
     async function clearMonthlyLogsAndArchive() {
         if(currentRole !== 'admin') return;
         isPromptOpen = true;
-        if (confirm("⚠️ أرشفة الجرد الشهري وتصفير العداد المالي؟")) {
+        if (confirm("⚠️ أرشفة الجرد الشهري وتصفير العداد المالي?")) {
             try {
                 let archiveId = "ARC-" + Date.now();
                 let archivePayload = { archiveId: archiveId, dateArchived: new Date().toLocaleDateString('ar-TN'), data: logs };
@@ -611,6 +653,7 @@
 
     function printRepairSticker(customer, device, issue, inv) {
         const win = window.open('', '_blank', 'width=350,height=220');
+        if(!win) return;
         win.document.write(`
             <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
             <style>body { font-family: sans-serif; text-align: center; margin: 0; padding: 5px; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; }
@@ -630,7 +673,9 @@
         const svcType = document.getElementById('svcTypeSelect').value;
         const subDetails = document.getElementById('svcName').value;
         const imei = document.getElementById('svcImei').value.trim();
-        const cost = parseFloat(document.getElementById('svcCost').value) || 0, total = parseFloat(document.getElementById('svcTotal').value) || 0;
+        const costInput = document.getElementById('svcCost');
+        const cost = (costInput && currentRole === 'admin') ? (parseFloat(costInput.value) || 0) : 0;
+        const total = parseFloat(document.getElementById('svcTotal').value) || 0;
         
         let detectedModel = detectDeviceModel(imei, 'svcDetectedText');
         let fullDeviceDetails = subDetails + (detectedModel ? " [" + detectedModel + "]" : "");
@@ -662,27 +707,39 @@
             printMultipleInvoice(isDebt ? "إيصال صيانة بالآجل" : "فاتورة صيانة نقدية", [{ n: name + (imei ? " (IMEI: "+imei+")" : ""), cat: "خدمات فنية", qty: 1, finalPrice: total }], invoiceNum, currentDate, currentTime);
             
             document.getElementById('svcName').value = ""; document.getElementById('svcImei').value = ""; document.getElementById('svcTotal').value = ""; 
-            document.getElementById('svcDetectedText').innerText = ""; if(document.getElementById('svcCost')) document.getElementById('svcCost').value = "";
-        } else alert("الرجاء إدخال البيانات المطلوبة.");
+            document.getElementById('svcDetectedText').innerText = ""; if(costInput) costInput.value = "";
+        } else alert("الرجاء إدخال البيانات المطلوبة والسعر.");
     }
 
     function addProduct() {
-        if(currentRole !== 'admin') return;
         let id = document.getElementById('pId').value.trim();
-        const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value, m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, c = parseFloat(document.getElementById('pCost').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
-        if(n && m && q >= 0) {
+        const n = document.getElementById('pName').value, cat = document.getElementById('pCat').value, m = document.getElementById('pModel').value, q = parseInt(document.getElementById('pQty').value) || 0, p = parseFloat(document.getElementById('pPrice').value) || 0;
+        
+        let c = 0;
+        const costInput = document.getElementById('pCost');
+        if (costInput && currentRole === 'admin') { c = parseFloat(costInput.value) || 0; }
+
+        if(n && m && q >= 0 && p >= 0) {
             if(!id) { id = "MSB-" + Math.random().toString(36).substr(2, 5).toUpperCase(); }
             let exists = stock.find(item => item.id === id); if(exists) { alert("❌ الكود مسجل لمنتج آخر!"); return; }
-            stock.push({ id, n, cat, m, q, c, p }); cloudSaveStock(); alert("✅ تم حفظ المنتج.");
-            document.getElementById('pId').value = ""; document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; document.getElementById('pCost').value = ""; document.getElementById('pPrice').value = "";
-        } else alert("يرجى ملء الحقول الأساسية.");
+            stock.push({ id, n, cat, m, q, c, p }); 
+            cloudSaveStock(); 
+            alert("✅ تم حفظ المنتج بنجاح بالمخزن السحابي.");
+            
+            document.getElementById('pId').value = ""; document.getElementById('pName').value = ""; document.getElementById('pModel').value = ""; if(costInput) costInput.value = ""; document.getElementById('pPrice').value = "";
+            
+            if(currentRole === 'worker') {
+                document.getElementById('tab-page-add-product').style.display = "none";
+            }
+            switchPage('page-sales'); 
+        } else alert("يرجى ملء الحقول الأساسية وتحديد الأسعار والكمية.");
     }
 
     function addToCart(index) {
         let item = stock[index]; if(item.q <= 0) { alert("❌ الكمية نفدت!"); return; }
         isPromptOpen = true;
         let qty = parseInt(prompt("أدخل الكمية المطلوبة من [ " + item.n + " ]:", 1)); 
-        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة!"); isPromptOpen = false; return; }
+        if(isNaN(qty) || qty <= 0 || qty > item.q) { alert("كمية غير صحيحة أو تتجاوز المخزون!"); isPromptOpen = false; return; }
         
         let imeiInput = ""; let autoDetectedName = "";
         if(item.cat === "هواتف") {
@@ -695,7 +752,7 @@
         let itemDisplayName = item.n + (autoDetectedName ? " [" + autoDetectedName + "]" : "");
         let existing = cart.find(c => c.stockId === item.id && c.imei === imeiInput);
         if(existing) { 
-            if ((existing.qty + qty) > item.q) { alert("❌ تجاوزت الكمية المتاحة!"); return; }
+            if ((existing.qty + qty) > item.q) { alert("❌ تجاوزت الكمية المتاحة بالمخزن!"); return; }
             existing.qty += qty; existing.finalPrice = price; 
         } else { cart.push({ stockId: item.id, n: itemDisplayName, m: item.m, cat: item.cat, qty: qty, finalPrice: price, cost: item.c, imei: imeiInput }); }
         cloudSaveCart();
@@ -714,7 +771,7 @@
         } else {
             let sItem = stock.find(s => s.id === cItem.stockId);
             if(sItem) {
-                if(cItem.qty + amount > sItem.q) { alert("❌ تجاوزت الحد الأقصى!"); return; }
+                if(cItem.qty + amount > sItem.q) { alert("❌ تجاوزت الحد الأقصى المتوفر!"); return; }
                 cItem.qty += amount; if(cItem.qty <= 0) cart.splice(idx, 1);
                 if(sItem.q - cItem.qty <= 0) { playWarningBeep(); }
             }
@@ -835,13 +892,15 @@
 
     function printSticker(item) {
         const win = window.open('', '_blank', 'width=350,height=220'); const qrContainer = document.getElementById("qrcode"); const qrImg = qrContainer.querySelector("img"); const qrImgSrc = qrImg ? qrImg.src : "";
+        if(!win) return;
         win.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body { font-family: "Segoe UI", sans-serif; margin: 0; padding: 4px; text-align: center; background: #fff; width: 60mm; height: 30mm; box-sizing: border-box; overflow: hidden; } .shop-title { font-size: 10px; font-weight: bold; color: #e67e22; margin: 0; } .item-name { font-size: 11px; font-weight: bold; color: #2c3e50; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .sticker-main { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; } .qr-side img { width: 42px; height: 42px; } .price-side { text-align: right; } .price-tag { font-size: 14px; font-weight: 800; color: #000; margin: 0; } .code-text { font-size: 8px; font-family: monospace; color: #7f8c8d; margin-top: 1px; }</style></head><body><div class="shop-title">Mobile Shop Béja</div><div class="item-name">' + item.n + ' (' + item.m + ')</div><div class="sticker-main"><div class="qr-side"><img src="' + qrImgSrc + '"></div><div class="price-side"><div class="price-tag">' + item.p.toFixed(2) + ' د.ت</div><div class="code-text">كود: ' + item.id + '</div></div></div><script>window.onload=function(){window.print(); setTimeout(()=>window.close(), 400);};<\/script></body></html>');
         win.document.close();
     }
 
-    // الفاتورة الفاخرة بدون الختم أو الإمضاء وبعنوان شارع 18 جانفي باجة
     function printMultipleInvoice(type, itemsList, invoiceNum, currentDate, currentTime) {
-        const win = window.open('', '_blank'); let rowsHtml = ""; let totalAmount = 0;
+        const win = window.open('', '_blank'); 
+        if(!win) return;
+        let rowsHtml = ""; let totalAmount = 0;
         itemsList.forEach((item) => {
             let subtotal = item.qty * item.finalPrice; totalAmount += subtotal; let imeiDetails = item.imei ? `<br><span style="font-size:11px; color:#64748b;">IMEI: ${item.imei}</span>` : "";
             rowsHtml += '<tr><td>' + (item.m ? item.n + ' - ' + item.m : item.n) + imeiDetails + '</td><td style="text-align: center; font-weight: bold;">' + item.qty + '</td><td style="text-align: center;">' + item.finalPrice.toFixed(2) + ' د.ت</td><td style="text-align: center; font-weight: bold;">' + subtotal.toFixed(2) + ' د.ت</td></tr>';
@@ -875,8 +934,6 @@
     function renderJard() {
         const lb = document.getElementById('logBody'); const wlb = document.getElementById('workerLogBody'); if(!lb || !wlb) return;
         lb.innerHTML = ''; wlb.innerHTML = ''; let sV = 0, sP = 0; let salesCountMap = {}; let serviceCountMap = {}; 
-        
-        // المتغير الاستراتيجي الدقيق لحساب الخطة المالية الجديدة
         let strategicIncomeBase = 0;
 
         logs.forEach((l) => {
@@ -889,13 +946,12 @@
             }
             wlb.innerHTML += '<tr><td><code>' + l.invoice + '</code></td><td>' + l.date + ' ' + l.time + '</td><td>' + l.txt + '</td><td><b>' + l.val.toFixed(2) + ' د.ت</b> (' + statusText + ')</td></tr>';
             
-            // التعديل الجوهري: إذا كانت العملية صيانة يحسب الأرباح فقط، وإذا كانت منتج يحسب كامل المداخيل
             if (l.isService === true || l.txt.includes("🛠️ صيانة:")) {
-                strategicIncomeBase += l.prf; // الأرباح فقط بالنسبة للصيانة
+                strategicIncomeBase += l.prf; 
                 if (l.itemCleanName) serviceCountMap[l.itemCleanName] = (serviceCountMap[l.itemCleanName] || 0) + 1;
             } else {
                 if(statusText !== "خلاص دين" && statusText !== "خلاص دين جزئي") {
-                    strategicIncomeBase += l.val; // المداخيل الإجمالية بالنسبة للسلع المباعة
+                    strategicIncomeBase += l.val; 
                 }
                 if (l.itemCleanName && l.itemQtySold) salesCountMap[l.itemCleanName] = (salesCountMap[l.itemCleanName] || 0) + l.itemQtySold;
             }
@@ -947,7 +1003,7 @@
     }
 
     function showQR(index) { 
-        const item = stock[index]; const qrBox = document.getElementById("qrcode"); qrBox.innerHTML = ""; 
+        const item = stock[index]; const qrBox = document.getElementById("qrcode"); if(!qrBox) return; qrBox.innerHTML = ""; 
         new QRCode(qrBox, { text: "MSB_ID:" + item.id, width: 140, height: 140 }); 
         document.getElementById("qrTitle").innerText = item.n; document.getElementById("qrModal").style.display = "block";
         document.getElementById("btnPrintStickerBtn").onclick = function() { printSticker(item); };
