@@ -977,58 +977,70 @@
                 </div>
             `).join('');
         }
-
-        // إتمام البيع، الخصم التلقائي من المخزن وتوليد الفاتورة A4
         document.getElementById('checkoutBtn').addEventListener('click', async () => {
-            if (cart.length === 0) { alert('السلة فارغة!'); return; }
+    if (cart.length === 0) { 
+        alert('سلة المشتريات فارغة!'); 
+        return; 
+    }
 
-            let sum = 0;
-            let soldItemsDetails = [];
+    try {
+        let sum = 0;
+        let soldItemsDetails = [];
 
-            // 1. الخصم من المبيعات
-            for (let cItem of cart) {
-                const stockItem = inventory.find(i => i.id === cItem.inventoryId);
-                if (stockItem) {
-                    const newQty = Math.max(0, stockItem.qty - cItem.qty);
-                    await db.collection("shop_inventory").doc(stockItem.id).update({ qty: newQty });
-                }
-                sum += cItem.price * cItem.qty;
-                soldItemsDetails.push({ name: cItem.name, qty: cItem.qty, price: cItem.price, subTotal: cItem.price * cItem.qty });
+        // 1. الخصم التلقائي من المخزن لكل منتج في السلة
+        for (let cItem of cart) {
+            const stockItem = inventory.find(i => i.id === cItem.inventoryId);
+            if (stockItem) {
+                const newQty = Math.max(0, Number(stockItem.qty) - Number(cItem.qty));
+                await db.collection("shop_inventory").doc(stockItem.id).update({ qty: newQty });
             }
-
-            const dt = getFrenchFormattedDateTime(new Date());
-            const invoiceNumber = Math.floor(1000 + Math.random() * 9000);
-
-            // 2. تسجيل البيعة بالأرشيف السحابي
-            await db.collection("sales_archive").add({
-                invoiceNo: invoiceNumber,
-                dateTime: dt.formattedText,
-                items: soldItemsDetails,
-                totalAmount: sum
+            sum += Number(cItem.price) * Number(cItem.qty);
+            soldItemsDetails.push({ 
+                name: cItem.name, 
+                qty: cItem.qty, 
+                price: cItem.price, 
+                subTotal: cItem.price * cItem.qty 
             });
+        }
 
-            // 3. تفريغ السلة المشتركة السحابية
-            for (let cItem of cart) {
-                await db.collection("shared_cart").doc(cItem.docId).delete();
-            }
+        const dt = getFrenchFormattedDateTime(new Date());
+        const invoiceNumber = Math.floor(1000 + Math.random() * 9000);
 
-            // عرض الفاتورة
-            document.getElementById('invTotalAmount').textContent = sum.toFixed(2) + ' د.ت';
-            document.getElementById('invDateTime').textContent = dt.formattedText;
-            document.getElementById('invIdNum').textContent = invoiceNumber;
-
-            document.getElementById('invItemsList').innerHTML = soldItemsDetails.map(i => `
-                <tr>
-                    <td>${i.name}</td>
-                    <td>${i.qty}</td>
-                    <td>${i.price.toFixed(2)} د.ت</td>
-                    <td>${i.subTotal.toFixed(2)} د.ت</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('invoiceModal').style.display = 'flex';
-            showToastPopup("تمت عملية البيع وخصم المخزن بنجاح! 🧾");
+        // 2. تسجيل العملية في أرشيف المبيعات السحابي
+        await db.collection("sales_archive").add({
+            invoiceNo: invoiceNumber,
+            dateTime: dt.formattedText,
+            items: soldItemsDetails,
+            totalAmount: sum
         });
+
+        // 3. تفريغ السلة المشتركة السحابية بعد إتمام البيع
+        for (let cItem of cart) {
+            await db.collection("shared_cart").doc(cItem.docId).delete();
+        }
+
+        // 4. تعبئة بيانات الفاتورة الرسمية A4 وعرضها
+        document.getElementById('invTotalAmount').textContent = sum.toFixed(2) + ' د.ت';
+        document.getElementById('invDateTime').textContent = dt.formattedText;
+        document.getElementById('invIdNum').textContent = invoiceNumber;
+
+        document.getElementById('invItemsList').innerHTML = soldItemsDetails.map(i => `
+            <tr>
+                <td>${i.name}</td>
+                <td>${i.qty}</td>
+                <td>${Number(i.price).toFixed(2)} د.ت</td>
+                <td>${Number(i.subTotal).toFixed(2)} د.ت</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('invoiceModal').style.display = 'flex';
+        showToastPopup("تمت عملية البيع وخصم المخزن بنجاح! 🧾");
+
+    } catch (error) {
+        console.error("خطأ أثناء إتمام البيع:", error);
+        alert("فشل إتمام البيع، تأكد من اتصال الإنترنت وصلاحيات قاعدة البيانات: " + error.message);
+    }
+});
 
         function renderSalesArchive() {
             const list = document.getElementById('salesArchiveList');
