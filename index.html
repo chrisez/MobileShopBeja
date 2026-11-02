@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة المال والأعمال والمخزن - سحابي ذكي</title>
+    <title>إدارة المال والأعمال والمخزن - Mobile Shop Béja</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- مكتبة قراءة الباركود عبر الكاميرا -->
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <!-- مكتبات Google Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
@@ -19,7 +17,6 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --primary: #6366f1;
-            --primary-hover: #4f46e5;
             --expenses: #f43f5e;
             --savings: #3b82f6;
             --invest: #10b981;
@@ -90,12 +87,12 @@
             cursor: pointer;
         }
 
-        /* شاشة القفل والرمز السرّي */
+        /* شاشة تسجيل الدخول بالرمز السري (PIN) */
         .pin-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg-color);
-            z-index: 2000;
+            z-index: 5000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -166,12 +163,12 @@
             border-radius: 12px;
         }
 
-        /* نافذة الفاتورة المنبثقة */
+        /* نافذة الفاتورة الاحترافية المحدثة */
         .invoice-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.85);
-            z-index: 2500;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 4000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -179,38 +176,81 @@
         }
 
         .invoice-card {
-            background: #fff;
-            color: #0f172a;
+            background: #ffffff;
+            color: #1e293b;
             width: 100%;
-            max-width: 380px;
+            max-width: 420px;
             border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             max-height: 90vh;
             overflow-y: auto;
+            border-top: 6px solid var(--primary);
         }
 
-        .invoice-header {
+        .invoice-brand {
             text-align: center;
-            border-bottom: 2px dashed #cbd5e1;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
             padding-bottom: 12px;
-            margin-bottom: 12px;
+        }
+
+        .invoice-brand h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .invoice-brand p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .invoice-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #475569;
+            margin-bottom: 16px;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 8px;
         }
 
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             font-size: 0.85rem;
         }
 
         .invoice-table th, .invoice-table td {
-            padding: 6px;
+            padding: 8px 6px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
         }
 
-        .invoice-table th { background: #f1f5f9; }
+        .invoice-table th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .invoice-totals {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .invoice-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
 
         /* التبويبات */
         .tab-content {
@@ -396,39 +436,6 @@
             margin-bottom: 8px;
         }
 
-        .filter-section {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 14px;
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--card-border);
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .filter-row input {
-            font-size: 0.85rem;
-            padding: 8px 10px;
-        }
-
-        .reset-filter-btn {
-            background: #334155;
-            border: none;
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
         .history-actions {
             display: flex;
             justify-content: space-between;
@@ -442,11 +449,6 @@
             font-weight: 700;
         }
 
-        .action-btns-group {
-            display: flex;
-            gap: 6px;
-        }
-
         .action-btn {
             background: #334155;
             border: none;
@@ -456,19 +458,6 @@
             padding: 6px 10px;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .action-btn.export {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--invest);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .action-btn.clear {
-            background: rgba(244, 63, 94, 0.2);
-            color: var(--expenses);
-            border: 1px solid rgba(244, 63, 94, 0.3);
         }
 
         .history-list {
@@ -518,7 +507,7 @@
 
         .history-details {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 4px;
             text-align: center;
         }
@@ -624,7 +613,7 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
             opacity: 0;
             transition: all 0.3s ease;
-            z-index: 3100;
+            z-index: 5100;
             pointer-events: none;
         }
 
@@ -636,7 +625,7 @@
 </head>
 <body>
 
-    <!-- شاشة الرمز السرّي (PIN) -->
+    <!-- شاشة تسجيل الدخول بالرمز السري (PIN) -->
     <div id="pinOverlay" class="pin-overlay" style="display: none;">
         <div class="pin-box">
             <h2 id="pinTitle" style="font-size: 1.1rem; margin-bottom: 8px;">أدخل الرمز السرّي (PIN)</h2>
@@ -652,24 +641,25 @@
             <h3 style="font-size: 1rem; margin-bottom: 10px; color: #fff;">مسح الباركود بالكاميرا</h3>
             <div id="reader"></div>
             <p id="scannerStatus" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 12px;">وجّه الكاميرا نحو الباركود...</p>
-            <button type="button" class="action-btn clear" onclick="closeScannerModal()" style="width: 100%; padding: 10px; font-size: 0.9rem;">إلغاء وإغلاق</button>
+            <button type="button" class="action-btn" onclick="closeScannerModal()" style="width: 100%; padding: 10px; font-size: 0.9rem; background: #f43f5e; color:#fff;">إلغاء وإغلاق</button>
         </div>
     </div>
 
-    <!-- نافذة عرض الفاتورة المنبثقة -->
+    <!-- نافذة الفاتورة الاحترافية المحدثة -->
     <div id="invoiceModal" class="invoice-modal" style="display: none;">
         <div class="invoice-card">
-            <div class="invoice-header">
-                <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b;">فاتورة بيع رسمية</h3>
-                <p id="invDateTime" style="font-size: 0.75rem; color: #64748b; direction: ltr; margin-top: 2px;"></p>
+            <div class="invoice-brand">
+                <h2>MOBILE SHOP BÉJA</h2>
+                <p>إدارة الهواتف، الإكسسوارات و الصيانة</p>
             </div>
-            <div style="font-size: 0.85rem; margin-bottom: 8px;">
-                <strong>المتجر:</strong> Mobile Shop Béja
+            <div class="invoice-meta">
+                <span id="invDateTime">التاريخ: 00/00/0000</span>
+                <span>الرقم: #POS-<span id="invIdNum">1001</span></span>
             </div>
             <table class="invoice-table">
                 <thead>
                     <tr>
-                        <th>السلعة</th>
+                        <th>السلعة / المنتج</th>
                         <th>الكمية</th>
                         <th>السعر</th>
                         <th>المجموع</th>
@@ -677,13 +667,18 @@
                 </thead>
                 <tbody id="invItemsList"></tbody>
             </table>
-            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; border-top: 2px solid #0f172a; padding-top: 8px; margin-bottom: 16px;">
-                <span>الإجمالي الكلي:</span>
-                <span id="invTotalAmount" style="color: #2563eb;">0.00</span>
+            <div class="invoice-totals">
+                <div class="invoice-total-row">
+                    <span>الإجمالي الكلي:</span>
+                    <span id="invTotalAmount" style="color: #2563eb;">0.00 د.ت</span>
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 0.75rem; color: #64748b; margin-bottom: 16px;">
+                شكراً لتعاملكم معنا! نتردد في خدمتكم دائماً.
             </div>
             <div style="display: flex; gap: 8px;">
-                <button type="button" class="btn" onclick="printInvoice()" style="padding: 10px; font-size: 0.9rem;">طباعة / مشاركة</button>
-                <button type="button" class="action-btn clear" onclick="closeInvoiceModal()" style="padding: 10px; font-size: 0.9rem; flex: 1; border: 1px solid #f43f5e;">إغلاق</button>
+                <button type="button" class="btn" onclick="printInvoice()" style="padding: 10px; font-size: 0.9rem;">طباعة / تحميل PDF</button>
+                <button type="button" class="action-btn" onclick="closeInvoiceModal()" style="padding: 10px; font-size: 0.9rem; flex: 1; background: #cbd5e1; color: #0f172a;">إغلاق</button>
             </div>
         </div>
     </div>
@@ -691,10 +686,10 @@
     <div class="app-container">
         <header>
             <div class="header-btns">
-                <button type="button" class="lock-btn-header" id="lockAppBtn">☁️ متصل بالسحابة</button>
+                <button type="button" class="lock-btn-header" onclick="lockApp()">🔒 قفل</button>
             </div>
             <h1>إدارة المال والأعمال</h1>
-            <p>سحابي ذكي - مخزن، ديون، وحاسبة</p>
+            <p>سحابي ذكي متزامن (هاتف + حاسوب)</p>
         </header>
 
         <!-- صفحة 01: حاسبة الدخل اليومي -->
@@ -710,34 +705,19 @@
                 <div class="section-title">التوزيع الفوري الذكي:</div>
                 <div class="grid-cards">
                     <div class="stat-card expenses">
-                        <div class="stat-header">
-                            <span>مصاريف</span>
-                            <span class="stat-badge">33%</span>
-                        </div>
+                        <div class="stat-header"><span>مصاريف</span><span class="stat-badge">33%</span></div>
                         <div class="stat-value" id="previewExpenses">0.00</div>
                     </div>
-
                     <div class="stat-card savings">
-                        <div class="stat-header">
-                            <span>إدخار</span>
-                            <span class="stat-badge">33%</span>
-                        </div>
+                        <div class="stat-header"><span>إدخار</span><span class="stat-badge">33%</span></div>
                         <div class="stat-value" id="previewSavings">0.00</div>
                     </div>
-
                     <div class="stat-card invest">
-                        <div class="stat-header">
-                            <span>استثمار</span>
-                            <span class="stat-badge">33%</span>
-                        </div>
+                        <div class="stat-header"><span>استثمار</span><span class="stat-badge">33%</span></div>
                         <div class="stat-value" id="previewInvest">0.00</div>
                     </div>
-
                     <div class="stat-card charity">
-                        <div class="stat-header">
-                            <span>صدقة</span>
-                            <span class="stat-badge">1%</span>
-                        </div>
+                        <div class="stat-header"><span>صدقة</span><span class="stat-badge">1%</span></div>
                         <div class="stat-value" id="previewCharity">0.00</div>
                     </div>
                 </div>
@@ -757,12 +737,9 @@
                     </div>
                     <div class="grand-total-amount" id="totalIncomeSum">0.00</div>
                 </div>
-
-                <div class="history-actions">
-                    <h2>سجل المدخلات</h2>
-                </div>
+                <div class="history-actions"><h2>سجل المدخلات</h2></div>
                 <div class="history-list" id="historyList">
-                    <div class="empty-state">جاري مزامنة البيانات...</div>
+                    <div class="empty-state">جاري التحميل...</div>
                 </div>
             </div>
         </div>
@@ -780,8 +757,8 @@
                     <input type="text" id="debtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal">
                 </div>
                 <div class="input-group">
-                    <label for="debtNote">ملاحظات (اختياري)</label>
-                    <input type="text" id="debtNote" class="form-control" placeholder="مثال: مقابل بضاعة...">
+                    <label for="debtNote">ملاحظات</label>
+                    <input type="text" id="debtNote" class="form-control" placeholder="مثال: مقابل هاتف...">
                 </div>
                 <button type="button" class="btn" id="saveDebtBtn">إضافة الدين للسجل</button>
             </div>
@@ -794,12 +771,9 @@
                     </div>
                     <div class="grand-total-amount" id="totalDebtsSum" style="color: var(--expenses);">0.00</div>
                 </div>
-
-                <div class="history-actions">
-                    <h2>قائمة ديون الحرفاء</h2>
-                </div>
+                <div class="history-actions"><h2>قائمة ديون الحرفاء</h2></div>
                 <div class="history-list" id="debtsList">
-                    <div class="empty-state">لا توجد ديون مسجلة بعد</div>
+                    <div class="empty-state">لا توجد ديون مسجلة</div>
                 </div>
             </div>
         </div>
@@ -807,20 +781,16 @@
         <!-- صفحة 03: ديوني الخاصة -->
         <div id="tab-my-debts" class="tab-content">
             <div class="card">
-                <div class="section-title">تسجيل دين مترتب عليك (دائن):</div>
+                <div class="section-title">تسجيل دين مترتب عليك:</div>
                 <div class="input-group">
-                    <label for="myCreditorName">اسم الدائن / الجهة الدائنة</label>
-                    <input type="text" id="myCreditorName" class="form-control" placeholder="أدخل اسم الشخص أو البنك...">
+                    <label for="myCreditorName">اسم الدائن / الجهة</label>
+                    <input type="text" id="myCreditorName" class="form-control" placeholder="أدخل اسم المورد...">
                 </div>
                 <div class="input-group">
                     <label for="myDebtAmount">المبلغ المطلوب منك</label>
                     <input type="text" id="myDebtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal">
                 </div>
-                <div class="input-group">
-                    <label for="myDebtNote">ملاحظات (اختياري)</label>
-                    <input type="text" id="myDebtNote" class="form-control" placeholder="مثال: قسط شهري...">
-                </div>
-                <button type="button" class="btn" id="saveMyDebtBtn">إضافة الدين لقائمتي</button>
+                <button type="button" class="btn" id="saveMyDebtBtn">إضافة لقائمتي</button>
             </div>
 
             <div class="card">
@@ -831,12 +801,8 @@
                     </div>
                     <div class="grand-total-amount" id="totalMyDebtsSum" style="color: var(--expenses);">0.00</div>
                 </div>
-
-                <div class="history-actions">
-                    <h2>قائمة ديوني</h2>
-                </div>
                 <div class="history-list" id="myDebtsList">
-                    <div class="empty-state">لا توجد ديون مسجلة عليك بعد</div>
+                    <div class="empty-state">لا توجد ديون عليك</div>
                 </div>
             </div>
         </div>
@@ -844,10 +810,10 @@
         <!-- صفحة 04: السلع الناقصة -->
         <div id="tab-goods" class="tab-content">
             <div class="card">
-                <div class="section-title">إضافة سلعة ناقصة أو مطلوبة:</div>
+                <div class="section-title">إضافة سلعة ناقصة:</div>
                 <div class="input-group">
                     <label for="goodsName">اسم السلعة / المنتج</label>
-                    <input type="text" id="goodsName" class="form-control" placeholder="أدخل اسم السلعة...">
+                    <input type="text" id="goodsName" class="form-control" placeholder="مثال: شاشة هاتف...">
                 </div>
                 <div class="input-group">
                     <label for="goodsQty">الكمية والمواصفات</label>
@@ -857,21 +823,14 @@
             </div>
 
             <div class="card">
-                <div class="grand-total-title" style="margin-bottom: 10px;">
-                    <span>السلع المطلوبة</span>
-                    <span id="goodsCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 سلع)</span>
-                </div>
-
-                <div class="history-actions">
-                    <h2>قائمة السلع</h2>
-                </div>
+                <div class="history-actions"><h2>قائمة السلع المطلوبة</h2></div>
                 <div class="history-list" id="goodsList">
-                    <div class="empty-state">لا توجد سلع مطلوبة حالياً</div>
+                    <div class="empty-state">لا توجد سلع مطلوبة</div>
                 </div>
             </div>
         </div>
 
-        <!-- صفحة 05: خزانة السلع ونقطة البيع الذكية (Smart POS & Inventory) -->
+        <!-- صفحة 05: خزانة السلع ونقطة البيع الذكية (هاتف + حاسوب) -->
         <div id="tab-inventory" class="tab-content">
             <div class="card">
                 <div class="section-title">إضافة سلعة جديدة للخزانة (المخزن):</div>
@@ -884,7 +843,7 @@
                 </div>
                 <div class="input-group">
                     <label for="invItemName">اسم السلعة / المنتج</label>
-                    <input type="text" id="invItemName" class="form-control" placeholder="مثال: شاشة هاتف، كابل شحن...">
+                    <input type="text" id="invItemName" class="form-control" placeholder="مثال: iPhone 13 / Laptop HP...">
                 </div>
                 <div class="grid-cards" style="margin-bottom: 14px;">
                     <div class="input-group" style="margin-bottom:0;">
@@ -900,11 +859,11 @@
             </div>
 
             <div class="card">
-                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع والآلة الحاسبة الذكية:</div>
+                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع الذكية (هاتف & حاسوب):</div>
                 <div class="input-group">
-                    <label for="posSearchInput">بحث بالاسم أو مسح الباركود بالكاميرا:</label>
+                    <label for="posSearchInput">بحث بالاسم أو مسح الباركود:</label>
                     <div class="input-with-action">
-                        <input type="text" id="posSearchInput" class="form-control" placeholder="اكتب للبحث أو امسح الباركود...">
+                        <input type="text" id="posSearchInput" class="form-control" placeholder="اكتب للبحث السريع أو امسح الباركود...">
                         <button type="button" class="scan-cam-btn" onclick="openScannerFor('posSearchInput', true)" title="مسح بالكاميرا للبيع">📷</button>
                     </div>
                 </div>
@@ -923,7 +882,7 @@
                     <div class="empty-state">السلة فارغة حالياً</div>
                 </div>
 
-                <button type="button" class="btn" id="checkoutBtn" style="background: linear-gradient(135deg, var(--invest), #059669);">إتمام البيع وإصدار الفاتورة 🧾</button>
+                <button type="button" class="btn" id="checkoutBtn" style="background: linear-gradient(135deg, var(--invest), #059669);">إتمام البيع وإصدار الفاتورة الرسمية 🧾</button>
             </div>
 
             <div class="card">
@@ -961,10 +920,10 @@
         </button>
     </nav>
 
-    <div class="toast" id="toast">تم الحفظ بنجاح! ✓</div>
+    <div class="toast" id="toast">تم بنجاح! ✓</div>
 
     <script>
-        // --- إعداد Firebase ببياناتك المحددة ---
+        // --- إعداد Firebase والسحابة الذكية ---
         const firebaseConfig = {
             apiKey: "AIzaSyDhiSZbbEc1lg9EveYktR5mFOVX19gNcY4",
             authDomain: "mobileshope-ac548.firebaseapp.com",
@@ -979,7 +938,41 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // متغيرات البيانات
+        // --- نظام الرمز السري (PIN) للحماية ---
+        const pinOverlay = document.getElementById('pinOverlay');
+        const pinInput = document.getElementById('pinInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        let savedPin = localStorage.getItem('app_pin_code') || null;
+
+        function checkPinOnStart() {
+            if (!savedPin) {
+                const newPin = prompt('الرجاء تعيين رمز سري مكون من 4 أرقام لتأمين التطبيق:');
+                if (newPin && newPin.length === 4 && !isNaN(newPin)) {
+                    savedPin = newPin;
+                    localStorage.setItem('app_pin_code', savedPin);
+                    showToastPopup("تم تعيين الرمز السري بنجاح! 🔒");
+                } else {
+                    savedPin = "1234"; // افتراضي إذا تخطي
+                    localStorage.setItem('app_pin_code', savedPin);
+                }
+            }
+            pinOverlay.style.display = 'flex';
+        }
+
+        unlockBtn.addEventListener('click', () => {
+            if (pinInput.value.trim() === savedPin) {
+                pinOverlay.style.display = 'none';
+                pinInput.value = '';
+            } else {
+                alert('الرمز السري غير صحيح!');
+                pinInput.value = '';
+            }
+        });
+
+        function lockApp() {
+            pinOverlay.style.display = 'flex';
+        }
+
         let logs = [];
         let debts = [];
         let myDebts = [];
@@ -987,12 +980,11 @@
         let inventory = [];
         let cart = [];
 
-        // الاستماع الفوري للبيانات من سحابة Firestore
         function initRealtimeListeners() {
             db.collection("income_logs").onSnapshot(snapshot => {
                 logs = []; snapshot.forEach(doc => logs.push({ id: doc.id, ...doc.data() }));
                 renderIncomeApp();
-            }, err => console.log(err));
+            });
 
             db.collection("customer_debts").onSnapshot(snapshot => {
                 debts = []; snapshot.forEach(doc => debts.push({ id: doc.id, ...doc.data() }));
@@ -1020,7 +1012,7 @@
                 await db.collection(collectionName).add(item);
                 showToastPopup("تم الحفظ في السحابة بنجاح! ☁️");
             } catch (e) {
-                alert("فشل الاتصال بالسحابة، تحقق من الإنترنت.");
+                alert("فشل الحفظ، تحقق من الاتصال بالإنترنت.");
             }
         }
 
@@ -1033,7 +1025,7 @@
             }
         }
 
-        // --- كاميرا الباركود ---
+        // --- كاميرا الباركود (تدعم الهاتف والحاسوب) ---
         const scannerModal = document.getElementById('scannerModal');
         let html5QrCode = null;
         let activeScannerTargetInput = null;
@@ -1100,7 +1092,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
 
-        // --- 1. الحاسبة ---
+        // --- 1. الحاسبة وتوزيع الأرباح ---
         const incomeInput = document.getElementById('incomeInput');
         const previewExpenses = document.getElementById('previewExpenses');
         const previewSavings = document.getElementById('previewSavings');
@@ -1143,12 +1135,12 @@
             historyList.innerHTML = logs.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount">${(item.amount || 0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <div><span class="history-amount">${(item.amount || 0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
                         <button type="button" class="delete-btn" onclick="syncDelete('income_logs', '${item.id}')">حذف</button>
                     </div>
                 </div>
             `).join('');
-            document.getElementById('totalIncomeSum').textContent = logs.reduce((a,c)=>a+(c.amount||0),0).toFixed(2);
+            document.getElementById('totalIncomeSum').textContent = logs.reduce((a,c)=>a+(c.amount||0),0).toFixed(2) + ' د.ت';
             document.getElementById('totalCountBadge').textContent = `(${logs.length} عمليات)`;
         }
 
@@ -1165,11 +1157,11 @@
         function renderDebtsApp() {
             const list = document.getElementById('debtsList');
             if (debts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون</div>'; document.getElementById('totalDebtsSum').textContent = '0.00'; return; }
-            document.getElementById('totalDebtsSum').textContent = debts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2);
+            document.getElementById('totalDebtsSum').textContent = debts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2) + ' د.ت';
             list.innerHTML = debts.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
                         <button type="button" class="delete-btn" onclick="syncDelete('customer_debts', '${item.id}')">حذف</button>
                     </div>
                 </div>
@@ -1182,19 +1174,18 @@
             const amount = parseArabicNumber(document.getElementById('myDebtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
             const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('my_personal_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('myDebtNote').value || 'بدون', dateTime: dt.formattedText });
-            document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = ''; document.getElementById('myDebtNote').value = '';
+            syncAdd('my_personal_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, dateTime: dt.formattedText });
+            document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = '';
         });
 
         function renderMyDebtsApp() {
             const list = document.getElementById('myDebtsList');
-            myDebts.sort((a,b)=>(a.remainingAmount||0) - (b.remainingAmount||0));
             if (myDebts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون عليك</div>'; document.getElementById('totalMyDebtsSum').textContent = '0.00'; return; }
-            document.getElementById('totalMyDebtsSum').textContent = myDebts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2);
+            document.getElementById('totalMyDebtsSum').textContent = myDebts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2) + ' د.ت';
             list.innerHTML = myDebts.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
                         <button type="button" class="delete-btn" onclick="syncDelete('my_personal_debts', '${item.id}')">حذف</button>
                     </div>
                 </div>
@@ -1222,7 +1213,7 @@
             `).join('');
         }
 
-        // --- 5. خزانة السلع ونقطة البيع (POS) ---
+        // --- 5. خزانة السلع ونقطة البيع (POS) للهواتف والحواسيب ---
         document.getElementById('saveInvItemBtn').addEventListener('click', () => {
             const barcode = document.getElementById('invItemBarcode').value.trim() || `BC-${Math.floor(1000 + Math.random()*9000)}`;
             const name = document.getElementById('invItemName').value.trim();
@@ -1241,8 +1232,11 @@
             if (!q) { res.innerHTML = ''; return; }
             const matches = inventory.filter(i => (i.name && i.name.toLowerCase().includes(q)) || (i.barcode && i.barcode.toLowerCase().includes(q)));
             res.innerHTML = matches.map(i => `
-                <div style="background:#0f172a; padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${i.name} (${(i.price||0).toFixed(2)}) - متوفر: ${i.qty}</span>
+                <div style="background:#0f172a; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border);">
+                    <div>
+                        <div style="font-weight:bold; font-size:0.85rem; color:#fff;">${i.name}</div>
+                        <div style="font-size:0.7rem; color:var(--text-muted);">${(i.price||0).toFixed(2)} د.ت | متوفر: ${i.qty}</div>
+                    </div>
                     <button type="button" class="pay-btn" onclick="addToCart('${i.id}')">إضافة +</button>
                 </div>
             `).join('');
@@ -1259,9 +1253,9 @@
 
         function renderCart() {
             const list = document.getElementById('cartItemsList');
-            if (cart.length === 0) { list.innerHTML = '<div class="empty-state">السلة فارغة</div>'; document.getElementById('cartTotalSum').textContent = '0.00'; return; }
-            document.getElementById('cartTotalSum').textContent = cart.reduce((a,c)=>a+(c.price*c.qty),0).toFixed(2);
-            list.innerHTML = cart.map(i => `<div style="background:#0f172a; padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between;"><span>${i.name} × ${i.qty}</span><span>${(i.price*i.qty).toFixed(2)}</span></div>`).join('');
+            if (cart.length === 0) { list.innerHTML = '<div class="empty-state">السلة فارغة</div>'; document.getElementById('cartTotalSum').textContent = '0.00 د.ت'; return; }
+            document.getElementById('cartTotalSum').textContent = cart.reduce((a,c)=>a+(c.price*c.qty),0).toFixed(2) + ' د.ت';
+            list.innerHTML = cart.map(i => `<div style="background:#0f172a; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span>${i.name} × ${i.qty}</span><span style="color:#38bdf8; font-weight:bold;">${(i.price*i.qty).toFixed(2)} د.ت</span></div>`).join('');
         }
 
         document.getElementById('checkoutBtn').addEventListener('click', () => {
@@ -1270,10 +1264,14 @@
             const invItemsList = document.getElementById('invItemsList');
             invItemsList.innerHTML = cart.map(i => {
                 sum += i.price * i.qty;
-                return `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price.toFixed(2)}</td><td>${(i.price*i.qty).toFixed(2)}</td></tr>`;
+                return `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price.toFixed(2)} د.ت</td><td>${(i.price*i.qty).toFixed(2)} د.ت</td></tr>`;
             }).join('');
-            document.getElementById('invTotalAmount').textContent = sum.toFixed(2);
+            
+            document.getElementById('invTotalAmount').textContent = sum.toFixed(2) + ' د.ت';
+            document.getElementById('invDateTime').textContent = 'التاريخ: ' + getFrenchFormattedDateTime(new Date()).formattedText;
+            document.getElementById('invIdNum').textContent = Math.floor(1000 + Math.random() * 9000);
             document.getElementById('invoiceModal').style.display = 'flex';
+            
             cart = []; renderCart();
         });
 
@@ -1297,15 +1295,16 @@
                         <button type="button" class="delete-btn" onclick="syncDelete('shop_inventory', '${item.id}')">حذف</button>
                     </div>
                     <div class="history-details" style="margin-top: 4px;">
-                        <div class="detail-item"><label>السعر</label><span>${(item.price||0).toFixed(2)}</span></div>
-                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه' : ''}</span></div>
+                        <div class="detail-item"><label>السعر</label><span>${(item.price||0).toFixed(2)} د.ت</span></div>
+                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه قرب النفاد' : ''}</span></div>
                     </div>
                 </div>
             `;
             }).join('');
         }
 
-        // التشغيل الأولي الفوري للسحابة
+        // بدء التشغيل
+        checkPinOnStart();
         initRealtimeListeners();
         initChart();
     </script>
