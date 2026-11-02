@@ -163,7 +163,7 @@
             border-radius: 12px;
         }
 
-        /* نافذة الفاتورة الاحترافية المحدثة */
+        /* نافذة الفاتورة الرسمية بقياس A4 (تظهر على الشاشة وتطبع بشكل احترافي) */
         .invoice-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -172,87 +172,109 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 10px;
         }
 
         .invoice-card {
             background: #ffffff;
             color: #1e293b;
             width: 100%;
-            max-width: 420px;
-            border-radius: 16px;
-            padding: 24px;
+            max-width: 700px;
+            border-radius: 8px;
+            padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            max-height: 90vh;
+            max-height: 95vh;
             overflow-y: auto;
-            border-top: 6px solid var(--primary);
         }
 
-        .invoice-brand {
-            text-align: center;
-            margin-bottom: 16px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 12px;
+        .invoice-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #0f172a;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .invoice-brand h2 {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 800;
             color: #0f172a;
         }
 
         .invoice-brand p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #64748b;
         }
 
-        .invoice-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #475569;
-            margin-bottom: 16px;
-            background: #f8fafc;
-            padding: 8px 12px;
-            border-radius: 8px;
+        .invoice-meta-box {
+            text-align: left;
+            font-size: 0.85rem;
+            color: #334155;
         }
 
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 16px;
-            font-size: 0.85rem;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
         }
 
         .invoice-table th, .invoice-table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 8px;
+            border-bottom: 1px solid #cbd5e1;
             text-align: center;
         }
 
         .invoice-table th {
             background: #f1f5f9;
-            color: #334155;
-            font-weight: 700;
+            color: #0f172a;
+            font-weight: 800;
         }
 
         .invoice-totals {
             background: #f8fafc;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
         }
 
         .invoice-total-row {
             display: flex;
             justify-content: space-between;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: #0f172a;
         }
 
-        /* التبويبات */
+        /* إعدادات الطباعة بحجم A4 تماماً */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #invoiceModal, #invoiceModal * {
+                visibility: visible;
+            }
+            #invoiceModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+            }
+            .invoice-card {
+                box-shadow: none;
+                max-width: 100%;
+                width: 100%;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* التبويبات وتصميم الواجهة */
         .tab-content {
             display: none;
             flex-direction: column;
@@ -645,40 +667,47 @@
         </div>
     </div>
 
-    <!-- نافذة الفاتورة الاحترافية المحدثة -->
+    <!-- نافذة الفاتورة الرسمية بقياس A4 للطباعة أو المشاركة -->
     <div id="invoiceModal" class="invoice-modal" style="display: none;">
         <div class="invoice-card">
-            <div class="invoice-brand">
-                <h2>MOBILE SHOP BÉJA</h2>
-                <p>إدارة الهواتف، الإكسسوارات و الصيانة</p>
+            <div class="invoice-header-flex">
+                <div class="invoice-brand">
+                    <h2>MOBILE SHOP BÉJA</h2>
+                    <p>بيع وصيانة الهواتف الذكية، الحاسوب والإكسسوارات</p>
+                </div>
+                <div class="invoice-meta-box">
+                    <div><strong>رقم الفاتورة:</strong> #POS-<span id="invIdNum">1001</span></div>
+                    <div><strong>التاريخ:</strong> <span id="invDateTime">00/00/0000</span></div>
+                </div>
             </div>
-            <div class="invoice-meta">
-                <span id="invDateTime">التاريخ: 00/00/0000</span>
-                <span>الرقم: #POS-<span id="invIdNum">1001</span></span>
-            </div>
+            
             <table class="invoice-table">
                 <thead>
                     <tr>
                         <th>السلعة / المنتج</th>
                         <th>الكمية</th>
-                        <th>السعر</th>
+                        <th>السعر الفردي</th>
                         <th>المجموع</th>
                     </tr>
                 </thead>
                 <tbody id="invItemsList"></tbody>
             </table>
+
             <div class="invoice-totals">
                 <div class="invoice-total-row">
-                    <span>الإجمالي الكلي:</span>
+                    <span>الإجمالي الكلي للبيع:</span>
                     <span id="invTotalAmount" style="color: #2563eb;">0.00 د.ت</span>
                 </div>
             </div>
-            <div style="text-align: center; font-size: 0.75rem; color: #64748b; margin-bottom: 16px;">
-                شكراً لتعاملكم معنا! نتردد في خدمتكم دائماً.
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button type="button" class="btn" onclick="printInvoice()" style="padding: 10px; font-size: 0.9rem;">طباعة / تحميل PDF</button>
-                <button type="button" class="action-btn" onclick="closeInvoiceModal()" style="padding: 10px; font-size: 0.9rem; flex: 1; background: #cbd5e1; color: #0f172a;">إغلاق</button>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <div style="font-size: 0.75rem; color: #64748b;">
+                    شكراً لثقتكم بخدماتنا | الهاتف: شارع 18 جانفي باجة
+                </div>
+                <div class="no-print" style="display: flex; gap: 8px;">
+                    <button type="button" class="btn" onclick="printInvoice()" style="padding: 10px 16px; font-size: 0.9rem;">🖨️ طباعة الفاتورة (A4)</button>
+                    <button type="button" class="action-btn" onclick="closeInvoiceModal()" style="padding: 10px 16px; font-size: 0.9rem; background: #cbd5e1; color: #0f172a;">إغلاق</button>
+                </div>
             </div>
         </div>
     </div>
@@ -830,7 +859,7 @@
             </div>
         </div>
 
-        <!-- صفحة 05: خزانة السلع ونقطة البيع الذكية (هاتف + حاسوب) -->
+        <!-- صفحة 05: خزانة السلع ونقطة البيع الذكية (هاتف + حاسوب مع أرشيف ومزامنة حية) -->
         <div id="tab-inventory" class="tab-content">
             <div class="card">
                 <div class="section-title">إضافة سلعة جديدة للخزانة (المخزن):</div>
@@ -859,7 +888,7 @@
             </div>
 
             <div class="card">
-                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع الذكية (هاتف & حاسوب):</div>
+                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع الذكية (متزامنة حياً):</div>
                 <div class="input-group">
                     <label for="posSearchInput">بحث بالاسم أو مسح الباركود:</label>
                     <div class="input-with-action">
@@ -872,7 +901,7 @@
 
                 <div class="grand-total-card" style="margin-bottom: 10px;">
                     <div class="grand-total-title">
-                        <span>سلة المشتريات الحالية</span>
+                        <span>سلة المشتريات المشتركة</span>
                         <span id="cartCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 عناصر)</span>
                     </div>
                     <div class="grand-total-amount" id="cartTotalSum">0.00</div>
@@ -882,7 +911,17 @@
                     <div class="empty-state">السلة فارغة حالياً</div>
                 </div>
 
-                <button type="button" class="btn" id="checkoutBtn" style="background: linear-gradient(135deg, var(--invest), #059669);">إتمام البيع وإصدار الفاتورة الرسمية 🧾</button>
+                <button type="button" class="btn" id="checkoutBtn" style="background: linear-gradient(135deg, var(--invest), #059669);">إتمام البيع، خصم المخزن وإصدار الفاتورة 🧾</button>
+            </div>
+
+            <!-- أرشيف المبيعات -->
+            <div class="card">
+                <div class="history-actions">
+                    <h2>📊 أرشيف المبيعات السابقة</h2>
+                </div>
+                <div class="history-list" id="salesArchiveList">
+                    <div class="empty-state">لا توجد مبيعات مسجلة بعد</div>
+                </div>
             </div>
 
             <div class="card">
@@ -923,7 +962,6 @@
     <div class="toast" id="toast">تم بنجاح! ✓</div>
 
     <script>
-        // --- إعداد Firebase والسحابة الذكية ---
         const firebaseConfig = {
             apiKey: "AIzaSyDhiSZbbEc1lg9EveYktR5mFOVX19gNcY4",
             authDomain: "mobileshope-ac548.firebaseapp.com",
@@ -938,24 +976,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- نظام الرمز السري (PIN) للحماية ---
+        // نظام الحماية PIN
         const pinOverlay = document.getElementById('pinOverlay');
         const pinInput = document.getElementById('pinInput');
         const unlockBtn = document.getElementById('unlockBtn');
-        let savedPin = localStorage.getItem('app_pin_code') || null;
+        let savedPin = localStorage.getItem('app_pin_code') || "1234";
 
         function checkPinOnStart() {
-            if (!savedPin) {
-                const newPin = prompt('الرجاء تعيين رمز سري مكون من 4 أرقام لتأمين التطبيق:');
-                if (newPin && newPin.length === 4 && !isNaN(newPin)) {
-                    savedPin = newPin;
-                    localStorage.setItem('app_pin_code', savedPin);
-                    showToastPopup("تم تعيين الرمز السري بنجاح! 🔒");
-                } else {
-                    savedPin = "1234"; // افتراضي إذا تخطي
-                    localStorage.setItem('app_pin_code', savedPin);
-                }
-            }
             pinOverlay.style.display = 'flex';
         }
 
@@ -979,6 +1006,7 @@
         let goods = [];
         let inventory = [];
         let cart = [];
+        let salesArchive = [];
 
         function initRealtimeListeners() {
             db.collection("income_logs").onSnapshot(snapshot => {
@@ -1005,27 +1033,37 @@
                 inventory = []; snapshot.forEach(doc => inventory.push({ id: doc.id, ...doc.data() }));
                 renderInventoryApp();
             });
+
+            // مزامنة السلة الحية بين الأجهزة (الهاتف والحاسوب)
+            db.collection("shared_cart").onSnapshot(snapshot => {
+                cart = []; snapshot.forEach(doc => cart.push({ docId: doc.id, ...doc.data() }));
+                renderCart();
+            });
+
+            // أرشيف المبيعات السحابي
+            db.collection("sales_archive").onSnapshot(snapshot => {
+                salesArchive = []; snapshot.forEach(doc => salesArchive.push({ id: doc.id, ...doc.data() }));
+                renderSalesArchive();
+            });
         }
 
         async function syncAdd(collectionName, item) {
             try {
                 await db.collection(collectionName).add(item);
-                showToastPopup("تم الحفظ في السحابة بنجاح! ☁️");
             } catch (e) {
-                alert("فشل الحفظ، تحقق من الاتصال بالإنترنت.");
+                alert("فشل الاتصال بالسحابة.");
             }
         }
 
         async function syncDelete(collectionName, id) {
             try {
                 await db.collection(collectionName).doc(id.toString()).delete();
-                showToastPopup("تم الحذف بنجاح! 🗑️");
             } catch (e) {
                 alert("فشل الحذف من السحابة.");
             }
         }
 
-        // --- كاميرا الباركود (تدعم الهاتف والحاسوب) ---
+        // كاميرا الباركود
         const scannerModal = document.getElementById('scannerModal');
         let html5QrCode = null;
         let activeScannerTargetInput = null;
@@ -1062,7 +1100,6 @@
             } else { scannerModal.style.display = 'none'; }
         }
 
-        // --- تبديل الصفحات ---
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1092,7 +1129,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
 
-        // --- 1. الحاسبة وتوزيع الأرباح ---
+        // 1. الحاسبة
         const incomeInput = document.getElementById('incomeInput');
         const previewExpenses = document.getElementById('previewExpenses');
         const previewSavings = document.getElementById('previewSavings');
@@ -1127,6 +1164,7 @@
             const dt = getFrenchFormattedDateTime(new Date());
             syncAdd('income_logs', { id: Date.now().toString(), amount, dateTime: dt.formattedText, isoDate: dt.isoDate, expenses: amount*0.33, savings: amount*0.33, invest: amount*0.33, charity: amount*0.01 });
             incomeInput.value = '';
+            showToastPopup("تم حفظ المدخول بالسجل ✓");
         });
 
         function renderIncomeApp() {
@@ -1144,14 +1182,15 @@
             document.getElementById('totalCountBadge').textContent = `(${logs.length} عمليات)`;
         }
 
-        // --- 2. ديون الحرفاء ---
+        // 2. ديون الحرفاء
         document.getElementById('saveDebtBtn').addEventListener('click', () => {
             const name = document.getElementById('debtorName').value.trim();
             const amount = parseArabicNumber(document.getElementById('debtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
             const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('customer_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('debtNote').value || 'بدون', dateTime: dt.formattedText });
+            syncAdd('customer_debts', { id: Date.now().toString(), name, remainingAmount: amount, note: document.getElementById('debtNote').value || 'بدون', dateTime: dt.formattedText });
             document.getElementById('debtorName').value = ''; document.getElementById('debtAmount').value = ''; document.getElementById('debtNote').value = '';
+            showToastPopup("تم إضافة الدين بنجاح! ✓");
         });
 
         function renderDebtsApp() {
@@ -1168,14 +1207,15 @@
             `).join('');
         }
 
-        // --- 3. ديوني الخاصة ---
+        // 3. ديوني الخاصة
         document.getElementById('saveMyDebtBtn').addEventListener('click', () => {
             const name = document.getElementById('myCreditorName').value.trim();
             const amount = parseArabicNumber(document.getElementById('myDebtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
             const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('my_personal_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, dateTime: dt.formattedText });
+            syncAdd('my_personal_debts', { id: Date.now().toString(), name, remainingAmount: amount, dateTime: dt.formattedText });
             document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = '';
+            showToastPopup("تم الحفظ بنجاح! ✓");
         });
 
         function renderMyDebtsApp() {
@@ -1192,12 +1232,13 @@
             `).join('');
         }
 
-        // --- 4. السلع الناقصة ---
+        // 4. السلع الناقصة
         document.getElementById('saveGoodsBtn').addEventListener('click', () => {
             const name = document.getElementById('goodsName').value.trim();
             if (!name) { alert('أدخل اسم السلعة'); return; }
             syncAdd('missing_goods', { id: Date.now().toString(), name, qty: document.getElementById('goodsQty').value || '1', dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('goodsName').value = ''; document.getElementById('goodsQty').value = '';
+            showToastPopup("تمت الإضافة للقائمة ✓");
         });
 
         function renderGoodsApp() {
@@ -1213,7 +1254,7 @@
             `).join('');
         }
 
-        // --- 5. خزانة السلع ونقطة البيع (POS) للهواتف والحواسيب ---
+        // 5. المخزن ونقطة البيع المشتركة الحية (تظهر السلة على الحاسوب والهاتف معاً)
         document.getElementById('saveInvItemBtn').addEventListener('click', () => {
             const barcode = document.getElementById('invItemBarcode').value.trim() || `BC-${Math.floor(1000 + Math.random()*9000)}`;
             const name = document.getElementById('invItemName').value.trim();
@@ -1223,6 +1264,7 @@
             
             syncAdd('shop_inventory', { id: Date.now().toString(), barcode, name, price, qty, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('invItemBarcode').value = ''; document.getElementById('invItemName').value = ''; document.getElementById('invItemPrice').value = ''; document.getElementById('invItemQty').value = '';
+            showToastPopup("تم حفظ السلعة في الخزانة 📦");
         });
 
         const posSearchInput = document.getElementById('posSearchInput');
@@ -1237,46 +1279,132 @@
                         <div style="font-weight:bold; font-size:0.85rem; color:#fff;">${i.name}</div>
                         <div style="font-size:0.7rem; color:var(--text-muted);">${(i.price||0).toFixed(2)} د.ت | متوفر: ${i.qty}</div>
                     </div>
-                    <button type="button" class="pay-btn" onclick="addToCart('${i.id}')">إضافة +</button>
+                    <button type="button" class="pay-btn" onclick="addToSharedCart('${i.id}')">إضافة للسلة +</button>
                 </div>
             `).join('');
         });
 
-        window.addToCart = function(id) {
-            const item = inventory.find(i => i.id === id);
+        // إضافة للسلة السحابية المشتركة
+        window.addToSharedCart = async function(inventoryId) {
+            const item = inventory.find(i => i.id === inventoryId);
             if (!item || item.qty <= 0) { alert('السلعة غير متوفرة أو نفدت!'); return; }
-            const cItem = cart.find(c => c.id === id);
-            if (cItem) cItem.qty += 1; else cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
-            posSearchInput.value = ''; document.getElementById('posQuickResults').innerHTML = '';
-            renderCart();
+            
+            // تحقق إذا كانت السلعة موجودة مسبقاً في السلة المشتركة
+            const existing = cart.find(c => c.inventoryId === inventoryId);
+            if (existing) {
+                await db.collection("shared_cart").doc(existing.docId).update({ qty: existing.qty + 1 });
+            } else {
+                await db.collection("shared_cart").add({
+                    inventoryId: item.id,
+                    name: item.name,
+                    price: item.price,
+                    qty: 1
+                });
+            }
+            posSearchInput.value = '';
+            document.getElementById('posQuickResults').innerHTML = '';
+            showToastPopup("تمت الإضافة للسلة المشتركة ✓");
         };
 
         function renderCart() {
             const list = document.getElementById('cartItemsList');
             if (cart.length === 0) { list.innerHTML = '<div class="empty-state">السلة فارغة</div>'; document.getElementById('cartTotalSum').textContent = '0.00 د.ت'; return; }
             document.getElementById('cartTotalSum').textContent = cart.reduce((a,c)=>a+(c.price*c.qty),0).toFixed(2) + ' د.ت';
-            list.innerHTML = cart.map(i => `<div style="background:#0f172a; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span>${i.name} × ${i.qty}</span><span style="color:#38bdf8; font-weight:bold;">${(i.price*i.qty).toFixed(2)} د.ت</span></div>`).join('');
+            document.getElementById('cartCountBadge').textContent = `(${cart.reduce((a,c)=>a+c.qty,0)} عناصر)`;
+            
+            list.innerHTML = cart.map(i => `
+                <div style="background:#0f172a; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>${i.name} × ${i.qty}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="color:#38bdf8; font-weight:bold;">${(i.price*i.qty).toFixed(2)} د.ت</span>
+                        <button class="delete-btn" onclick="removeCartItem('${i.docId}')">&times;</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        document.getElementById('checkoutBtn').addEventListener('click', () => {
+        window.removeCartItem = async function(docId) {
+            await db.collection("shared_cart").doc(docId).delete();
+        };
+
+        // إتمام البيع، خصم الكمية من المخزن، وحفظ أرشيف المبيعات
+        document.getElementById('checkoutBtn').addEventListener('click', async () => {
             if (cart.length === 0) { alert('السلة فارغة!'); return; }
+            
             let sum = 0;
-            const invItemsList = document.getElementById('invItemsList');
-            invItemsList.innerHTML = cart.map(i => {
-                sum += i.price * i.qty;
-                return `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price.toFixed(2)} د.ت</td><td>${(i.price*i.qty).toFixed(2)} د.ت</td></tr>`;
-            }).join('');
-            
+            let soldItemsDetails = [];
+
+            // 1. خصم الكميات من المخزن الأساسي
+            for (let cItem of cart) {
+                const stockItem = inventory.find(i => i.id === cItem.inventoryId);
+                if (stockItem) {
+                    const newQty = Math.max(0, stockItem.qty - cItem.qty);
+                    // تحديث المخزن في قاعدة البيانات
+                    await db.collection("shop_inventory").doc(stockItem.id).update({ qty: newQty });
+                }
+                sum += cItem.price * cItem.qty;
+                soldItemsDetails.push({ name: cItem.name, qty: cItem.qty, price: cItem.price, subTotal: cItem.price * cItem.qty });
+            }
+
+            const now = new Date();
+            const dt = getFrenchFormattedDateTime(now);
+            const invoiceNumber = Math.floor(1000 + Math.random() * 9000);
+
+            // 2. تسجيل البيعة في أرشيف المبيعات السحابي
+            await db.collection("sales_archive").add({
+                invoiceNo: invoiceNumber,
+                dateTime: dt.formattedText,
+                items: soldItemsDetails,
+                totalAmount: sum
+            });
+
+            // 3. تفريغ السلة المشتركة السحابية
+            for (let cItem of cart) {
+                await db.collection("shared_cart").doc(cItem.docId).delete();
+            }
+
+            // عرض الفاتورة الرسمية A4
             document.getElementById('invTotalAmount').textContent = sum.toFixed(2) + ' د.ت';
-            document.getElementById('invDateTime').textContent = 'التاريخ: ' + getFrenchFormattedDateTime(new Date()).formattedText;
-            document.getElementById('invIdNum').textContent = Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('invoiceModal').style.display = 'flex';
+            document.getElementById('invDateTime').textContent = dt.formattedText;
+            document.getElementById('invIdNum').textContent = invoiceNumber;
             
-            cart = []; renderCart();
+            const invItemsList = document.getElementById('invItemsList');
+            invItemsList.innerHTML = soldItemsDetails.map(i => `
+                <tr>
+                    <td>${i.name}</td>
+                    <td>${i.qty}</td>
+                    <td>${i.price.toFixed(2)} د.ت</td>
+                    <td>${i.subTotal.toFixed(2)} د.ت</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('invoiceModal').style.display = 'flex';
+            showToastPopup("تمت عملية البيع وخصم المخزن بنجاح! 🧾");
         });
 
         window.closeInvoiceModal = function() { document.getElementById('invoiceModal').style.display = 'none'; };
         window.printInvoice = function() { window.print(); };
+
+        // عرض أرشيف المبيعات
+        function renderSalesArchive() {
+            const list = document.getElementById('salesArchiveList');
+            if (salesArchive.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد مبيعات مسجلة بعد</div>'; return; }
+            
+            list.innerHTML = salesArchive.map(sale => `
+                <div class="history-item">
+                    <div class="history-top">
+                        <div>
+                            <span class="history-amount" style="color:var(--invest);">فاتورة #${sale.invoiceNo} : ${sale.totalAmount.toFixed(2)} د.ت</span>
+                            <span class="history-date">| ${sale.dateTime}</span>
+                        </div>
+                        <button class="delete-btn" onclick="syncDelete('sales_archive', '${sale.id}')">حذف</button>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+                        المنتجات: ${sale.items ? sale.items.map(i => `${i.name} (${i.qty})`).join(', ') : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
         function renderInventoryApp() {
             const list = document.getElementById('stockList');
@@ -1296,7 +1424,7 @@
                     </div>
                     <div class="history-details" style="margin-top: 4px;">
                         <div class="detail-item"><label>السعر</label><span>${(item.price||0).toFixed(2)} د.ت</span></div>
-                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه قرب النفاد' : ''}</span></div>
+                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه' : ''}</span></div>
                     </div>
                 </div>
             `;
