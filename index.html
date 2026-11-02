@@ -163,7 +163,7 @@
             border-radius: 12px;
         }
 
-        /* نافذة الفاتورة الرسمية بقياس A4 (تظهر على الشاشة وتطبع بشكل احترافي) */
+        /* نافذة الفاتورة الرسمية بقياس A4 */
         .invoice-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -248,42 +248,16 @@
             color: #0f172a;
         }
 
-        /* إعدادات الطباعة بحجم A4 تماماً */
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #invoiceModal, #invoiceModal * {
-                visibility: visible;
-            }
-            #invoiceModal {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-            }
-            .invoice-card {
-                box-shadow: none;
-                max-width: 100%;
-                width: 100%;
-                padding: 0;
-            }
-            .no-print {
-                display: none !important;
-            }
+            body * { visibility: hidden; }
+            #invoiceModal, #invoiceModal * { visibility: visible; }
+            #invoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: white; }
+            .invoice-card { box-shadow: none; max-width: 100%; width: 100%; padding: 0; }
+            .no-print { display: none !important; }
         }
 
-        /* التبويبات وتصميم الواجهة */
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
+        .tab-content { display: none; flex-direction: column; gap: 16px; }
+        .tab-content.active { display: flex; }
 
         .card {
             background: var(--card-bg);
@@ -306,7 +280,7 @@
             color: var(--text-main);
         }
 
-        .input-wrapper input, .filter-row input, .form-control {
+        .input-wrapper input, .form-control {
             width: 100%;
             padding: 12px 14px;
             background-color: #0f172a;
@@ -316,27 +290,12 @@
             font-size: 1.1rem;
             font-weight: 700;
             outline: none;
-            transition: all 0.2s ease;
         }
 
-        .input-wrapper input {
-            font-size: 1.3rem;
-            padding: 14px 16px;
-        }
+        .input-wrapper input { font-size: 1.3rem; padding: 14px 16px; }
 
-        .input-wrapper input:focus, .filter-row input:focus, .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        .input-with-action {
-            display: flex;
-            gap: 6px;
-        }
-
-        .input-with-action input {
-            flex: 1;
-        }
+        .input-with-action { display: flex; gap: 6px; }
+        .input-with-action input { flex: 1; }
 
         .scan-cam-btn {
             background: rgba(99, 102, 241, 0.2);
@@ -346,9 +305,6 @@
             border-radius: 12px;
             font-size: 1.1rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .btn {
@@ -361,26 +317,12 @@
             font-size: 1.05rem;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.2s;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
+        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; }
 
-        .section-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .grid-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .grid-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         .stat-card {
             background: #0f172a;
@@ -397,41 +339,16 @@
         .stat-card.invest { border-color: var(--invest); }
         .stat-card.charity { border-color: var(--charity); }
 
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .stat-badge {
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .stat-value {
-            font-size: 1.15rem;
-            font-weight: 800;
-        }
+        .stat-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .stat-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 6px; background: rgba(255, 255, 255, 0.08); }
+        .stat-value { font-size: 1.15rem; font-weight: 800; }
 
         .stat-card.expenses .stat-value { color: var(--expenses); }
         .stat-card.savings .stat-value { color: var(--savings); }
         .stat-card.invest .stat-value { color: var(--invest); }
         .stat-card.charity .stat-value { color: var(--charity); }
 
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 190px;
-            margin-top: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .chart-container { position: relative; width: 100%; height: 190px; margin-top: 14px; }
 
         .grand-total-card {
             background: linear-gradient(135deg, #1e1b4b, #0f172a);
@@ -441,55 +358,13 @@
             margin-bottom: 16px;
         }
 
-        .grand-total-title {
-            font-size: 0.85rem;
-            color: #a5b4fc;
-            font-weight: 700;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .grand-total-title { font-size: 0.85rem; color: #a5b4fc; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .grand-total-amount { font-size: 1.4rem; font-weight: 800; color: #38bdf8; }
 
-        .grand-total-amount {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #38bdf8;
-            margin-bottom: 8px;
-        }
+        .history-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .history-actions h2 { font-size: 0.95rem; font-weight: 700; }
 
-        .history-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            gap: 6px;
-        }
-
-        .history-actions h2 {
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
-
-        .action-btn {
-            background: #334155;
-            border: none;
-            color: var(--text-main);
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 6px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding-left: 2px;
-        }
+        .history-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
 
         .history-item {
             background: #0f172a;
@@ -501,56 +376,9 @@
             gap: 8px;
         }
 
-        .history-item.low-stock {
-            border-color: var(--charity);
-            background: rgba(245, 158, 11, 0.05);
-        }
-
-        .history-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 6px;
-        }
-
-        .history-date {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            direction: ltr;
-            display: inline-block;
-        }
-
-        .history-amount {
-            font-weight: 800;
-            font-size: 0.95rem;
-            color: #38bdf8;
-        }
-
-        .history-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4px;
-            text-align: center;
-        }
-
-        .detail-item {
-            background: #1e293b;
-            padding: 6px 2px;
-            border-radius: 8px;
-        }
-
-        .detail-item label {
-            display: block;
-            color: var(--text-muted);
-            font-size: 0.62rem;
-            margin-bottom: 2px;
-        }
-
-        .detail-item span {
-            font-size: 0.72rem;
-            font-weight: 700;
-        }
+        .history-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 6px; }
+        .history-date { font-size: 0.72rem; color: var(--text-muted); direction: ltr; }
+        .history-amount { font-weight: 800; font-size: 0.95rem; color: #38bdf8; }
 
         .delete-btn {
             background: rgba(244, 63, 94, 0.15);
@@ -563,29 +391,23 @@
             padding: 3px 8px;
         }
 
-        .pay-btn {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--invest);
-            border-radius: 8px;
-            font-size: 0.75rem;
+        .qty-btn {
+            background: #334155;
+            color: #fff;
+            border: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
             font-weight: bold;
+            font-size: 1rem;
             cursor: pointer;
-            padding: 3px 8px;
         }
 
-        .empty-state {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 20px 0;
-        }
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0; }
 
-        /* شريط التنقل السفلي */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
+            bottom: 0; left: 0;
             width: 100%;
             background: #1e293b;
             border-top: 1px solid var(--card-border);
@@ -593,7 +415,6 @@
             justify-content: space-around;
             padding: 8px 1px;
             z-index: 1000;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
         }
 
         .nav-item {
@@ -608,23 +429,14 @@
             gap: 2px;
             cursor: pointer;
             flex: 1;
-            transition: color 0.2s;
         }
 
-        .nav-item svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-
-        .nav-item.active {
-            color: #38bdf8;
-        }
+        .nav-item svg { width: 18px; height: 18px; fill: currentColor; }
+        .nav-item.active { color: #38bdf8; }
 
         .toast {
             position: fixed;
-            bottom: 75px;
-            left: 50%;
+            bottom: 75px; left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--invest);
             color: #0f172a;
@@ -632,26 +444,22 @@
             border-radius: 30px;
             font-weight: bold;
             font-size: 0.85rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 5100;
             pointer-events: none;
         }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول بالرمز السري (PIN) -->
+    <!-- شاشة الرمز السري (PIN) -->
     <div id="pinOverlay" class="pin-overlay" style="display: none;">
         <div class="pin-box">
-            <h2 id="pinTitle" style="font-size: 1.1rem; margin-bottom: 8px;">أدخل الرمز السرّي (PIN)</h2>
-            <p id="pinSub" style="font-size: 0.78rem; color: var(--text-muted);">حماية بيانات المحل والديون</p>
+            <h2 style="font-size: 1.1rem; margin-bottom: 8px;">أدخل الرمز السرّي (PIN)</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">حماية بيانات المحل والديون</p>
             <input type="password" id="pinInput" class="pin-input" maxlength="4" inputmode="numeric" placeholder="****">
             <button type="button" class="btn" id="unlockBtn">فتح التطبيق</button>
         </div>
@@ -662,12 +470,12 @@
         <div class="scanner-container">
             <h3 style="font-size: 1rem; margin-bottom: 10px; color: #fff;">مسح الباركود بالكاميرا</h3>
             <div id="reader"></div>
-            <p id="scannerStatus" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; margin-bottom: 12px;">وجّه الكاميرا نحو الباركود...</p>
-            <button type="button" class="action-btn" onclick="closeScannerModal()" style="width: 100%; padding: 10px; font-size: 0.9rem; background: #f43f5e; color:#fff;">إلغاء وإغلاق</button>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">وجّه الكاميرا نحو الباركود...</p>
+            <button type="button" onclick="closeScannerModal()" style="width: 100%; padding: 10px; font-size: 0.9rem; background: #f43f5e; color:#fff; border:none; border-radius:10px; font-weight:bold;">إلغاء وإغلاق</button>
         </div>
     </div>
 
-    <!-- نافذة الفاتورة الرسمية بقياس A4 للطباعة أو المشاركة -->
+    <!-- نافذة الفاتورة A4 -->
     <div id="invoiceModal" class="invoice-modal" style="display: none;">
         <div class="invoice-card">
             <div class="invoice-header-flex">
@@ -701,12 +509,10 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                <div style="font-size: 0.75rem; color: #64748b;">
-                    شكراً لثقتكم بخدماتنا | الهاتف: شارع 18 جانفي باجة
-                </div>
+                <div style="font-size: 0.75rem; color: #64748b;">شكراً لثقتكم بخدماتنا | شارع 18 جانفي باجة</div>
                 <div class="no-print" style="display: flex; gap: 8px;">
-                    <button type="button" class="btn" onclick="printInvoice()" style="padding: 10px 16px; font-size: 0.9rem;">🖨️ طباعة الفاتورة (A4)</button>
-                    <button type="button" class="action-btn" onclick="closeInvoiceModal()" style="padding: 10px 16px; font-size: 0.9rem; background: #cbd5e1; color: #0f172a;">إغلاق</button>
+                    <button type="button" class="btn" onclick="window.print()" style="padding: 10px 16px; font-size: 0.9rem;">🖨️ طباعة الفاتورة (A4)</button>
+                    <button type="button" onclick="document.getElementById('invoiceModal').style.display='none'" style="padding: 10px 16px; font-size: 0.9rem; background: #cbd5e1; color: #0f172a; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">إغلاق</button>
                 </div>
             </div>
         </div>
@@ -715,13 +521,13 @@
     <div class="app-container">
         <header>
             <div class="header-btns">
-                <button type="button" class="lock-btn-header" onclick="lockApp()">🔒 قفل</button>
+                <button type="button" class="lock-btn-header" onclick="document.getElementById('pinOverlay').style.display='flex'">🔒 قفل</button>
             </div>
             <h1>إدارة المال والأعمال</h1>
             <p>سحابي ذكي متزامن (هاتف + حاسوب)</p>
         </header>
 
-        <!-- صفحة 01: حاسبة الدخل اليومي -->
+        <!-- 1. الحاسبة -->
         <div id="tab-income" class="tab-content active">
             <div class="card">
                 <div class="input-group">
@@ -733,28 +539,13 @@
 
                 <div class="section-title">التوزيع الفوري الذكي:</div>
                 <div class="grid-cards">
-                    <div class="stat-card expenses">
-                        <div class="stat-header"><span>مصاريف</span><span class="stat-badge">33%</span></div>
-                        <div class="stat-value" id="previewExpenses">0.00</div>
-                    </div>
-                    <div class="stat-card savings">
-                        <div class="stat-header"><span>إدخار</span><span class="stat-badge">33%</span></div>
-                        <div class="stat-value" id="previewSavings">0.00</div>
-                    </div>
-                    <div class="stat-card invest">
-                        <div class="stat-header"><span>استثمار</span><span class="stat-badge">33%</span></div>
-                        <div class="stat-value" id="previewInvest">0.00</div>
-                    </div>
-                    <div class="stat-card charity">
-                        <div class="stat-header"><span>صدقة</span><span class="stat-badge">1%</span></div>
-                        <div class="stat-value" id="previewCharity">0.00</div>
-                    </div>
+                    <div class="stat-card expenses"><div class="stat-header"><span>مصاريف</span><span class="stat-badge">33%</span></div><div class="stat-value" id="previewExpenses">0.00</div></div>
+                    <div class="stat-card savings"><div class="stat-header"><span>إدخار</span><span class="stat-badge">33%</span></div><div class="stat-value" id="previewSavings">0.00</div></div>
+                    <div class="stat-card invest"><div class="stat-header"><span>استثمار</span><span class="stat-badge">33%</span></div><div class="stat-value" id="previewInvest">0.00</div></div>
+                    <div class="stat-card charity"><div class="stat-header"><span>صدقة</span><span class="stat-badge">1%</span></div><div class="stat-value" id="previewCharity">0.00</div></div>
                 </div>
 
-                <div class="chart-container">
-                    <canvas id="previewChart"></canvas>
-                </div>
-
+                <div class="chart-container"><canvas id="previewChart"></canvas></div>
                 <button type="button" class="btn" style="margin-top: 16px;" id="saveBtn">حفظ العملية في السجل</button>
             </div>
 
@@ -767,102 +558,67 @@
                     <div class="grand-total-amount" id="totalIncomeSum">0.00</div>
                 </div>
                 <div class="history-actions"><h2>سجل المدخلات</h2></div>
-                <div class="history-list" id="historyList">
-                    <div class="empty-state">جاري التحميل...</div>
-                </div>
+                <div class="history-list" id="historyList"><div class="empty-state">جاري التحميل...</div></div>
             </div>
         </div>
 
-        <!-- صفحة 02: ديون الحرفاء -->
+        <!-- 2. ديون الحرفاء -->
         <div id="tab-debts" class="tab-content">
             <div class="card">
                 <div class="section-title">تسجيل دين على حرفي:</div>
-                <div class="input-group">
-                    <label for="debtorName">اسم الحرفي / الزبون</label>
-                    <input type="text" id="debtorName" class="form-control" placeholder="أدخل اسم الزبون...">
-                </div>
-                <div class="input-group">
-                    <label for="debtAmount">المبلغ المستحق الإجمالي</label>
-                    <input type="text" id="debtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal">
-                </div>
-                <div class="input-group">
-                    <label for="debtNote">ملاحظات</label>
-                    <input type="text" id="debtNote" class="form-control" placeholder="مثال: مقابل هاتف...">
-                </div>
+                <div class="input-group"><label for="debtorName">اسم الحرفي / الزبون</label><input type="text" id="debtorName" class="form-control" placeholder="أدخل اسم الزبون..."></div>
+                <div class="input-group"><label for="debtAmount">المبلغ المستحق الإجمالي</label><input type="text" id="debtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal"></div>
+                <div class="input-group"><label for="debtNote">ملاحظات</label><input type="text" id="debtNote" class="form-control" placeholder="مثال: مقابل هاتف..."></div>
                 <button type="button" class="btn" id="saveDebtBtn">إضافة الدين للسجل</button>
             </div>
 
             <div class="card">
                 <div class="grand-total-card">
-                    <div class="grand-total-title">
-                        <span>إجمالي ديون الحرفاء المتبقية</span>
-                        <span id="debtCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 ديون)</span>
-                    </div>
+                    <div class="grand-total-title"><span>إجمالي ديون الحرفاء المتبقية</span><span id="debtCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 ديون)</span></div>
                     <div class="grand-total-amount" id="totalDebtsSum" style="color: var(--expenses);">0.00</div>
                 </div>
                 <div class="history-actions"><h2>قائمة ديون الحرفاء</h2></div>
-                <div class="history-list" id="debtsList">
-                    <div class="empty-state">لا توجد ديون مسجلة</div>
-                </div>
+                <div class="history-list" id="debtsList"><div class="empty-state">لا توجد ديون مسجلة</div></div>
             </div>
         </div>
 
-        <!-- صفحة 03: ديوني الخاصة -->
+        <!-- 3. ديوني الخاصة -->
         <div id="tab-my-debts" class="tab-content">
             <div class="card">
                 <div class="section-title">تسجيل دين مترتب عليك:</div>
-                <div class="input-group">
-                    <label for="myCreditorName">اسم الدائن / الجهة</label>
-                    <input type="text" id="myCreditorName" class="form-control" placeholder="أدخل اسم المورد...">
-                </div>
-                <div class="input-group">
-                    <label for="myDebtAmount">المبلغ المطلوب منك</label>
-                    <input type="text" id="myDebtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal">
-                </div>
+                <div class="input-group"><label for="myCreditorName">اسم الدائن / الجهة</label><input type="text" id="myCreditorName" class="form-control" placeholder="أدخل اسم المورد..."></div>
+                <div class="input-group"><label for="myDebtAmount">المبلغ المطلوب منك</label><input type="text" id="myDebtAmount" class="form-control" placeholder="أدخل المبلغ..." inputmode="decimal"></div>
                 <button type="button" class="btn" id="saveMyDebtBtn">إضافة لقائمتي</button>
             </div>
 
             <div class="card">
                 <div class="grand-total-card">
-                    <div class="grand-total-title">
-                        <span>إجمالي ديوني الخاصة المتبقية</span>
-                        <span id="myDebtCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 ديون)</span>
-                    </div>
+                    <div class="grand-total-title"><span>إجمالي ديوني الخاصة المتبقية</span><span id="myDebtCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 ديون)</span></div>
                     <div class="grand-total-amount" id="totalMyDebtsSum" style="color: var(--expenses);">0.00</div>
                 </div>
-                <div class="history-list" id="myDebtsList">
-                    <div class="empty-state">لا توجد ديون عليك</div>
-                </div>
+                <div class="history-list" id="myDebtsList"><div class="empty-state">لا توجد ديون عليك</div></div>
             </div>
         </div>
 
-        <!-- صفحة 04: السلع الناقصة -->
+        <!-- 4. السلع الناقصة -->
         <div id="tab-goods" class="tab-content">
             <div class="card">
                 <div class="section-title">إضافة سلعة ناقصة:</div>
-                <div class="input-group">
-                    <label for="goodsName">اسم السلعة / المنتج</label>
-                    <input type="text" id="goodsName" class="form-control" placeholder="مثال: شاشة هاتف...">
-                </div>
-                <div class="input-group">
-                    <label for="goodsQty">الكمية والمواصفات</label>
-                    <input type="text" id="goodsQty" class="form-control" placeholder="مثال: 5 علب...">
-                </div>
+                <div class="input-group"><label for="goodsName">اسم السلعة / المنتج</label><input type="text" id="goodsName" class="form-control" placeholder="مثال: شاشة هاتف..."></div>
+                <div class="input-group"><label for="goodsQty">الكمية والمواصفات</label><input type="text" id="goodsQty" class="form-control" placeholder="مثال: 5 علب..."></div>
                 <button type="button" class="btn" id="saveGoodsBtn">إضافة للقائمة</button>
             </div>
 
             <div class="card">
                 <div class="history-actions"><h2>قائمة السلع المطلوبة</h2></div>
-                <div class="history-list" id="goodsList">
-                    <div class="empty-state">لا توجد سلع مطلوبة</div>
-                </div>
+                <div class="history-list" id="goodsList"><div class="empty-state">لا توجد سلع مطلوبة</div></div>
             </div>
         </div>
 
-        <!-- صفحة 05: خزانة السلع ونقطة البيع الذكية (هاتف + حاسوب مع أرشيف ومزامنة حية) -->
+        <!-- 5. خزانة السلع وسلة المشتريات التفاعلية المباشرة -->
         <div id="tab-inventory" class="tab-content">
             <div class="card">
-                <div class="section-title">إضافة سلعة جديدة للخزانة (المخزن):</div>
+                <div class="section-title">إضافة سلعة جديدة للمخزن:</div>
                 <div class="input-group">
                     <label for="invItemBarcode">رقم الباركود (Barcode)</label>
                     <div class="input-with-action">
@@ -875,20 +631,15 @@
                     <input type="text" id="invItemName" class="form-control" placeholder="مثال: iPhone 13 / Laptop HP...">
                 </div>
                 <div class="grid-cards" style="margin-bottom: 14px;">
-                    <div class="input-group" style="margin-bottom:0;">
-                        <label for="invItemPrice">سعر البيع</label>
-                        <input type="text" id="invItemPrice" class="form-control" placeholder="0.00" inputmode="decimal">
-                    </div>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <label for="invItemQty">الكمية بالمخزن</label>
-                        <input type="text" id="invItemQty" class="form-control" placeholder="0" inputmode="numeric">
-                    </div>
+                    <div class="input-group" style="margin-bottom:0;"><label for="invItemPrice">سعر البيع</label><input type="text" id="invItemPrice" class="form-control" placeholder="0.00" inputmode="decimal"></div>
+                    <div class="input-group" style="margin-bottom:0;"><label for="invItemQty">الكمية بالمخزن</label><input type="text" id="invItemQty" class="form-control" placeholder="0" inputmode="numeric"></div>
                 </div>
                 <button type="button" class="btn" id="saveInvItemBtn">حفظ السلعة في الخزانة</button>
             </div>
 
+            <!-- نقطة البيع وسلة المشتريات السحابية المشتركة -->
             <div class="card">
-                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع الذكية (متزامنة حياً):</div>
+                <div class="section-title" style="color: var(--invest);">🛒 نقطة البيع الذكية (متزامنة بين الهاتف والحاسوب):</div>
                 <div class="input-group">
                     <label for="posSearchInput">بحث بالاسم أو مسح الباركود:</label>
                     <div class="input-with-action">
@@ -901,13 +652,14 @@
 
                 <div class="grand-total-card" style="margin-bottom: 10px;">
                     <div class="grand-total-title">
-                        <span>سلة المشتريات المشتركة</span>
+                        <span>سلة المشتريات الحالية (المشتركة)</span>
                         <span id="cartCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 عناصر)</span>
                     </div>
-                    <div class="grand-total-amount" id="cartTotalSum">0.00</div>
+                    <div class="grand-total-amount" id="cartTotalSum">0.00 د.ت</div>
                 </div>
 
-                <div class="history-list" id="cartItemsList" style="margin-bottom: 12px; max-height: 180px;">
+                <!-- سلة المشتريات المباشرة والتفاعلية -->
+                <div class="history-list" id="cartItemsList" style="margin-bottom: 12px; max-height: 220px;">
                     <div class="empty-state">السلة فارغة حالياً</div>
                 </div>
 
@@ -916,47 +668,25 @@
 
             <!-- أرشيف المبيعات -->
             <div class="card">
-                <div class="history-actions">
-                    <h2>📊 أرشيف المبيعات السابقة</h2>
-                </div>
-                <div class="history-list" id="salesArchiveList">
-                    <div class="empty-state">لا توجد مبيعات مسجلة بعد</div>
-                </div>
+                <div class="history-actions"><h2>📊 أرشيف المبيعات السابقة</h2></div>
+                <div class="history-list" id="salesArchiveList"><div class="empty-state">لا توجد مبيعات مسجلة بعد</div></div>
             </div>
 
+            <!-- المخزن -->
             <div class="card">
-                <div class="history-actions">
-                    <h2>📦 خزانة السلع المتوفرة (<span id="totalStockCount">0</span>)</h2>
-                </div>
-                <div class="history-list" id="stockList">
-                    <div class="empty-state">المخزن فارغ</div>
-                </div>
+                <div class="history-actions"><h2>📦 خزانة السلع المتوفرة (<span id="totalStockCount">0</span>)</h2></div>
+                <div class="history-list" id="stockList"><div class="empty-state">المخزن فارغ</div></div>
             </div>
         </div>
     </div>
 
     <!-- شريط التنقل السفلي -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('income', this)">
-            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-            الحاسبة
-        </button>
-        <button class="nav-item" onclick="switchTab('debts', this)">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            ديون الحرفاء
-        </button>
-        <button class="nav-item" onclick="switchTab('my-debts', this)">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            ديوني الخاصة
-        </button>
-        <button class="nav-item" onclick="switchTab('goods', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 15H4V8h16v11z"/></svg>
-            السلع الناقصة
-        </button>
-        <button class="nav-item" onclick="switchTab('inventory', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.9 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-            خزانة السلع
-        </button>
+        <button class="nav-item active" onclick="switchTab('income', this)"><svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>الحاسبة</button>
+        <button class="nav-item" onclick="switchTab('debts', this)"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>ديون الحرفاء</button>
+        <button class="nav-item" onclick="switchTab('my-debts', this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>ديوني الخاصة</button>
+        <button class="nav-item" onclick="switchTab('goods', this)"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 15H4V8h16v11z"/></svg>السلع الناقصة</button>
+        <button class="nav-item" onclick="switchTab('inventory', this)"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.9 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>خزانة السلع</button>
     </nav>
 
     <div class="toast" id="toast">تم بنجاح! ✓</div>
@@ -982,92 +712,36 @@
         const unlockBtn = document.getElementById('unlockBtn');
         let savedPin = localStorage.getItem('app_pin_code') || "1234";
 
-        function checkPinOnStart() {
-            pinOverlay.style.display = 'flex';
-        }
-
         unlockBtn.addEventListener('click', () => {
-            if (pinInput.value.trim() === savedPin) {
-                pinOverlay.style.display = 'none';
-                pinInput.value = '';
-            } else {
-                alert('الرمز السري غير صحيح!');
-                pinInput.value = '';
-            }
+            if (pinInput.value.trim() === savedPin) { pinOverlay.style.display = 'none'; pinInput.value = ''; }
+            else { alert('الرمز السري غير صحيح!'); pinInput.value = ''; }
         });
 
-        function lockApp() {
-            pinOverlay.style.display = 'flex';
-        }
-
-        let logs = [];
-        let debts = [];
-        let myDebts = [];
-        let goods = [];
-        let inventory = [];
-        let cart = [];
-        let salesArchive = [];
+        let logs = [], debts = [], myDebts = [], goods = [], inventory = [], cart = [], salesArchive = [];
 
         function initRealtimeListeners() {
-            db.collection("income_logs").onSnapshot(snapshot => {
-                logs = []; snapshot.forEach(doc => logs.push({ id: doc.id, ...doc.data() }));
-                renderIncomeApp();
-            });
+            db.collection("income_logs").onSnapshot(s => { logs = []; s.forEach(d => logs.push({ id: d.id, ...d.data() })); renderIncomeApp(); });
+            db.collection("customer_debts").onSnapshot(s => { debts = []; s.forEach(d => debts.push({ id: d.id, ...d.data() })); renderDebtsApp(); });
+            db.collection("my_personal_debts").onSnapshot(s => { myDebts = []; s.forEach(d => myDebts.push({ id: d.id, ...d.data() })); renderMyDebtsApp(); });
+            db.collection("missing_goods").onSnapshot(s => { goods = []; s.forEach(d => goods.push({ id: d.id, ...d.data() })); renderGoodsApp(); });
+            db.collection("shop_inventory").onSnapshot(s => { inventory = []; s.forEach(d => inventory.push({ id: d.id, ...d.data() })); renderInventoryApp(); });
 
-            db.collection("customer_debts").onSnapshot(snapshot => {
-                debts = []; snapshot.forEach(doc => debts.push({ id: doc.id, ...doc.data() }));
-                renderDebtsApp();
-            });
-
-            db.collection("my_personal_debts").onSnapshot(snapshot => {
-                myDebts = []; snapshot.forEach(doc => myDebts.push({ id: doc.id, ...doc.data() }));
-                renderMyDebtsApp();
-            });
-
-            db.collection("missing_goods").onSnapshot(snapshot => {
-                goods = []; snapshot.forEach(doc => goods.push({ id: doc.id, ...doc.data() }));
-                renderGoodsApp();
-            });
-
-            db.collection("shop_inventory").onSnapshot(snapshot => {
-                inventory = []; snapshot.forEach(doc => inventory.push({ id: doc.id, ...doc.data() }));
-                renderInventoryApp();
-            });
-
-            // مزامنة السلة الحية بين الأجهزة (الهاتف والحاسوب)
-            db.collection("shared_cart").onSnapshot(snapshot => {
-                cart = []; snapshot.forEach(doc => cart.push({ docId: doc.id, ...doc.data() }));
+            // الاستماع الفوري واللحظي لسلة المشتريات المشتركة
+            db.collection("shared_cart").onSnapshot(s => {
+                cart = [];
+                s.forEach(d => cart.push({ docId: d.id, ...d.data() }));
                 renderCart();
             });
 
-            // أرشيف المبيعات السحابي
-            db.collection("sales_archive").onSnapshot(snapshot => {
-                salesArchive = []; snapshot.forEach(doc => salesArchive.push({ id: doc.id, ...doc.data() }));
-                renderSalesArchive();
-            });
+            db.collection("sales_archive").onSnapshot(s => { salesArchive = []; s.forEach(d => salesArchive.push({ id: d.id, ...d.data() })); renderSalesArchive(); });
         }
 
-        async function syncAdd(collectionName, item) {
-            try {
-                await db.collection(collectionName).add(item);
-            } catch (e) {
-                alert("فشل الاتصال بالسحابة.");
-            }
-        }
-
-        async function syncDelete(collectionName, id) {
-            try {
-                await db.collection(collectionName).doc(id.toString()).delete();
-            } catch (e) {
-                alert("فشل الحذف من السحابة.");
-            }
-        }
+        async function syncAdd(col, item) { try { await db.collection(col).add(item); showToastPopup("تم الحفظ بالسحابة ✓"); } catch (e) { alert("خطأ في الاتصال!"); } }
+        async function syncDelete(col, id) { try { await db.collection(col).doc(id.toString()).delete(); showToastPopup("تم الحذف ✓"); } catch (e) { alert("خطأ في الحذف!"); } }
 
         // كاميرا الباركود
         const scannerModal = document.getElementById('scannerModal');
-        let html5QrCode = null;
-        let activeScannerTargetInput = null;
-        let isPosCheckoutScan = false;
+        let html5QrCode = null, activeScannerTargetInput = null, isPosCheckoutScan = false;
 
         function openScannerFor(inputId, isPos = false) {
             activeScannerTargetInput = document.getElementById(inputId);
@@ -1075,9 +749,7 @@
             scannerModal.style.display = 'flex';
             setTimeout(() => {
                 if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-                html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, (code) => {
-                    handleDetectedBarcode(code);
-                }, () => {});
+                html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 150 } }, handleDetectedBarcode, () => {});
             }, 300);
         }
 
@@ -1086,8 +758,8 @@
             if (isPosCheckoutScan) {
                 posSearchInput.value = code;
                 const match = inventory.find(i => i.barcode === code);
-                if (match) addToCart(match.id);
-                else alert(`السلعة ذات الباركود (${code}) غير موجودة بالمخزن!`);
+                if (match) addToSharedCart(match.id);
+                else alert(`المنتج بالباركود (${code}) غير موجود بالمخزن!`);
             } else if (activeScannerTargetInput) {
                 activeScannerTargetInput.value = code;
                 showToastPopup(`تم رصد الباركود: ${code} ✓`);
@@ -1120,7 +792,7 @@
             const year = dateObj.getFullYear();
             const hours = String(dateObj.getHours()).padStart(2, '0');
             const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            return { formattedText: `${day}/${month}/${year} - ${hours}:${minutes}`, isoDate: `${year}-${month}-${day}` };
+            return { formattedText: `${day}/${month}/${year} - ${hours}:${minutes}` };
         }
 
         const toast = document.getElementById('toast');
@@ -1141,10 +813,7 @@
             const ctx = document.getElementById('previewChart').getContext('2d');
             previewChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: ['مصاريف (33%)', 'إدخار (33%)', 'استثمار (33%)', 'صدقة (1%)'],
-                    datasets: [{ data: [33, 33, 33, 1], backgroundColor: ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b'], borderWidth: 0 }]
-                },
+                data: { labels: ['مصاريف', 'إدخار', 'استثمار', 'صدقة'], datasets: [{ data: [33, 33, 33, 1], backgroundColor: ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Tajawal', size: 11 } } } }, cutout: '65%' }
             });
         }
@@ -1161,23 +830,14 @@
         document.getElementById('saveBtn').addEventListener('click', () => {
             const amount = parseArabicNumber(incomeInput.value);
             if (isNaN(amount) || amount <= 0) { alert('أدخل مبلغ صحيح'); return; }
-            const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('income_logs', { id: Date.now().toString(), amount, dateTime: dt.formattedText, isoDate: dt.isoDate, expenses: amount*0.33, savings: amount*0.33, invest: amount*0.33, charity: amount*0.01 });
+            syncAdd('income_logs', { id: Date.now().toString(), amount, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             incomeInput.value = '';
-            showToastPopup("تم حفظ المدخول بالسجل ✓");
         });
 
         function renderIncomeApp() {
             const historyList = document.getElementById('historyList');
-            if (logs.length === 0) { historyList.innerHTML = '<div class="empty-state">لا توجد عمليات مسجلة</div>'; document.getElementById('totalIncomeSum').textContent = '0.00'; return; }
-            historyList.innerHTML = logs.map(item => `
-                <div class="history-item">
-                    <div class="history-top">
-                        <div><span class="history-amount">${(item.amount || 0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('income_logs', '${item.id}')">حذف</button>
-                    </div>
-                </div>
-            `).join('');
+            if (logs.length === 0) { historyList.innerHTML = '<div class="empty-state">لا توجد عمليات مسجلة</div>'; document.getElementById('totalIncomeSum').textContent = '0.00 د.ت'; return; }
+            historyList.innerHTML = logs.map(item => `<div class="history-item"><div class="history-top"><div><span class="history-amount">${(item.amount || 0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div><button class="delete-btn" onclick="syncDelete('income_logs', '${item.id}')">حذف</button></div></div>`).join('');
             document.getElementById('totalIncomeSum').textContent = logs.reduce((a,c)=>a+(c.amount||0),0).toFixed(2) + ' د.ت';
             document.getElementById('totalCountBadge').textContent = `(${logs.length} عمليات)`;
         }
@@ -1187,24 +847,15 @@
             const name = document.getElementById('debtorName').value.trim();
             const amount = parseArabicNumber(document.getElementById('debtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
-            const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('customer_debts', { id: Date.now().toString(), name, remainingAmount: amount, note: document.getElementById('debtNote').value || 'بدون', dateTime: dt.formattedText });
+            syncAdd('customer_debts', { id: Date.now().toString(), name, remainingAmount: amount, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('debtorName').value = ''; document.getElementById('debtAmount').value = ''; document.getElementById('debtNote').value = '';
-            showToastPopup("تم إضافة الدين بنجاح! ✓");
         });
 
         function renderDebtsApp() {
             const list = document.getElementById('debtsList');
-            if (debts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون</div>'; document.getElementById('totalDebtsSum').textContent = '0.00'; return; }
+            if (debts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون</div>'; document.getElementById('totalDebtsSum').textContent = '0.00 د.ت'; return; }
             document.getElementById('totalDebtsSum').textContent = debts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2) + ' د.ت';
-            list.innerHTML = debts.map(item => `
-                <div class="history-item">
-                    <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('customer_debts', '${item.id}')">حذف</button>
-                    </div>
-                </div>
-            `).join('');
+            list.innerHTML = debts.map(item => `<div class="history-item"><div class="history-top"><div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div><button class="delete-btn" onclick="syncDelete('customer_debts', '${item.id}')">حذف</button></div></div>`).join('');
         }
 
         // 3. ديوني الخاصة
@@ -1212,59 +863,40 @@
             const name = document.getElementById('myCreditorName').value.trim();
             const amount = parseArabicNumber(document.getElementById('myDebtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
-            const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('my_personal_debts', { id: Date.now().toString(), name, remainingAmount: amount, dateTime: dt.formattedText });
+            syncAdd('my_personal_debts', { id: Date.now().toString(), name, remainingAmount: amount, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = '';
-            showToastPopup("تم الحفظ بنجاح! ✓");
         });
 
         function renderMyDebtsApp() {
             const list = document.getElementById('myDebtsList');
-            if (myDebts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون عليك</div>'; document.getElementById('totalMyDebtsSum').textContent = '0.00'; return; }
+            if (myDebts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون عليك</div>'; document.getElementById('totalMyDebtsSum').textContent = '0.00 د.ت'; return; }
             document.getElementById('totalMyDebtsSum').textContent = myDebts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2) + ' د.ت';
-            list.innerHTML = myDebts.map(item => `
-                <div class="history-item">
-                    <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('my_personal_debts', '${item.id}')">حذف</button>
-                    </div>
-                </div>
-            `).join('');
+            list.innerHTML = myDebts.map(item => `<div class="history-item"><div class="history-top"><div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)} د.ت</span><span class="history-date">| ${item.dateTime}</span></div><button class="delete-btn" onclick="syncDelete('my_personal_debts', '${item.id}')">حذف</button></div></div>`).join('');
         }
 
         // 4. السلع الناقصة
         document.getElementById('saveGoodsBtn').addEventListener('click', () => {
             const name = document.getElementById('goodsName').value.trim();
             if (!name) { alert('أدخل اسم السلعة'); return; }
-            syncAdd('missing_goods', { id: Date.now().toString(), name, qty: document.getElementById('goodsQty').value || '1', dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
+            syncAdd('missing_goods', { id: Date.now().toString(), name, qty: document.getElementById('goodsQty').value || '1' });
             document.getElementById('goodsName').value = ''; document.getElementById('goodsQty').value = '';
-            showToastPopup("تمت الإضافة للقائمة ✓");
         });
 
         function renderGoodsApp() {
             const list = document.getElementById('goodsList');
             if (goods.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد سلع مطلوبة</div>'; return; }
-            list.innerHTML = goods.map(item => `
-                <div class="history-item">
-                    <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--invest);">${item.name} (${item.qty})</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('missing_goods', '${item.id}')">حذف</button>
-                    </div>
-                </div>
-            `).join('');
+            list.innerHTML = goods.map(item => `<div class="history-item"><div class="history-top"><div><span class="history-amount" style="color:var(--invest);">${item.name} (${item.qty})</span></div><button class="delete-btn" onclick="syncDelete('missing_goods', '${item.id}')">حذف</button></div></div>`).join('');
         }
 
-        // 5. المخزن ونقطة البيع المشتركة الحية (تظهر السلة على الحاسوب والهاتف معاً)
+        // 5. المخزن وسلة المشتريات المباشرة التفاعلية
         document.getElementById('saveInvItemBtn').addEventListener('click', () => {
             const barcode = document.getElementById('invItemBarcode').value.trim() || `BC-${Math.floor(1000 + Math.random()*9000)}`;
             const name = document.getElementById('invItemName').value.trim();
             const price = parseArabicNumber(document.getElementById('invItemPrice').value);
             const qty = parseInt(parseArabicNumber(document.getElementById('invItemQty').value));
             if (!name || isNaN(price) || isNaN(qty)) { alert('أدخل بيانات صحيحة'); return; }
-            
             syncAdd('shop_inventory', { id: Date.now().toString(), barcode, name, price, qty, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('invItemBarcode').value = ''; document.getElementById('invItemName').value = ''; document.getElementById('invItemPrice').value = ''; document.getElementById('invItemQty').value = '';
-            showToastPopup("تم حفظ السلعة في الخزانة 📦");
         });
 
         const posSearchInput = document.getElementById('posSearchInput');
@@ -1279,17 +911,16 @@
                         <div style="font-weight:bold; font-size:0.85rem; color:#fff;">${i.name}</div>
                         <div style="font-size:0.7rem; color:var(--text-muted);">${(i.price||0).toFixed(2)} د.ت | متوفر: ${i.qty}</div>
                     </div>
-                    <button type="button" class="pay-btn" onclick="addToSharedCart('${i.id}')">إضافة للسلة +</button>
+                    <button type="button" class="qty-btn" style="background:var(--invest); width:auto; padding:2px 10px; font-size:0.8rem;" onclick="addToSharedCart('${i.id}')">إضافة +</button>
                 </div>
             `).join('');
         });
 
-        // إضافة للسلة السحابية المشتركة
+        // إضافة منتج لسلة المشتريات السحابية
         window.addToSharedCart = async function(inventoryId) {
             const item = inventory.find(i => i.id === inventoryId);
-            if (!item || item.qty <= 0) { alert('السلعة غير متوفرة أو نفدت!'); return; }
+            if (!item || item.qty <= 0) { alert('السلعة غير متوفرة أو نفدت من المخزن!'); return; }
             
-            // تحقق إذا كانت السلعة موجودة مسبقاً في السلة المشتركة
             const existing = cart.find(c => c.inventoryId === inventoryId);
             if (existing) {
                 await db.collection("shared_cart").doc(existing.docId).update({ qty: existing.qty + 1 });
@@ -1306,51 +937,69 @@
             showToastPopup("تمت الإضافة للسلة المشتركة ✓");
         };
 
+        // تعديل كميات العناصر بالسلة مباشرة (زيادة أو نقصان)
+        window.updateCartQty = async function(docId, newQty) {
+            if (newQty <= 0) {
+                await db.collection("shared_cart").doc(docId).delete();
+            } else {
+                await db.collection("shared_cart").doc(docId).update({ qty: newQty });
+            }
+        };
+
+        // عرض سلة المشتريات المباشرة
         function renderCart() {
             const list = document.getElementById('cartItemsList');
-            if (cart.length === 0) { list.innerHTML = '<div class="empty-state">السلة فارغة</div>'; document.getElementById('cartTotalSum').textContent = '0.00 د.ت'; return; }
-            document.getElementById('cartTotalSum').textContent = cart.reduce((a,c)=>a+(c.price*c.qty),0).toFixed(2) + ' د.ت';
-            document.getElementById('cartCountBadge').textContent = `(${cart.reduce((a,c)=>a+c.qty,0)} عناصر)`;
+            if (cart.length === 0) {
+                list.innerHTML = '<div class="empty-state">السلة فارغة حالياً</div>';
+                document.getElementById('cartTotalSum').textContent = '0.00 د.ت';
+                document.getElementById('cartCountBadge').textContent = '(0 عناصر)';
+                return;
+            }
             
+            const totalSum = cart.reduce((a, c) => a + (c.price * c.qty), 0);
+            const totalItemsCount = cart.reduce((a, c) => a + c.qty, 0);
+
+            document.getElementById('cartTotalSum').textContent = totalSum.toFixed(2) + ' د.ت';
+            document.getElementById('cartCountBadge').textContent = `(${totalItemsCount} عناصر)`;
+
             list.innerHTML = cart.map(i => `
-                <div style="background:#0f172a; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${i.name} × ${i.qty}</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="color:#38bdf8; font-weight:bold;">${(i.price*i.qty).toFixed(2)} د.ت</span>
-                        <button class="delete-btn" onclick="removeCartItem('${i.docId}')">&times;</button>
+                <div style="background:#0f172a; padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border);">
+                    <div style="display:flex; flex-direction:column;">
+                        <span style="font-weight:bold; font-size:0.9rem; color:#fff;">${i.name}</span>
+                        <span style="font-size:0.75rem; color:#38bdf8;">${(i.price * i.qty).toFixed(2)} د.ت (${i.price.toFixed(2)} للقطعة)</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button class="qty-btn" onclick="updateCartQty('${i.docId}', ${i.qty - 1})">-</button>
+                        <span style="font-weight:bold; font-size:0.9rem; padding:0 4px;">${i.qty}</span>
+                        <button class="qty-btn" onclick="updateCartQty('${i.docId}', ${i.qty + 1})">+</button>
+                        <button class="delete-btn" style="margin-right:6px;" onclick="updateCartQty('${i.docId}', 0)">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.removeCartItem = async function(docId) {
-            await db.collection("shared_cart").doc(docId).delete();
-        };
-
-        // إتمام البيع، خصم الكمية من المخزن، وحفظ أرشيف المبيعات
+        // إتمام البيع، الخصم التلقائي من المخزن وتوليد الفاتورة A4
         document.getElementById('checkoutBtn').addEventListener('click', async () => {
             if (cart.length === 0) { alert('السلة فارغة!'); return; }
-            
+
             let sum = 0;
             let soldItemsDetails = [];
 
-            // 1. خصم الكميات من المخزن الأساسي
+            // 1. الخصم من المبيعات
             for (let cItem of cart) {
                 const stockItem = inventory.find(i => i.id === cItem.inventoryId);
                 if (stockItem) {
                     const newQty = Math.max(0, stockItem.qty - cItem.qty);
-                    // تحديث المخزن في قاعدة البيانات
                     await db.collection("shop_inventory").doc(stockItem.id).update({ qty: newQty });
                 }
                 sum += cItem.price * cItem.qty;
                 soldItemsDetails.push({ name: cItem.name, qty: cItem.qty, price: cItem.price, subTotal: cItem.price * cItem.qty });
             }
 
-            const now = new Date();
-            const dt = getFrenchFormattedDateTime(now);
+            const dt = getFrenchFormattedDateTime(new Date());
             const invoiceNumber = Math.floor(1000 + Math.random() * 9000);
 
-            // 2. تسجيل البيعة في أرشيف المبيعات السحابي
+            // 2. تسجيل البيعة بالأرشيف السحابي
             await db.collection("sales_archive").add({
                 invoiceNo: invoiceNumber,
                 dateTime: dt.formattedText,
@@ -1363,13 +1012,12 @@
                 await db.collection("shared_cart").doc(cItem.docId).delete();
             }
 
-            // عرض الفاتورة الرسمية A4
+            // عرض الفاتورة
             document.getElementById('invTotalAmount').textContent = sum.toFixed(2) + ' د.ت';
             document.getElementById('invDateTime').textContent = dt.formattedText;
             document.getElementById('invIdNum').textContent = invoiceNumber;
-            
-            const invItemsList = document.getElementById('invItemsList');
-            invItemsList.innerHTML = soldItemsDetails.map(i => `
+
+            document.getElementById('invItemsList').innerHTML = soldItemsDetails.map(i => `
                 <tr>
                     <td>${i.name}</td>
                     <td>${i.qty}</td>
@@ -1382,14 +1030,9 @@
             showToastPopup("تمت عملية البيع وخصم المخزن بنجاح! 🧾");
         });
 
-        window.closeInvoiceModal = function() { document.getElementById('invoiceModal').style.display = 'none'; };
-        window.printInvoice = function() { window.print(); };
-
-        // عرض أرشيف المبيعات
         function renderSalesArchive() {
             const list = document.getElementById('salesArchiveList');
             if (salesArchive.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد مبيعات مسجلة بعد</div>'; return; }
-            
             list.innerHTML = salesArchive.map(sale => `
                 <div class="history-item">
                     <div class="history-top">
@@ -1410,7 +1053,6 @@
             const list = document.getElementById('stockList');
             document.getElementById('totalStockCount').textContent = inventory.length;
             if (inventory.length === 0) { list.innerHTML = '<div class="empty-state">المخزن فارغ</div>'; return; }
-            
             list.innerHTML = inventory.map(item => {
                 const isLow = item.qty <= 3;
                 return `
@@ -1420,19 +1062,18 @@
                             <span class="history-amount" style="color:var(--invest);">${item.name}</span>
                             <span class="history-date">| باركود: ${item.barcode}</span>
                         </div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('shop_inventory', '${item.id}')">حذف</button>
+                        <button class="delete-btn" onclick="syncDelete('shop_inventory', '${item.id}')">حذف</button>
                     </div>
-                    <div class="history-details" style="margin-top: 4px;">
-                        <div class="detail-item"><label>السعر</label><span>${(item.price||0).toFixed(2)} د.ت</span></div>
-                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه' : ''}</span></div>
+                    <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:0.8rem;">
+                        <span>السعر: ${(item.price||0).toFixed(2)} د.ت</span>
+                        <span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">المتوفر: ${item.qty} قطعة ${isLow ? '⚠️ تنبيه' : ''}</span>
                     </div>
-                </div>
-            `;
+                </div>`;
             }).join('');
         }
 
-        // بدء التشغيل
-        checkPinOnStart();
+        // بدء التطبيق
+        document.getElementById('pinOverlay').style.display = 'flex';
         initRealtimeListeners();
         initChart();
     </script>
