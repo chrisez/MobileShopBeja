@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <!-- مكتبات Google Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -80,38 +80,14 @@
         }
 
         .lock-btn-header {
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid var(--primary);
-            color: #a5b4fc;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--invest);
+            color: var(--invest);
             padding: 5px 8px;
             border-radius: 8px;
             font-size: 0.68rem;
             font-weight: bold;
             cursor: pointer;
-        }
-
-        /* شاشة إعداد بيانات السحابة (أول تشغيل) */
-        .config-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-color);
-            z-index: 4000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .config-box {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 20px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         /* شاشة القفل والرمز السرّي */
@@ -514,11 +490,6 @@
             gap: 8px;
         }
 
-        .history-item.paid {
-            border-color: var(--invest);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
         .history-item.low-stock {
             border-color: var(--charity);
             background: rgba(245, 158, 11, 0.05);
@@ -570,11 +541,6 @@
             font-weight: 700;
         }
 
-        .btn-group-item {
-            display: flex;
-            gap: 6px;
-        }
-
         .delete-btn {
             background: rgba(244, 63, 94, 0.15);
             border: 1px solid rgba(244, 63, 94, 0.3);
@@ -595,15 +561,6 @@
             font-weight: bold;
             cursor: pointer;
             padding: 3px 8px;
-        }
-
-        .payments-history {
-            background: #1e293b;
-            border-radius: 8px;
-            padding: 6px;
-            margin-top: 4px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
         }
 
         .empty-state {
@@ -679,28 +636,6 @@
 </head>
 <body>
 
-    <!-- شاشة إعداد بيانات Google Firebase (تظهر أول مرة فقط للربط السحابي) -->
-    <div id="configOverlay" class="config-overlay" style="display: none;">
-        <div class="config-box">
-            <h2 style="font-size: 1.1rem; margin-bottom: 8px; color: #38bdf8;">إعداد الاتصال السحابي (Firebase)</h2>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 14px;">الصق بيانات مشروعك السحابي هنا لربط الهاتف بالحاسوب وتفعيل المزامنة:</p>
-            <div class="input-group">
-                <label style="font-size: 0.8rem;">apiKey</label>
-                <input type="text" id="cfgApiKey" class="form-control" style="font-size: 0.9rem; padding: 8px;" placeholder="AIzaSy...">
-            </div>
-            <div class="input-group">
-                <label style="font-size: 0.8rem;">projectId</label>
-                <input type="text" id="cfgProjectId" class="form-control" style="font-size: 0.9rem; padding: 8px;" placeholder="your-app-id">
-            </div>
-            <div class="input-group">
-                <label style="font-size: 0.8rem;">appId</label>
-                <input type="text" id="cfgAppId" class="form-control" style="font-size: 0.9rem; padding: 8px;" placeholder="1:123...">
-            </div>
-            <button type="button" class="btn" onclick="saveCloudConfig()" style="padding: 10px; font-size: 0.95rem; margin-top: 6px;">حفظ والاتصال بالسحابة ☁️</button>
-            <button type="button" class="action-btn clear" onclick="skipCloudConfig()" style="width: 100%; margin-top: 8px; padding: 10px;">العمل بدون سحابة (محلياً)</button>
-        </div>
-    </div>
-
     <!-- شاشة الرمز السرّي (PIN) -->
     <div id="pinOverlay" class="pin-overlay" style="display: none;">
         <div class="pin-box">
@@ -708,7 +643,6 @@
             <p id="pinSub" style="font-size: 0.78rem; color: var(--text-muted);">حماية بيانات المحل والديون</p>
             <input type="password" id="pinInput" class="pin-input" maxlength="4" inputmode="numeric" placeholder="****">
             <button type="button" class="btn" id="unlockBtn">فتح التطبيق</button>
-            <button type="button" id="cancelPinBtn" class="action-btn clear" style="margin-top: 8px; width: 100%; padding: 10px; display: none;">إلغاء</button>
         </div>
     </div>
 
@@ -757,8 +691,7 @@
     <div class="app-container">
         <header>
             <div class="header-btns">
-                <button type="button" class="lock-btn-header" id="lockAppBtn">🔒 قفل</button>
-                <button type="button" class="lock-btn-header" id="cloudConfigBtn" style="background: rgba(16, 185, 129, 0.15); border-color: var(--invest); color: var(--invest);">☁️ السحابة</button>
+                <button type="button" class="lock-btn-header" id="lockAppBtn">☁️ متصل بالسحابة</button>
             </div>
             <h1>إدارة المال والأعمال</h1>
             <p>سحابي ذكي - مخزن، ديون، وحاسبة</p>
@@ -823,45 +756,13 @@
                         <span id="totalCountBadge" style="color: var(--text-muted); font-size: 0.75rem;">(0 عمليات)</span>
                     </div>
                     <div class="grand-total-amount" id="totalIncomeSum">0.00</div>
-                    
-                    <div class="history-details" style="margin-top: 6px;">
-                        <div class="detail-item">
-                            <label>إجمالي مصاريف</label>
-                            <span style="color: var(--expenses);" id="totalExpensesSum">0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>إجمالي إدخار</label>
-                            <span style="color: var(--savings);" id="totalSavingsSum">0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>إجمالي استثمار</label>
-                            <span style="color: var(--invest);" id="totalInvestSum">0.00</span>
-                        </div>
-                        <div class="detail-item">
-                            <label>إجمالي صدقة</label>
-                            <span style="color: var(--charity);" id="totalCharitySum">0.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-section">
-                    <div class="section-title" style="margin-bottom: 4px;">تصفية وبحث في السجل:</div>
-                    <div class="filter-row">
-                        <input type="text" id="searchInput" placeholder="بحث بالمبلغ أو التاريخ...">
-                        <input type="date" id="dateFilter">
-                        <button type="button" class="reset-filter-btn" id="resetFilterBtn">إعادة ضبط</button>
-                    </div>
                 </div>
 
                 <div class="history-actions">
                     <h2>سجل المدخلات</h2>
-                    <div class="action-btns-group">
-                        <button type="button" class="action-btn export" id="exportCsvBtn">Excel</button>
-                        <button type="button" class="action-btn clear" id="clearAllBtn">مسح الكل</button>
-                    </div>
                 </div>
                 <div class="history-list" id="historyList">
-                    <div class="empty-state">لا توجد عمليات مسجلة بعد</div>
+                    <div class="empty-state">جاري مزامنة البيانات...</div>
                 </div>
             </div>
         </div>
@@ -896,7 +797,6 @@
 
                 <div class="history-actions">
                     <h2>قائمة ديون الحرفاء</h2>
-                    <button type="button" class="action-btn clear" id="clearAllDebtsBtn">مسح الكل</button>
                 </div>
                 <div class="history-list" id="debtsList">
                     <div class="empty-state">لا توجد ديون مسجلة بعد</div>
@@ -904,7 +804,7 @@
             </div>
         </div>
 
-        <!-- صفحة 03: ديوني الخاصة (مع أرشيف الخلاص) -->
+        <!-- صفحة 03: ديوني الخاصة -->
         <div id="tab-my-debts" class="tab-content">
             <div class="card">
                 <div class="section-title">تسجيل دين مترتب عليك (دائن):</div>
@@ -918,7 +818,7 @@
                 </div>
                 <div class="input-group">
                     <label for="myDebtNote">ملاحظات (اختياري)</label>
-                    <input type="text" id="myDebtNote" class="form-control" placeholder="مثال: قسط شهري، موعد السداد...">
+                    <input type="text" id="myDebtNote" class="form-control" placeholder="مثال: قسط شهري...">
                 </div>
                 <button type="button" class="btn" id="saveMyDebtBtn">إضافة الدين لقائمتي</button>
             </div>
@@ -933,21 +833,10 @@
                 </div>
 
                 <div class="history-actions">
-                    <h2>قائمة ديوني (مرتبة من الأصغر للأكبر)</h2>
-                    <button type="button" class="action-btn clear" id="clearAllMyDebtsBtn">مسح الكل</button>
+                    <h2>قائمة ديوني</h2>
                 </div>
                 <div class="history-list" id="myDebtsList">
                     <div class="empty-state">لا توجد ديون مسجلة عليك بعد</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="history-actions" style="margin-bottom: 0;">
-                    <h2 style="color: var(--invest); font-size: 0.9rem;">✨ ديون تم خلاصها (<span id="paidCountBadge">0</span>)</h2>
-                    <button type="button" class="action-btn" id="togglePaidBtn" style="background: #334155; color: #fff;">إظهار الأرشيف</button>
-                </div>
-                <div class="history-list" id="paidDebtsList" style="display: none; margin-top: 12px;">
-                    <div class="empty-state">لا توجد ديون مسددة في الأرشيف بعد</div>
                 </div>
             </div>
         </div>
@@ -975,7 +864,6 @@
 
                 <div class="history-actions">
                     <h2>قائمة السلع</h2>
-                    <button type="button" class="action-btn clear" id="clearAllGoodsBtn">مسح القائمة</button>
                 </div>
                 <div class="history-list" id="goodsList">
                     <div class="empty-state">لا توجد سلع مطلوبة حالياً</div>
@@ -1041,10 +929,9 @@
             <div class="card">
                 <div class="history-actions">
                     <h2>📦 خزانة السلع المتوفرة (<span id="totalStockCount">0</span>)</h2>
-                    <button type="button" class="action-btn clear" id="clearAllStockBtn">مسح المخزن</button>
                 </div>
                 <div class="history-list" id="stockList">
-                    <div class="empty-state">لا توجد سلع مخزنة بعد</div>
+                    <div class="empty-state">المخزن فارغ</div>
                 </div>
             </div>
         </div>
@@ -1077,159 +964,74 @@
     <div class="toast" id="toast">تم الحفظ بنجاح! ✓</div>
 
     <script>
-        // --- إعداد Firebase والسحابة ---
-        let db = null;
-        let useCloud = false;
-
-        const configOverlay = document.getElementById('configOverlay');
-        const cloudConfigBtn = document.getElementById('cloudConfigBtn');
-
-        function initFirebase() {
-            const savedCfg = localStorage.getItem('firebase_config');
-            if (savedCfg) {
-                try {
-                    const cfg = JSON.parse(savedCfg);
-                    firebase.initializeApp(cfg);
-                    db = firebase.firestore();
-                    useCloud = true;
-                    initRealtimeListeners();
-                } catch (e) {
-                    console.error("خطأ في تشغيل السحابة");
-                }
-            }
-        }
-
-        cloudConfigBtn.addEventListener('click', () => {
-            configOverlay.style.display = 'flex';
-        });
-
-        window.saveCloudConfig = function() {
-            const apiKey = document.getElementById('cfgApiKey').value.trim();
-            const projectId = document.getElementById('cfgProjectId').value.trim();
-            const appId = document.getElementById('cfgAppId').value.trim();
-
-            if (!apiKey || !projectId || !appId) {
-                alert('يرجى تعبئة كافة الحقول المطلوبة');
-                return;
-            }
-
-            const cfg = { apiKey, projectId, appId, authDomain: `${projectId}.firebaseapp.com`, storageBucket: `${projectId}.appspot.com`, messagingSenderId: "123456" };
-            localStorage.setItem('firebase_config', JSON.stringify(cfg));
-            configOverlay.style.display = 'none';
-            location.reload();
+        // --- إعداد Firebase ببياناتك المحددة ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhiSZbbEc1lg9EveYktR5mFOVX19gNcY4",
+            authDomain: "mobileshope-ac548.firebaseapp.com",
+            databaseURL: "https://mobileshope-ac548-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "mobileshope-ac548",
+            storageBucket: "mobileshope-ac548.firebasestorage.app",
+            messagingSenderId: "931292757934",
+            appId: "1:931292757934:web:611f898ad5cecc204f123f",
+            measurementId: "G-7HWGYS1C1S"
         };
 
-        window.skipCloudConfig = function() {
-            configOverlay.style.display = 'none';
-            useCloud = false;
-        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // --- البيانات المحلية والافتراضية ---
+        // متغيرات البيانات
         let logs = [];
         let debts = [];
         let myDebts = [];
-        let paidMyDebts = [];
         let goods = [];
         let inventory = [];
         let cart = [];
 
-        function getStorageData(key) {
-            try {
-                const data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : [];
-            } catch (e) { return []; }
-        }
-
-        function saveLocalStorage(key, arr) {
-            try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
-        }
-
-        // مستمعات السحابة الحية (Realtime Sync) أو الاعتماد على المحلي
+        // الاستماع الفوري للبيانات من سحابة Firestore
         function initRealtimeListeners() {
-            if (!useCloud || !db) return;
             db.collection("income_logs").onSnapshot(snapshot => {
                 logs = []; snapshot.forEach(doc => logs.push({ id: doc.id, ...doc.data() }));
                 renderIncomeApp();
-            });
+            }, err => console.log(err));
+
             db.collection("customer_debts").onSnapshot(snapshot => {
                 debts = []; snapshot.forEach(doc => debts.push({ id: doc.id, ...doc.data() }));
                 renderDebtsApp();
             });
+
             db.collection("my_personal_debts").onSnapshot(snapshot => {
                 myDebts = []; snapshot.forEach(doc => myDebts.push({ id: doc.id, ...doc.data() }));
                 renderMyDebtsApp();
             });
-            db.collection("my_paid_personal_debts").onSnapshot(snapshot => {
-                paidMyDebts = []; snapshot.forEach(doc => paidMyDebts.push({ id: doc.id, ...doc.data() }));
-                renderMyDebtsApp();
-            });
+
             db.collection("missing_goods").onSnapshot(snapshot => {
                 goods = []; snapshot.forEach(doc => goods.push({ id: doc.id, ...doc.data() }));
                 renderGoodsApp();
             });
+
             db.collection("shop_inventory").onSnapshot(snapshot => {
                 inventory = []; snapshot.forEach(doc => inventory.push({ id: doc.id, ...doc.data() }));
                 renderInventoryApp();
             });
         }
 
-        function loadLocalData() {
-            logs = getStorageData('income_logs');
-            debts = getStorageData('customer_debts');
-            myDebts = getStorageData('my_personal_debts');
-            paidMyDebts = getStorageData('my_paid_personal_debts');
-            goods = getStorageData('missing_goods');
-            inventory = getStorageData('shop_inventory');
-        }
-
         async function syncAdd(collectionName, item) {
-            if (useCloud && db) {
+            try {
                 await db.collection(collectionName).add(item);
-            } else {
-                if (collectionName === 'income_logs') logs.unshift(item), saveLocalStorage('income_logs', logs), renderIncomeApp();
-                if (collectionName === 'customer_debts') debts.unshift(item), saveLocalStorage('customer_debts', debts), renderDebtsApp();
-                if (collectionName === 'my_personal_debts') myDebts.unshift(item), saveLocalStorage('my_personal_debts', myDebts), renderMyDebtsApp();
-                if (collectionName === 'missing_goods') goods.unshift(item), saveLocalStorage('missing_goods', goods), renderGoodsApp();
-                if (collectionName === 'shop_inventory') inventory.unshift(item), saveLocalStorage('shop_inventory', inventory), renderInventoryApp();
+                showToastPopup("تم الحفظ في السحابة بنجاح! ☁️");
+            } catch (e) {
+                alert("فشل الاتصال بالسحابة، تحقق من الإنترنت.");
             }
         }
 
         async function syncDelete(collectionName, id) {
-            if (useCloud && db) {
+            try {
                 await db.collection(collectionName).doc(id.toString()).delete();
-            } else {
-                if (collectionName === 'income_logs') logs = logs.filter(i => i.id !== id), saveLocalStorage('income_logs', logs), renderIncomeApp();
-                if (collectionName === 'customer_debts') debts = debts.filter(i => i.id !== id), saveLocalStorage('customer_debts', debts), renderDebtsApp();
-                if (collectionName === 'my_personal_debts') myDebts = myDebts.filter(i => i.id !== id), saveLocalStorage('my_personal_debts', myDebts), renderMyDebtsApp();
-                if (collectionName === 'missing_goods') goods = goods.filter(i => i.id !== id), saveLocalStorage('missing_goods', goods), renderGoodsApp();
-                if (collectionName === 'shop_inventory') inventory = inventory.filter(i => i.id !== id), saveLocalStorage('shop_inventory', inventory), renderInventoryApp();
+                showToastPopup("تم الحذف بنجاح! 🗑️");
+            } catch (e) {
+                alert("فشل الحذف من السحابة.");
             }
         }
-
-        // --- إدارة الرمز السري (PIN) ---
-        const pinOverlay = document.getElementById('pinOverlay');
-        const pinInput = document.getElementById('pinInput');
-        const unlockBtn = document.getElementById('unlockBtn');
-        const lockAppBtn = document.getElementById('lockAppBtn');
-        let savedPin = localStorage.getItem('app_pin_code') || null;
-
-        function checkPinOnStart() {
-            if (savedPin) pinOverlay.style.display = 'flex';
-        }
-        unlockBtn.addEventListener('click', () => {
-            if (pinInput.value.trim() === savedPin) {
-                pinOverlay.style.display = 'none';
-                pinInput.value = '';
-            } else { alert('الرمز غير صحيح!'); pinInput.value = ''; }
-        });
-        lockAppBtn.addEventListener('click', () => {
-            const newPin = prompt('أدخل رمز سري جديد من 4 أرقام:');
-            if (newPin && newPin.length === 4) {
-                savedPin = newPin;
-                localStorage.setItem('app_pin_code', savedPin);
-                showToastPopup("تم تفعيل قفل الحماية بنجاح! 🔒");
-            }
-        });
 
         // --- كاميرا الباركود ---
         const scannerModal = document.getElementById('scannerModal');
@@ -1293,7 +1095,7 @@
         }
 
         const toast = document.getElementById('toast');
-        function showToastPopup(msg = "تم الحفظ بنجاح! ✓") {
+        function showToastPopup(msg = "تم بنجاح! ✓") {
             toast.textContent = msg; toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
@@ -1330,25 +1132,23 @@
         document.getElementById('saveBtn').addEventListener('click', () => {
             const amount = parseArabicNumber(incomeInput.value);
             if (isNaN(amount) || amount <= 0) { alert('أدخل مبلغ صحيح'); return; }
-            const now = new Date();
-            const dt = getFrenchFormattedDateTime(now);
-            syncAdd('income_logs', { id: Date.now(), amount, dateTime: dt.formattedText, isoDate: dt.isoDate, expenses: amount*0.33, savings: amount*0.33, invest: amount*0.33, charity: amount*0.01 });
+            const dt = getFrenchFormattedDateTime(new Date());
+            syncAdd('income_logs', { id: Date.now().toString(), amount, dateTime: dt.formattedText, isoDate: dt.isoDate, expenses: amount*0.33, savings: amount*0.33, invest: amount*0.33, charity: amount*0.01 });
             incomeInput.value = '';
-            showToastPopup();
         });
 
         function renderIncomeApp() {
             const historyList = document.getElementById('historyList');
-            if (logs.length === 0) { historyList.innerHTML = '<div class="empty-state">لا توجد عمليات مسجلة</div>'; return; }
+            if (logs.length === 0) { historyList.innerHTML = '<div class="empty-state">لا توجد عمليات مسجلة</div>'; document.getElementById('totalIncomeSum').textContent = '0.00'; return; }
             historyList.innerHTML = logs.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount">${item.amount.toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('income_logs', ${item.id})">حذف</button>
+                        <div><span class="history-amount">${(item.amount || 0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <button type="button" class="delete-btn" onclick="syncDelete('income_logs', '${item.id}')">حذف</button>
                     </div>
                 </div>
             `).join('');
-            document.getElementById('totalIncomeSum').textContent = logs.reduce((a,c)=>a+c.amount,0).toFixed(2);
+            document.getElementById('totalIncomeSum').textContent = logs.reduce((a,c)=>a+(c.amount||0),0).toFixed(2);
             document.getElementById('totalCountBadge').textContent = `(${logs.length} عمليات)`;
         }
 
@@ -1358,20 +1158,19 @@
             const amount = parseArabicNumber(document.getElementById('debtAmount').value);
             if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
             const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('customer_debts', { id: Date.now(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('debtNote').value || 'بدون', dateTime: dt.formattedText, payments: [] });
-            document.getElementById('debtorName').value = ''; document.getElementById('debtAmount').value = '';
-            showToastPopup("تم إضافة الدين بنجاح! ✓");
+            syncAdd('customer_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('debtNote').value || 'بدون', dateTime: dt.formattedText });
+            document.getElementById('debtorName').value = ''; document.getElementById('debtAmount').value = ''; document.getElementById('debtNote').value = '';
         });
 
         function renderDebtsApp() {
             const list = document.getElementById('debtsList');
             if (debts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون</div>'; document.getElementById('totalDebtsSum').textContent = '0.00'; return; }
-            document.getElementById('totalDebtsSum').textContent = debts.reduce((a,c)=>a+c.remainingAmount,0).toFixed(2);
+            document.getElementById('totalDebtsSum').textContent = debts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2);
             list.innerHTML = debts.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${item.remainingAmount.toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('customer_debts', ${item.id})">حذف</button>
+                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <button type="button" class="delete-btn" onclick="syncDelete('customer_debts', '${item.id}')">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -1381,23 +1180,22 @@
         document.getElementById('saveMyDebtBtn').addEventListener('click', () => {
             const name = document.getElementById('myCreditorName').value.trim();
             const amount = parseArabicNumber(document.getElementById('myDebtAmount').value);
-            if (!name || isNaN(amount)) return;
+            if (!name || isNaN(amount)) { alert('أدخل البيانات صحيحة'); return; }
             const dt = getFrenchFormattedDateTime(new Date());
-            syncAdd('my_personal_debts', { id: Date.now(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('myDebtNote').value || 'بدون', dateTime: dt.formattedText });
-            document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = '';
-            showToastPopup();
+            syncAdd('my_personal_debts', { id: Date.now().toString(), name, originalAmount: amount, remainingAmount: amount, note: document.getElementById('myDebtNote').value || 'بدون', dateTime: dt.formattedText });
+            document.getElementById('myCreditorName').value = ''; document.getElementById('myDebtAmount').value = ''; document.getElementById('myDebtNote').value = '';
         });
 
         function renderMyDebtsApp() {
             const list = document.getElementById('myDebtsList');
-            myDebts.sort((a,b)=>a.remainingAmount - b.remainingAmount);
+            myDebts.sort((a,b)=>(a.remainingAmount||0) - (b.remainingAmount||0));
             if (myDebts.length === 0) { list.innerHTML = '<div class="empty-state">لا توجد ديون عليك</div>'; document.getElementById('totalMyDebtsSum').textContent = '0.00'; return; }
-            document.getElementById('totalMyDebtsSum').textContent = myDebts.reduce((a,c)=>a+c.remainingAmount,0).toFixed(2);
+            document.getElementById('totalMyDebtsSum').textContent = myDebts.reduce((a,c)=>a+(c.remainingAmount||0),0).toFixed(2);
             list.innerHTML = myDebts.map(item => `
                 <div class="history-item">
                     <div class="history-top">
-                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${item.remainingAmount.toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('my_personal_debts', ${item.id})">حذف</button>
+                        <div><span class="history-amount" style="color:var(--expenses);">${item.name} : ${(item.remainingAmount||0).toFixed(2)}</span><span class="history-date">| ${item.dateTime}</span></div>
+                        <button type="button" class="delete-btn" onclick="syncDelete('my_personal_debts', '${item.id}')">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -1406,10 +1204,9 @@
         // --- 4. السلع الناقصة ---
         document.getElementById('saveGoodsBtn').addEventListener('click', () => {
             const name = document.getElementById('goodsName').value.trim();
-            if (!name) return;
-            syncAdd('missing_goods', { id: Date.now(), name, qty: document.getElementById('goodsQty').value || '1', dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
+            if (!name) { alert('أدخل اسم السلعة'); return; }
+            syncAdd('missing_goods', { id: Date.now().toString(), name, qty: document.getElementById('goodsQty').value || '1', dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('goodsName').value = ''; document.getElementById('goodsQty').value = '';
-            showToastPopup();
         });
 
         function renderGoodsApp() {
@@ -1419,13 +1216,13 @@
                 <div class="history-item">
                     <div class="history-top">
                         <div><span class="history-amount" style="color:var(--invest);">${item.name} (${item.qty})</span></div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('missing_goods', ${item.id})">حذف</button>
+                        <button type="button" class="delete-btn" onclick="syncDelete('missing_goods', '${item.id}')">حذف</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // --- 5. خزانة السلع ونقطة البيع (POS) مع خاصية التنبيه الذكي للمخزن المنخفض ---
+        // --- 5. خزانة السلع ونقطة البيع (POS) ---
         document.getElementById('saveInvItemBtn').addEventListener('click', () => {
             const barcode = document.getElementById('invItemBarcode').value.trim() || `BC-${Math.floor(1000 + Math.random()*9000)}`;
             const name = document.getElementById('invItemName').value.trim();
@@ -1433,9 +1230,8 @@
             const qty = parseInt(parseArabicNumber(document.getElementById('invItemQty').value));
             if (!name || isNaN(price) || isNaN(qty)) { alert('أدخل بيانات صحيحة'); return; }
             
-            syncAdd('shop_inventory', { id: Date.now(), barcode, name, price, qty, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
+            syncAdd('shop_inventory', { id: Date.now().toString(), barcode, name, price, qty, dateTime: getFrenchFormattedDateTime(new Date()).formattedText });
             document.getElementById('invItemBarcode').value = ''; document.getElementById('invItemName').value = ''; document.getElementById('invItemPrice').value = ''; document.getElementById('invItemQty').value = '';
-            showToastPopup("تم الحفظ في الخزانة بنجاح! 📦");
         });
 
         const posSearchInput = document.getElementById('posSearchInput');
@@ -1443,11 +1239,11 @@
             const q = posSearchInput.value.trim().toLowerCase();
             const res = document.getElementById('posQuickResults');
             if (!q) { res.innerHTML = ''; return; }
-            const matches = inventory.filter(i => i.name.toLowerCase().includes(q) || i.barcode.toLowerCase().includes(q));
+            const matches = inventory.filter(i => (i.name && i.name.toLowerCase().includes(q)) || (i.barcode && i.barcode.toLowerCase().includes(q)));
             res.innerHTML = matches.map(i => `
                 <div style="background:#0f172a; padding:6px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${i.name} (${i.price.toFixed(2)}) - متوفر: ${i.qty}</span>
-                    <button class="pay-btn" onclick="addToCart(${i.id})">إضافة +</button>
+                    <span>${i.name} (${(i.price||0).toFixed(2)}) - متوفر: ${i.qty}</span>
+                    <button type="button" class="pay-btn" onclick="addToCart('${i.id}')">إضافة +</button>
                 </div>
             `).join('');
         });
@@ -1469,7 +1265,7 @@
         }
 
         document.getElementById('checkoutBtn').addEventListener('click', () => {
-            if (cart.length === 0) return;
+            if (cart.length === 0) { alert('السلة فارغة!'); return; }
             let sum = 0;
             const invItemsList = document.getElementById('invItemsList');
             invItemsList.innerHTML = cart.map(i => {
@@ -1489,7 +1285,6 @@
             document.getElementById('totalStockCount').textContent = inventory.length;
             if (inventory.length === 0) { list.innerHTML = '<div class="empty-state">المخزن فارغ</div>'; return; }
             
-            // خاصية ذكية: تمييز السلع التي توشك على النفاد (أقل أو تساوي 3 قطع)
             list.innerHTML = inventory.map(item => {
                 const isLow = item.qty <= 3;
                 return `
@@ -1499,23 +1294,20 @@
                             <span class="history-amount" style="color:var(--invest);">${item.name}</span>
                             <span class="history-date">| باركود: ${item.barcode}</span>
                         </div>
-                        <button type="button" class="delete-btn" onclick="syncDelete('shop_inventory', ${item.id})">حذف</button>
+                        <button type="button" class="delete-btn" onclick="syncDelete('shop_inventory', '${item.id}')">حذف</button>
                     </div>
                     <div class="history-details" style="margin-top: 4px;">
-                        <div class="detail-item"><label>السعر</label><span>${item.price.toFixed(2)}</span></div>
-                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعتان ${isLow ? '⚠️ تنبيه قرب النفاد' : ''}</span></div>
+                        <div class="detail-item"><label>السعر</label><span>${(item.price||0).toFixed(2)}</span></div>
+                        <div class="detail-item"><label>المتوفر</label><span style="color:${isLow ? 'var(--charity)' : 'var(--invest)'};">${item.qty} قطعة ${isLow ? '⚠️ تنبيه' : ''}</span></div>
                     </div>
                 </div>
             `;
             }).join('');
         }
 
-        // التشغيل الأولي
-        initFirebase();
-        if (!useCloud) loadLocalData();
-        checkPinOnStart();
+        // التشغيل الأولي الفوري للسحابة
+        initRealtimeListeners();
         initChart();
-        renderIncomeApp(); renderDebtsApp(); renderMyDebtsApp(); renderGoodsApp(); renderInventoryApp();
     </script>
 </body>
 </html>
